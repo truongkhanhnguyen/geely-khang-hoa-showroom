@@ -16,6 +16,9 @@ interface PriceQuoteModalProps {
   selectedCar: string;
 }
 
+type CarModel = "Geely Coolray" | "Geely Monjaro" | "Geely EX5";
+type CarVariant = "Comfort" | "Premium";
+
 const PriceQuoteModal = ({ isOpen, onClose, selectedCar }: PriceQuoteModalProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
@@ -28,7 +31,7 @@ const PriceQuoteModal = ({ isOpen, onClose, selectedCar }: PriceQuoteModalProps)
     notes: ""
   });
 
-  const carPrices = {
+  const carPrices: Record<CarModel, Record<CarVariant, { price: number; variants: CarVariant[] }>> = {
     "Geely Coolray": {
       "Comfort": { price: 699000000, variants: ["Comfort"] },
       "Premium": { price: 769000000, variants: ["Comfort", "Premium"] }
@@ -46,7 +49,10 @@ const PriceQuoteModal = ({ isOpen, onClose, selectedCar }: PriceQuoteModalProps)
   const calculatePrice = () => {
     if (!formData.car || !formData.variant) return null;
     
-    const basePrice = carPrices[formData.car as keyof typeof carPrices]?.[formData.variant as keyof typeof carPrices[typeof formData.car]]?.price;
+    const carModel = formData.car as CarModel;
+    const variant = formData.variant as CarVariant;
+    
+    const basePrice = carPrices[carModel]?.[variant]?.price;
     if (!basePrice) return null;
 
     const registrationFee = 20000000; // 20 triệu
