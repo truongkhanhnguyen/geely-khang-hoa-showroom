@@ -14,9 +14,23 @@ interface LoanCalculatorProps {
 
 const LoanCalculator = ({ carPrice = 0 }: LoanCalculatorProps) => {
   const { t } = useLanguage();
-  const [loanAmount, setLoanAmount] = useState(Math.round(carPrice * 0.8));
+  
+  const carPrices = {
+    "Geely Coolray": 699000000,
+    "Geely Monjaro": 1469000000,
+    "Geely EX5": 769000000
+  };
+  
+  const [selectedCar, setSelectedCar] = useState("Geely Coolray");
+  const [loanAmount, setLoanAmount] = useState(Math.round(carPrices["Geely Coolray"] * 0.8));
   const [loanTerm, setLoanTerm] = useState(60); // months
   const [interestRate, setInterestRate] = useState(8.5); // %
+
+  const handleCarChange = (carName: string) => {
+    setSelectedCar(carName);
+    const newCarPrice = carPrices[carName as keyof typeof carPrices];
+    setLoanAmount(Math.round(newCarPrice * 0.8));
+  };
 
   const calculateMonthlyPayment = () => {
     if (!loanAmount || !loanTerm || !interestRate) return 0;
@@ -29,6 +43,7 @@ const LoanCalculator = ({ carPrice = 0 }: LoanCalculatorProps) => {
   };
 
   const monthlyPayment = calculateMonthlyPayment();
+  const currentCarPrice = carPrices[selectedCar as keyof typeof carPrices];
 
   const formatPrice = (price: number) => {
     return price.toLocaleString('vi-VN') + ' VNĐ';
@@ -44,6 +59,23 @@ const LoanCalculator = ({ carPrice = 0 }: LoanCalculatorProps) => {
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-4">
           <div>
+            <Label>Chọn dòng xe</Label>
+            <Select value={selectedCar} onValueChange={handleCarChange}>
+              <SelectTrigger className="mt-1">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Geely Coolray">Geely Coolray</SelectItem>
+                <SelectItem value="Geely Monjaro">Geely Monjaro</SelectItem>
+                <SelectItem value="Geely EX5">Geely EX5</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-sm text-gray-500 mt-1">
+              Giá xe: {formatPrice(currentCarPrice)}
+            </p>
+          </div>
+
+          <div>
             <Label htmlFor="loanAmount">{t('loanAmount')}</Label>
             <Input
               id="loanAmount"
@@ -54,7 +86,7 @@ const LoanCalculator = ({ carPrice = 0 }: LoanCalculatorProps) => {
               className="mt-1"
             />
             <p className="text-sm text-gray-500 mt-1">
-              Tối đa 80% giá trị xe: {formatPrice(Math.round(carPrice * 0.8))}
+              Tối đa 80% giá trị xe: {formatPrice(Math.round(currentCarPrice * 0.8))}
             </p>
           </div>
 
@@ -97,6 +129,10 @@ const LoanCalculator = ({ carPrice = 0 }: LoanCalculatorProps) => {
               {formatPrice(monthlyPayment)}
             </p>
             <div className="space-y-2 text-sm text-gray-600">
+              <div className="flex justify-between">
+                <span>Dòng xe:</span>
+                <span>{selectedCar}</span>
+              </div>
               <div className="flex justify-between">
                 <span>Số tiền vay:</span>
                 <span>{formatPrice(loanAmount)}</span>

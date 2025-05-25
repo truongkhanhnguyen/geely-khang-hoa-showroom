@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Calculator, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, Calculator, ArrowRight, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Car {
@@ -18,39 +18,59 @@ interface HeroCarouselProps {
   cars: Car[];
   onTestDrive: (carName: string) => void;
   onPriceQuote: (carName: string) => void;
+  onExplore: (carName: string) => void;
 }
 
-const HeroCarousel = ({ cars, onTestDrive, onPriceQuote }: HeroCarouselProps) => {
+const HeroCarousel = ({ cars, onTestDrive, onPriceQuote, onExplore }: HeroCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const { t } = useLanguage();
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % cars.length);
-    }, 3000);
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % cars.length);
+        setIsTransitioning(false);
+      }, 300);
+    }, 10000);
 
     return () => clearInterval(interval);
   }, [cars.length]);
 
   const goToPrevious = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + cars.length) % cars.length);
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentIndex((prevIndex) => (prevIndex - 1 + cars.length) % cars.length);
+      setIsTransitioning(false);
+    }, 300);
   };
 
   const goToNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % cars.length);
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % cars.length);
+      setIsTransitioning(false);
+    }, 300);
   };
 
   const currentCar = cars[currentIndex];
 
   return (
     <section className="relative h-screen overflow-hidden">
-      {/* Background Image */}
+      {/* Background Image with transition */}
       <div className="absolute inset-0">
-        <img 
-          src={currentCar.image} 
-          alt={currentCar.name}
-          className="w-full h-full object-cover"
-        />
+        <div 
+          className={`w-full h-full transition-transform duration-700 ease-in-out ${
+            isTransitioning ? 'transform translate-x-[-100%]' : 'transform translate-x-0'
+          }`}
+        >
+          <img 
+            src={currentCar.image} 
+            alt={currentCar.name}
+            className="w-full h-full object-cover"
+          />
+        </div>
         <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
@@ -85,6 +105,16 @@ const HeroCarousel = ({ cars, onTestDrive, onPriceQuote }: HeroCarouselProps) =>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 animate-fade-in">
+                <Button 
+                  size="lg"
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 rounded-full"
+                  onClick={() => onExplore(currentCar.name)}
+                >
+                  <Eye className="mr-2 h-5 w-5" />
+                  Khám phá
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+
                 <Button 
                   size="lg"
                   className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-full"

@@ -3,20 +3,19 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, Calculator, Phone } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import HeroCarousel from "@/components/HeroCarousel";
 import TestDriveModal from "@/components/TestDriveModal";
 import PriceQuoteModal from "@/components/PriceQuoteModal";
 import LoanCalculator from "@/components/LoanCalculator";
-import NewsSection from "@/components/NewsSection";
-import ContactModal from "@/components/ContactModal";
 import LanguageToggle from "@/components/LanguageToggle";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Index = () => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [showTestDrive, setShowTestDrive] = useState(false);
   const [showPriceQuote, setShowPriceQuote] = useState(false);
-  const [showContact, setShowContact] = useState(false);
   const [selectedCar, setSelectedCar] = useState("");
 
   const cars = [
@@ -56,6 +55,22 @@ const Index = () => {
     setShowPriceQuote(true);
   };
 
+  const handleExplore = (carName: string) => {
+    switch (carName) {
+      case "Geely Coolray":
+        navigate("/coolray");
+        break;
+      case "Geely Monjaro":
+        navigate("/monjaro");
+        break;
+      case "Geely EX5":
+        navigate("/ex5");
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -72,16 +87,7 @@ const Index = () => {
             <nav className="hidden md:flex items-center space-x-8">
               <a href="#cars" className="text-gray-700 hover:text-blue-600 transition-colors">{t('products')}</a>
               <a href="#services" className="text-gray-700 hover:text-blue-600 transition-colors">{t('services')}</a>
-              <a href="#news" className="text-gray-700 hover:text-blue-600 transition-colors">{t('news')}</a>
               <a href="#contact" className="text-gray-700 hover:text-blue-600 transition-colors">{t('contact')}</a>
-              <Button
-                onClick={() => setShowContact(true)}
-                size="sm"
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full"
-              >
-                <Phone className="w-4 h-4 mr-2" />
-                Liên hệ lại
-              </Button>
               <LanguageToggle />
             </nav>
           </div>
@@ -93,6 +99,7 @@ const Index = () => {
         cars={cars}
         onTestDrive={handleTestDrive}
         onPriceQuote={handlePriceQuote}
+        onExplore={handleExplore}
       />
 
       {/* Loan Calculator Section */}
@@ -155,9 +162,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* News Section */}
-      <NewsSection />
-
       {/* Contact Section */}
       <section id="contact" className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -204,10 +208,6 @@ const Index = () => {
         isOpen={showPriceQuote} 
         onClose={() => setShowPriceQuote(false)}
         selectedCar={selectedCar}
-      />
-      <ContactModal 
-        isOpen={showContact}
-        onClose={() => setShowContact(false)}
       />
     </div>
   );
