@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, Calendar, Calculator, Fuel, Gauge, Shield, Cog, Eye, Zap } from "lucide-react";
@@ -8,6 +9,7 @@ import PriceQuoteModal from "@/components/PriceQuoteModal";
 import LanguageToggle from "@/components/LanguageToggle";
 import CarImageCarousel from "@/components/CarImageCarousel";
 import FloatingButtons from "@/components/FloatingButtons";
+import FeatureSlider from "@/components/FeatureSlider";
 
 const MonjaroDetails = () => {
   const navigate = useNavigate();
@@ -30,15 +32,31 @@ const MonjaroDetails = () => {
     { icon: Eye, label: "Camera", value: "360° + DMS" }
   ];
 
-  const features = [
-    "Hệ thống giải trí 12.3 inch với GKUI Pro",
-    "Cruise Control thích ứng ACC",
-    "Cửa sổ trời toàn cảnh Panorama",
-    "Ghế da cao cấp điều chỉnh điện",
-    "Hệ thống âm thanh Sony 12 loa",
-    "Đèn LED Matrix thông minh",
-    "Khởi động từ xa qua ứng dụng",
-    "Sạc không dây cho điện thoại"
+  const detailedFeatures = [
+    {
+      id: "luxury",
+      title: "Nội thất cao cấp",
+      description: "Hệ thống giải trí 12.3 inch với GKUI Pro, ghế da cao cấp điều chỉnh điện, cửa sổ trời toàn cảnh Panorama và hệ thống âm thanh Sony 12 loa chất lượng Hi-Fi.",
+      image: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&h=600&fit=crop"
+    },
+    {
+      id: "performance",
+      title: "Hiệu suất mạnh mẽ",
+      description: "Động cơ 2.0L Turbo 238 HP mạnh mẽ, hộp số tự động 8 cấp mượt mà, tiêu thụ nhiên liệu chỉ 7.2L/100km. Hệ thống treo độc lập 4 bánh mang lại cảm giác lái thoải mái.",
+      image: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&h=600&fit=crop"
+    },
+    {
+      id: "safety",
+      title: "An toàn tối đa",
+      description: "7 túi khí bảo vệ toàn diện, cruise control thích ứng ACC, camera 360° + DMS, hệ thống cảnh báo điểm mù và phanh khẩn cấp tự động để đảm bảo an toàn cho cả gia đình.",
+      image: "https://images.unsplash.com/photo-1621135802920-133df287f89c?w=800&h=600&fit=crop"
+    },
+    {
+      id: "convenience",
+      title: "Tiện nghi hiện đại",
+      description: "Đèn LED Matrix thông minh, khởi động từ xa qua ứng dụng, sạc không dây cho điện thoại, hệ thống điều hòa tự động và khoang hành lý rộng rãi 1800L.",
+      image: "https://images.unsplash.com/photo-1619976215542-c8162db1a640?w=800&h=600&fit=crop"
+    }
   ];
 
   return (
@@ -57,10 +75,12 @@ const MonjaroDetails = () => {
                 <ArrowLeft className="h-4 w-4" />
                 <span>Quay lại</span>
               </Button>
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">G</span>
-                </div>
+              <div className="flex items-center space-x-3">
+                <img 
+                  src="/lovable-uploads/fcdb7433-edf5-46e0-a645-63687828d441.png" 
+                  alt="Geely Logo" 
+                  className="h-8 w-auto"
+                />
                 <span className="text-xl font-semibold text-gray-900">Geely Monjaro</span>
               </div>
             </div>
@@ -125,24 +145,7 @@ const MonjaroDetails = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-light text-center text-gray-900 mb-16">Tính năng nổi bật</h2>
           
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <img 
-                src="https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&h=600&fit=crop" 
-                alt="Interior"
-                className="w-full h-64 object-cover rounded-lg"
-              />
-            </div>
-            
-            <div className="space-y-4">
-              {features.map((feature, index) => (
-                <div key={index} className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-gray-700">{feature}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+          <FeatureSlider features={detailedFeatures} accentColor="blue-600" />
         </div>
       </section>
 

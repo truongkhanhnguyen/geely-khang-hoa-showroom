@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, Calendar, Calculator, Fuel, Gauge, Shield, Cog, Eye, Zap } from "lucide-react";
@@ -8,6 +9,7 @@ import PriceQuoteModal from "@/components/PriceQuoteModal";
 import LanguageToggle from "@/components/LanguageToggle";
 import CarImageCarousel from "@/components/CarImageCarousel";
 import FloatingButtons from "@/components/FloatingButtons";
+import FeatureSlider from "@/components/FeatureSlider";
 
 const CoolrayDetails = () => {
   const navigate = useNavigate();
@@ -30,15 +32,31 @@ const CoolrayDetails = () => {
     { icon: Eye, label: "Camera", value: "360°" }
   ];
 
-  const features = [
-    "Hệ thống GKUI 19 với màn hình 10.25 inch",
-    "Phanh ABS + EBD + ESC",
-    "Cruise Control thông minh",
-    "Hệ thống kiểm soát lực kéo",
-    "Đèn LED full",
-    "Cảm biến lùi + Camera 360°",
-    "Khởi động bằng nút bấm",
-    "Điều hòa tự động 2 vùng"
+  const detailedFeatures = [
+    {
+      id: "interior",
+      title: "Nội thất thông minh",
+      description: "Hệ thống GKUI 19 với màn hình cảm ứng 10.25 inch, điều khiển bằng giọng nói thông minh, kết nối smartphone không dây và hệ thống điều hòa tự động 2 vùng độc lập.",
+      image: "https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800&h=600&fit=crop"
+    },
+    {
+      id: "safety",
+      title: "An toàn cao cấp",
+      description: "Trang bị đầy đủ 6 túi khí, hệ thống phanh ABS + EBD + ESC, kiểm soát lực kéo và hệ thống cảnh báo điểm mù để bảo vệ an toàn cho mọi hành khách.",
+      image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=800&h=600&fit=crop"
+    },
+    {
+      id: "technology",
+      title: "Công nghệ hiện đại",
+      description: "Cruise Control thông minh, camera 360°, cảm biến lùi, khởi động bằng nút bấm và hệ thống đèn LED full toàn xe với thiết kế hiện đại và tiết kiệm năng lượng.",
+      image: "https://images.unsplash.com/photo-1600712242805-5f78671b24da?w=800&h=600&fit=crop"
+    },
+    {
+      id: "performance",
+      title: "Hiệu suất vượt trội",
+      description: "Động cơ 1.5L Turbo mạnh mẽ 177 HP, hộp số CVT mượt mà, tiêu thụ nhiên liệu chỉ 6.8L/100km, mang lại trải nghiệm lái xe năng động và tiết kiệm.",
+      image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?w=800&h=600&fit=crop"
+    }
   ];
 
   return (
@@ -57,10 +75,12 @@ const CoolrayDetails = () => {
                 <ArrowLeft className="h-4 w-4" />
                 <span>Quay lại</span>
               </Button>
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">G</span>
-                </div>
+              <div className="flex items-center space-x-3">
+                <img 
+                  src="/lovable-uploads/fcdb7433-edf5-46e0-a645-63687828d441.png" 
+                  alt="Geely Logo" 
+                  className="h-8 w-auto"
+                />
                 <span className="text-xl font-semibold text-gray-900">Geely Coolray</span>
               </div>
             </div>
@@ -125,24 +145,7 @@ const CoolrayDetails = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-light text-center text-gray-900 mb-16">Tính năng nổi bật</h2>
           
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <img 
-                src="https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800&h=600&fit=crop" 
-                alt="Interior"
-                className="w-full h-64 object-cover rounded-lg"
-              />
-            </div>
-            
-            <div className="space-y-4">
-              {features.map((feature, index) => (
-                <div key={index} className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-gray-700">{feature}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+          <FeatureSlider features={detailedFeatures} accentColor="blue-600" />
         </div>
       </section>
 

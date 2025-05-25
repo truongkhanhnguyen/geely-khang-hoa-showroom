@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, Calendar, Calculator, Battery, Gauge, Shield, Cog, Eye, Zap } from "lucide-react";
@@ -8,6 +9,7 @@ import PriceQuoteModal from "@/components/PriceQuoteModal";
 import LanguageToggle from "@/components/LanguageToggle";
 import CarImageCarousel from "@/components/CarImageCarousel";
 import FloatingButtons from "@/components/FloatingButtons";
+import FeatureSlider from "@/components/FeatureSlider";
 
 const EX5Details = () => {
   const navigate = useNavigate();
@@ -30,15 +32,31 @@ const EX5Details = () => {
     { icon: Eye, label: "Tự lái", value: "Level 2" }
   ];
 
-  const features = [
-    "100% động cơ điện thân thiện môi trường",
-    "Phạm vi hoạt động lên đến 400km",
-    "Sạc nhanh 30 phút đạt 80% pin",
-    "Hệ thống tự lái cấp độ 2",
-    "Màn hình cảm ứng 12.3 inch",
-    "Hệ thống điều hòa thông minh",
-    "Điều khiển bằng giọng nói AI",
-    "Cập nhật phần mềm OTA"
+  const detailedFeatures = [
+    {
+      id: "electric",
+      title: "Động cơ điện thân thiện",
+      description: "100% động cơ điện với công suất 204 HP, hoàn toàn không phát thải, góp phần bảo vệ môi trường và mang lại trải nghiệm lái xe êm ái, không tiếng ồn.",
+      image: "https://images.unsplash.com/photo-1593941707882-a5bac6861d75?w=800&h=600&fit=crop"
+    },
+    {
+      id: "battery",
+      title: "Pin hiệu suất cao",
+      description: "Phạm vi hoạt động lên đến 400km với một lần sạc đầy, hỗ trợ sạc nhanh 30 phút đạt 80% dung lượng pin. Công nghệ quản lý pin thông minh đảm bảo độ bền và an toàn.",
+      image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop"
+    },
+    {
+      id: "autonomous",
+      title: "Tự lái cấp độ 2",
+      description: "Hệ thống hỗ trợ lái xe tự động cấp độ 2 với camera và cảm biến radar, giúp kiểm soát làn đường, tự động phanh khẩn cấp và cruise control thích ứng.",
+      image: "https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=800&h=600&fit=crop"
+    },
+    {
+      id: "smart",
+      title: "Công nghệ thông minh",
+      description: "Màn hình cảm ứng 12.3 inch, điều khiển bằng giọng nói AI, cập nhật phần mềm OTA qua mạng, hệ thống điều hòa thông minh và kết nối internet tốc độ cao.",
+      image: "https://images.unsplash.com/photo-1536431311719-398b6704d4cc?w=800&h=600&fit=crop"
+    }
   ];
 
   return (
@@ -57,10 +75,12 @@ const EX5Details = () => {
                 <ArrowLeft className="h-4 w-4" />
                 <span>Quay lại</span>
               </Button>
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-green-600 to-teal-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">G</span>
-                </div>
+              <div className="flex items-center space-x-3">
+                <img 
+                  src="/lovable-uploads/fcdb7433-edf5-46e0-a645-63687828d441.png" 
+                  alt="Geely Logo" 
+                  className="h-8 w-auto"
+                />
                 <span className="text-xl font-semibold text-gray-900">Geely EX5</span>
               </div>
             </div>
@@ -125,24 +145,7 @@ const EX5Details = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-light text-center text-gray-900 mb-16">Tính năng nổi bật</h2>
           
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <img 
-                src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop" 
-                alt="Interior"
-                className="w-full h-64 object-cover rounded-lg"
-              />
-            </div>
-            
-            <div className="space-y-4">
-              {features.map((feature, index) => (
-                <div key={index} className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-green-600 rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-gray-700">{feature}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+          <FeatureSlider features={detailedFeatures} accentColor="green-600" />
         </div>
       </section>
 
