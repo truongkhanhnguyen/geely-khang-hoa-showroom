@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, Calendar, Calculator, Fuel, Gauge, Shield, Cog, Eye, Zap } from "lucide-react";
@@ -7,11 +6,20 @@ import { useState } from "react";
 import TestDriveModal from "@/components/TestDriveModal";
 import PriceQuoteModal from "@/components/PriceQuoteModal";
 import LanguageToggle from "@/components/LanguageToggle";
+import CarImageCarousel from "@/components/CarImageCarousel";
+import FloatingButtons from "@/components/FloatingButtons";
 
 const MonjaroDetails = () => {
   const navigate = useNavigate();
   const [showTestDrive, setShowTestDrive] = useState(false);
   const [showPriceQuote, setShowPriceQuote] = useState(false);
+
+  const carImages = [
+    "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=1920&h=1080&fit=crop",
+    "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=1920&h=1080&fit=crop",
+    "https://images.unsplash.com/photo-1621135802920-133df287f89c?w=1920&h=1080&fit=crop",
+    "https://images.unsplash.com/photo-1619976215542-c8162db1a640?w=1920&h=1080&fit=crop"
+  ];
 
   const specifications = [
     { icon: Gauge, label: "Động cơ", value: "2.0L Turbo" },
@@ -61,47 +69,36 @@ const MonjaroDetails = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="pt-16 h-screen relative overflow-hidden">
-        <div className="absolute inset-0">
-          <img 
-            src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=1920&h=1080&fit=crop" 
-            alt="Geely Monjaro"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/40"></div>
-        </div>
+      {/* Hero Carousel Section */}
+      <section className="pt-16">
+        <CarImageCarousel images={carImages} carName="Geely Monjaro" />
         
-        <div className="relative z-10 h-full flex items-center">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <div className="text-center text-white">
-              <h1 className="text-6xl md:text-8xl font-light mb-6">Geely Monjaro</h1>
-              <p className="text-2xl md:text-3xl font-medium text-blue-300 mb-8">Premium. Powerful. Refined.</p>
-              <p className="text-xl text-gray-200 mb-12 max-w-3xl mx-auto">
-                SUV 7 chỗ cao cấp với không gian rộng rãi và trang bị công nghệ tiên tiến, hoàn hảo cho gia đình hiện đại.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
-                  size="lg"
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-full"
-                  onClick={() => setShowTestDrive(true)}
-                >
-                  <Calendar className="mr-2 h-5 w-5" />
-                  Đặt lịch lái thử
-                </Button>
-                
-                <Button 
-                  variant="outline"
-                  size="lg"
-                  className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 rounded-full"
-                  onClick={() => setShowPriceQuote(true)}
-                >
-                  <Calculator className="mr-2 h-5 w-5" />
-                  Xem báo giá
-                </Button>
-              </div>
-            </div>
+        {/* Overlay Content */}
+        <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-10 text-center">
+          <p className="text-2xl md:text-3xl font-medium text-blue-300 mb-8">Premium. Powerful. Refined.</p>
+          <p className="text-xl text-gray-200 mb-12 max-w-3xl mx-auto">
+            SUV 7 chỗ cao cấp với không gian rộng rãi và trang bị công nghệ tiên tiến, hoàn hảo cho gia đình hiện đại.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button 
+              size="lg"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-full"
+              onClick={() => setShowTestDrive(true)}
+            >
+              <Calendar className="mr-2 h-5 w-5" />
+              Đặt lịch lái thử
+            </Button>
+            
+            <Button 
+              variant="outline"
+              size="lg"
+              className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 rounded-full"
+              onClick={() => setShowPriceQuote(true)}
+            >
+              <Calculator className="mr-2 h-5 w-5" />
+              Xem báo giá
+            </Button>
           </div>
         </div>
       </section>
@@ -179,6 +176,9 @@ const MonjaroDetails = () => {
           </div>
         </div>
       </section>
+
+      {/* Floating Buttons */}
+      <FloatingButtons />
 
       {/* Modals */}
       <TestDriveModal 
