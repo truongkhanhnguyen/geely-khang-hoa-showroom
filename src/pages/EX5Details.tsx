@@ -8,6 +8,7 @@ import PriceQuoteModal from "@/components/PriceQuoteModal";
 import LanguageToggle from "@/components/LanguageToggle";
 import CarImageCarousel from "@/components/CarImageCarousel";
 import FeatureSlider from "@/components/FeatureSlider";
+import FloatingButtons from "@/components/FloatingButtons";
 
 const EX5Details = () => {
   const navigate = useNavigate();
