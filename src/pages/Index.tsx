@@ -98,7 +98,7 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Hero Carousel */}
+      {/* SEO optimized Hero Carousel */}
       <HeroCarousel 
         cars={cars}
         onTestDrive={handleTestDrive}
@@ -106,66 +106,71 @@ const Index = () => {
         onExplore={handleExplore}
       />
 
-      {/* Services Section */}
+      {/* SEO optimized Services Section */}
       <section id="services" className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-light text-gray-900 mb-4">
-              {t('professionalServices')} <span className="text-blue-600 font-medium"></span>
-            </h2>
+            <h1 className="text-3xl md:text-5xl font-light text-gray-900 mb-4">
+              Dịch vụ chuyên nghiệp <span className="text-blue-600 font-medium">Geely Ninh Thuận</span>
+            </h1>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Đại lý chính hãng Geely tại Ninh Thuận - Lái thử miễn phí, vay 80%, bảo hành toàn quốc
+            </p>
           </div>
           
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <Card className="p-8 bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <article className="p-8 bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 rounded-lg">
               <div className="text-center">
                 <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Calendar className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-2xl font-semibold text-gray-900 mb-4">{t('testDriveTitle')}</h3>
-                <p className="text-gray-600 mb-6">{t('testDriveDesc')}</p>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-4">Đặt lịch lái thử xe miễn phí</h2>
+                <p className="text-gray-600 mb-6">Trải nghiệm các dòng xe Geely Coolray, Monjaro, EX5 tại Ninh Thuận. Lái thử miễn phí, tư vấn chuyên nghiệp.</p>
                 <Button 
                   className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full"
                   onClick={() => setShowTestDrive(true)}
+                  aria-label="Đặt lịch lái thử xe Geely miễn phí"
                 >
-                  {t('scheduleNow')}
+                  Đặt lịch ngay
                 </Button>
               </div>
-            </Card>
+            </article>
 
-            <Card className="p-8 bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <article className="p-8 bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 rounded-lg">
               <div className="text-center">
                 <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Calculator className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-2xl font-semibold text-gray-900 mb-4">{t('priceQuoteTitle')}</h3>
-                <p className="text-gray-600 mb-6">{t('priceQuoteDesc')}</p>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-4">Báo giá và tư vấn vay trả góp</h2>
+                <p className="text-gray-600 mb-6">Nhận báo giá lăn bánh chi tiết và tư vấn vay mua xe lên đến 80% giá trị xe với lãi suất ưu đãi.</p>
                 <Button 
                   className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white rounded-full"
                   onClick={() => setShowPriceQuote(true)}
+                  aria-label="Xem báo giá xe Geely và tư vấn vay trả góp"
                 >
                   Xem báo giá
                 </Button>
               </div>
-            </Card>
+            </article>
           </div>
         </div>
       </section>
 
-      {/* Promotions Section */}
+      {/* Promotions Section with SEO */}
       <PromotionsSection />
 
-      {/* News Section */}
+      {/* News Section with SEO */}
       <NewsSection />
 
-      {/* Loan Calculator */}
+      {/* SEO optimized Loan Calculator */}
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-4">
-              Tính toán <span className="text-green-600 font-medium">vay trả góp</span>
+              Tính toán <span className="text-green-600 font-medium">vay trả góp xe Geely</span>
             </h2>
             <p className="text-lg text-gray-600">
-              Hỗ trợ vay lên đến 80% giá trị xe với lãi suất ưu đãi
+              Hỗ trợ vay lên đến 80% giá trị xe với lãi suất ưu đãi tại Ninh Thuận
             </p>
           </div>
           <LoanCalculator carPrice={1469000000} />

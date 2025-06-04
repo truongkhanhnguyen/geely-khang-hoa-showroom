@@ -1,14 +1,30 @@
+
+User-agent: *
+Allow: /
+
+# Prioritize important pages
+Allow: /coolray
+Allow: /monjaro
+Allow: /ex5
+Allow: /promotions
+Allow: /news
+
+# Sitemap location
+Sitemap: https://geely-khanhhoa.lovable.app/sitemap.xml
+
+# Crawl delay for politeness
+Crawl-delay: 1
+
+# Block certain user agents if needed
+User-agent: BadBot
+Disallow: /
+
+# Allow major search engines
 User-agent: Googlebot
 Allow: /
 
 User-agent: Bingbot
 Allow: /
 
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
-User-agent: *
+User-agent: Slurp
 Allow: /

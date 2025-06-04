@@ -12,24 +12,24 @@ const NewsSection = () => {
   const newsItems = [
     {
       id: 1,
-      title: "Geely ra mắt công nghệ pin mới cho xe điện",
-      excerpt: "Công nghệ pin thế hệ mới của Geely hứa hẹn tăng phạm vi hoạt động lên 500km...",
+      title: "Geely ra mắt công nghệ pin mới cho xe điện tại Ninh Thuận",
+      excerpt: "Công nghệ pin thế hệ mới của Geely hứa hẹn tăng phạm vi hoạt động lên 500km cho dòng xe EX5...",
       image: "https://images.unsplash.com/photo-1593941707882-a5bac6861d75?w=400&h=250&fit=crop",
       date: "2024-12-15",
       category: "Công nghệ"
     },
     {
       id: 2, 
-      title: "Chương trình ưu đãi đặc biệt tháng 12",
-      excerpt: "Nhân dịp cuối năm, Geely Ninh Thuận triển khai chương trình ưu đãi hấp dẫn...",
+      title: "Chương trình ưu đãi đặc biệt tháng 12 tại Geely Ninh Thuận",
+      excerpt: "Nhân dịp cuối năm, Geely Ninh Thuận triển khai chương trình ưu đãi hấp dẫn cho khách hàng mua xe...",
       image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=400&h=250&fit=crop",
       date: "2024-12-10",
       category: "Khuyến mãi"
     },
     {
       id: 3,
-      title: "Geely đạt chứng nhận an toàn 5 sao",
-      excerpt: "Các dòng xe Geely tiếp tục khẳng định vị thế với chứng nhận an toàn cao nhất...",
+      title: "Geely đạt chứng nhận an toàn 5 sao ASEAN NCAP",
+      excerpt: "Các dòng xe Geely Coolray, Monjaro tiếp tục khẳng định vị thế với chứng nhận an toàn cao nhất...",
       image: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=400&h=250&fit=crop", 
       date: "2024-12-05",
       category: "An toàn"
@@ -41,21 +41,22 @@ const NewsSection = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-light text-gray-900 mb-4">
-            {t('latestNews')} <span className="text-blue-600 font-medium">Geely</span>
+            Tin tức mới nhất <span className="text-blue-600 font-medium">Geely Ninh Thuận</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            {t('newsSubtitle')}
+            Cập nhật thông tin mới nhất về sản phẩm, khuyến mãi và sự kiện từ đại lý Geely Ninh Thuận
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {newsItems.map((item) => (
-            <Card key={item.id} className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-white">
+            <article key={item.id} className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-white rounded-lg">
               <div className="relative overflow-hidden">
                 <img 
                   src={item.image} 
-                  alt={item.title}
+                  alt={`${item.title} - Tin tức Geely Ninh Thuận`}
                   className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+                  loading="lazy"
                 />
                 <div className="absolute top-4 left-4">
                   <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
@@ -67,7 +68,7 @@ const NewsSection = () => {
               <div className="p-6">
                 <div className="flex items-center text-gray-500 text-sm mb-3">
                   <Calendar className="w-4 h-4 mr-2" />
-                  {new Date(item.date).toLocaleDateString('vi-VN')}
+                  <time dateTime={item.date}>{new Date(item.date).toLocaleDateString('vi-VN')}</time>
                 </div>
                 
                 <h3 className="text-xl font-semibold text-gray-900 mb-3 line-clamp-2">
@@ -81,12 +82,13 @@ const NewsSection = () => {
                 <Button 
                   variant="outline"
                   className="w-full border-gray-300 hover:border-blue-600 hover:text-blue-600 rounded-full group/btn"
+                  aria-label={`Đọc thêm bài viết: ${item.title}`}
                 >
                   Đọc thêm
                   <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
                 </Button>
               </div>
-            </Card>
+            </article>
           ))}
         </div>
 
@@ -96,6 +98,7 @@ const NewsSection = () => {
             variant="outline"
             onClick={() => navigate('/news')}
             className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-3 rounded-full"
+            aria-label="Xem tất cả tin tức Geely Ninh Thuận"
           >
             Xem tất cả tin tức
             <ArrowRight className="ml-2 h-5 w-5" />
