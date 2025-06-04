@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -84,7 +85,7 @@ const Index = () => {
               <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">G</span>
               </div>
-              <span className="text-xl font-semibold text-gray-900">Geely Khánh Hòa</span>
+              <span className="text-xl font-semibold text-gray-900">Geely Ninh Thuận</span>
             </div>
             
             <nav className="hidden md:flex items-center space-x-8">
@@ -104,31 +105,6 @@ const Index = () => {
         onPriceQuote={handlePriceQuote}
         onExplore={handleExplore}
       />
-
-      {/* Cars Section */}
-      <section id="cars" className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-8">
-            {cars.map((car, index) => (
-              <Card key={index} className="p-8 bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <img src={car.image} alt={car.name} className="w-16 h-16" />
-                  </div>
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">{car.name}</h3>
-                  <p className="text-gray-600 mb-6">{car.description}</p>
-                  <Button 
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full"
-                    onClick={() => handleExplore(car.name)}
-                  >
-                    Xem chi tiết
-                  </Button>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Services Section */}
       <section id="services" className="py-20 bg-gray-50">

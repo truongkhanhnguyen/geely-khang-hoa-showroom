@@ -3,9 +3,11 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useNavigate } from "react-router-dom";
 
 const NewsSection = () => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   const newsItems = [
     {
@@ -19,7 +21,7 @@ const NewsSection = () => {
     {
       id: 2, 
       title: "Chương trình ưu đãi đặc biệt tháng 12",
-      excerpt: "Nhân dịp cuối năm, Geely Khánh Hòa triển khai chương trình ưu đãi hấp dẫn...",
+      excerpt: "Nhân dịp cuối năm, Geely Ninh Thuận triển khai chương trình ưu đãi hấp dẫn...",
       image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=400&h=250&fit=crop",
       date: "2024-12-10",
       category: "Khuyến mãi"
@@ -92,6 +94,7 @@ const NewsSection = () => {
           <Button 
             size="lg"
             variant="outline"
+            onClick={() => navigate('/news')}
             className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-3 rounded-full"
           >
             Xem tất cả tin tức

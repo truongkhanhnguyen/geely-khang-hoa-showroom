@@ -3,9 +3,11 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Gift, Calendar, Percent } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useNavigate } from "react-router-dom";
 
 const PromotionsSection = () => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   const promotions = [
     {
@@ -88,7 +90,7 @@ const PromotionsSection = () => {
                 </div>
                 
                 <Button 
-                  className="w-full bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white rounded-full group/btn"
+                  className={`w-full bg-gradient-to-r ${promo.bgColor} hover:from-red-600 hover:to-pink-700 text-white rounded-full group/btn`}
                 >
                   Tìm hiểu thêm
                   <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
@@ -102,6 +104,7 @@ const PromotionsSection = () => {
           <Button 
             size="lg"
             variant="outline"
+            onClick={() => navigate('/promotions')}
             className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white px-8 py-3 rounded-full"
           >
             Xem tất cả khuyến mãi
