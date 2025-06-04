@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, Calendar, Calculator, Fuel, Gauge, Shield, Cog, Eye, Zap } from "lucide-react";
@@ -8,7 +7,6 @@ import TestDriveModal from "@/components/TestDriveModal";
 import PriceQuoteModal from "@/components/PriceQuoteModal";
 import LanguageToggle from "@/components/LanguageToggle";
 import CarImageCarousel from "@/components/CarImageCarousel";
-import FloatingButtons from "@/components/FloatingButtons";
 import FeatureSlider from "@/components/FeatureSlider";
 
 const CoolrayDetails = () => {

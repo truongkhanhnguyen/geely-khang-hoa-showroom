@@ -54,6 +54,19 @@ const FeatureSlider = ({ features, accentColor = "blue-600" }: FeaturesliderProp
         >
           <ChevronRight className="h-4 w-4" />
         </Button>
+        
+        {/* Dots Indicator */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+          {features.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentFeature(index)}
+              className={`w-2 h-2 rounded-full transition-all ${
+                index === currentFeature ? 'bg-white' : 'bg-white/50'
+              }`}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Feature Content */}
@@ -67,27 +80,29 @@ const FeatureSlider = ({ features, accentColor = "blue-600" }: FeaturesliderProp
           </p>
         </div>
 
-        {/* Feature Selector Buttons */}
-        <div className="grid grid-cols-2 gap-3">
-          {features.map((feature, index) => (
+        {/* Feature Navigation */}
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-gray-500">
+            {currentFeature + 1} / {features.length}
+          </div>
+          <div className="flex space-x-2">
             <Button
-              key={feature.id}
-              variant={index === currentFeature ? "default" : "outline"}
-              className={`text-left justify-start p-4 h-auto ${
-                index === currentFeature 
-                  ? `bg-${accentColor} hover:bg-${accentColor}/90` 
-                  : "hover:bg-gray-50"
-              }`}
-              onClick={() => setCurrentFeature(index)}
+              variant="outline"
+              size="sm"
+              onClick={prevFeature}
+              className="rounded-full"
             >
-              <div>
-                <div className="font-medium text-sm">{feature.title}</div>
-                <div className="text-xs opacity-70 mt-1 line-clamp-2">
-                  {feature.description}
-                </div>
-              </div>
+              <ChevronLeft className="h-4 w-4" />
             </Button>
-          ))}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={nextFeature}
+              className="rounded-full"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

@@ -25,6 +25,7 @@ const LoanCalculator = ({ carPrice = 0 }: LoanCalculatorProps) => {
   const [loanAmount, setLoanAmount] = useState(Math.round(carPrices["Geely Coolray"] * 0.8));
   const [loanTerm, setLoanTerm] = useState(60); // months
   const [interestRate, setInterestRate] = useState(8.5); // %
+  const [loanInsurance, setLoanInsurance] = useState(0); // %
 
   const handleCarChange = (carName: string) => {
     setSelectedCar(carName);
@@ -39,7 +40,10 @@ const LoanCalculator = ({ carPrice = 0 }: LoanCalculatorProps) => {
     const monthlyPayment = (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, loanTerm)) / 
                           (Math.pow(1 + monthlyRate, loanTerm) - 1);
     
-    return Math.round(monthlyPayment);
+    // Thêm bảo hiểm khoản vay
+    const insuranceCost = (loanAmount * loanInsurance / 100) / loanTerm;
+    
+    return Math.round(monthlyPayment + insuranceCost);
   };
 
   const monthlyPayment = calculateMonthlyPayment();
@@ -120,6 +124,22 @@ const LoanCalculator = ({ carPrice = 0 }: LoanCalculatorProps) => {
               className="mt-1"
             />
           </div>
+
+          <div>
+            <Label htmlFor="loanInsurance">{t('loanInsurance')} (%)</Label>
+            <Input
+              id="loanInsurance"
+              type="number"
+              step="0.1"
+              value={loanInsurance}
+              onChange={(e) => setLoanInsurance(Number(e.target.value))}
+              placeholder="Bảo hiểm khoản vay"
+              className="mt-1"
+            />
+            <p className="text-sm text-gray-500 mt-1">
+              Mặc định 0%, có thể điều chỉnh theo yêu cầu
+            </p>
+          </div>
         </div>
 
         <div className="flex flex-col justify-center">
@@ -144,6 +164,10 @@ const LoanCalculator = ({ carPrice = 0 }: LoanCalculatorProps) => {
               <div className="flex justify-between">
                 <span>Lãi suất:</span>
                 <span>{interestRate}%/năm</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Bảo hiểm:</span>
+                <span>{loanInsurance}%</span>
               </div>
               <div className="flex justify-between font-semibold border-t pt-2">
                 <span>Tổng thanh toán:</span>
