@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { User, Phone } from "lucide-react";
+import { User, Phone, MapPin, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -51,49 +51,79 @@ const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-center">
-            {t('contactBack')}
+            THÔNG TIN SHOWROOM GEELY NINH THUẬN
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
-          <p className="text-gray-600 text-center">
-            {t('contactBackDesc')}
-          </p>
-          
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="name" className="flex items-center text-sm font-medium text-gray-700">
-                <User className="w-4 h-4 mr-2" />
-                {t('fullName')} *
-              </Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => handleInputChange("name", e.target.value)}
-                placeholder="Nhập họ và tên"
-                className="mt-1"
-                required
-              />
+          {/* Showroom Information */}
+          <div className="bg-gray-50 p-4 rounded-lg space-y-3">
+            <div className="flex items-start space-x-3">
+              <MapPin className="w-5 h-5 text-blue-600 mt-1" />
+              <div>
+                <h3 className="font-semibold text-gray-900">Địa chỉ showroom:</h3>
+                <p className="text-gray-600">123 Đường Lê Lợi, Phường Mỹ Bình, TP. Phan Rang - Tháp Chàm, Ninh Thuận</p>
+              </div>
             </div>
+            
+            <div className="flex items-start space-x-3">
+              <Phone className="w-5 h-5 text-blue-600 mt-1" />
+              <div>
+                <h3 className="font-semibold text-gray-900">Hotline:</h3>
+                <p className="text-gray-600">0123 456 789</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start space-x-3">
+              <Clock className="w-5 h-5 text-blue-600 mt-1" />
+              <div>
+                <h3 className="font-semibold text-gray-900">Giờ làm việc:</h3>
+                <p className="text-gray-600">Thứ 2 - Chủ nhật: 8:00 - 18:00</p>
+              </div>
+            </div>
+          </div>
 
-            <div>
-              <Label htmlFor="phone" className="flex items-center text-sm font-medium text-gray-700">
-                <Phone className="w-4 h-4 mr-2" />
-                {t('phoneNumber')} *
-              </Label>
-              <Input
-                id="phone"
-                value={formData.phone}
-                onChange={(e) => handleInputChange("phone", e.target.value)}
-                placeholder="Nhập số điện thoại"
-                className="mt-1"
-                required
-              />
-            </div>
-          </form>
+          {/* Contact Form */}
+          <div className="border-t pt-4">
+            <h3 className="font-semibold text-gray-900 mb-3 text-center">
+              Để lại thông tin để được tư vấn miễn phí
+            </h3>
+            
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="name" className="flex items-center text-sm font-medium text-gray-700">
+                  <User className="w-4 h-4 mr-2" />
+                  Họ và tên *
+                </Label>
+                <Input
+                  id="name"
+                  value={formData.name}
+                  onChange={(e) => handleInputChange("name", e.target.value)}
+                  placeholder="Nhập họ và tên"
+                  className="mt-1"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="phone" className="flex items-center text-sm font-medium text-gray-700">
+                  <Phone className="w-4 h-4 mr-2" />
+                  Số điện thoại *
+                </Label>
+                <Input
+                  id="phone"
+                  value={formData.phone}
+                  onChange={(e) => handleInputChange("phone", e.target.value)}
+                  placeholder="Nhập số điện thoại"
+                  className="mt-1"
+                  required
+                />
+              </div>
+            </form>
+          </div>
 
           <div className="flex space-x-3">
             <Button
@@ -108,7 +138,7 @@ const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
               onClick={handleSubmit}
               className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
             >
-              {t('submitContact')}
+              Gửi thông tin
             </Button>
           </div>
         </div>

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,12 +14,14 @@ import FloatingButtons from "@/components/FloatingButtons";
 import PromotionsSection from "@/components/PromotionsSection";
 import ContactFooter from "@/components/ContactFooter";
 import NewsSection from "@/components/NewsSection";
+import ContactModal from "@/components/ContactModal";
 
 const Index = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [showTestDrive, setShowTestDrive] = useState(false);
   const [showPriceQuote, setShowPriceQuote] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
   const [selectedCar, setSelectedCar] = useState("");
 
   const cars = [
@@ -90,12 +93,12 @@ const Index = () => {
             </div>
             
             <nav className="hidden md:flex items-center space-x-8">
-              <a href="#cars" className="text-gray-700 hover:text-blue-600 transition-colors">{t('products')}</a>
-              <a href="#services" className="text-gray-700 hover:text-blue-600 transition-colors">{t('services')}</a>
-              <a href="#contact" className="text-gray-700 hover:text-blue-600 transition-colors">{t('contact')}</a>
+              <a href="#cars" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">SẢN PHẨM</a>
+              <a href="#services" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">DỊCH VỤ</a>
+              <a href="#contact" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">LIÊN HỆ</a>
               <Button 
                 className="bg-black hover:bg-gray-800 text-white px-6 py-2 rounded-md font-medium"
-                onClick={() => window.location.href = '#contact'}
+                onClick={() => setShowContactModal(true)}
               >
                 LIÊN HỆ
               </Button>
@@ -200,6 +203,10 @@ const Index = () => {
         isOpen={showPriceQuote} 
         onClose={() => setShowPriceQuote(false)}
         selectedCar={selectedCar}
+      />
+      <ContactModal 
+        isOpen={showContactModal} 
+        onClose={() => setShowContactModal(false)}
       />
     </div>
   );
