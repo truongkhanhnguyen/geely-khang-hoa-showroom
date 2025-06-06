@@ -1,40 +1,61 @@
 
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+
+interface News {
+  id: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  image_url: string;
+  category: string;
+  date: string;
+  created_at: string;
+}
 
 const NewsSection = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const [news, setNews] = useState<News[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const newsItems = [
-    {
-      id: 1,
-      title: "Geely ra mắt công nghệ pin mới cho xe điện tại Ninh Thuận",
-      excerpt: "Công nghệ pin thế hệ mới của Geely hứa hẹn tăng phạm vi hoạt động lên 500km cho dòng xe EX5...",
-      image: "https://images.unsplash.com/photo-1593941707882-a5bac6861d75?w=400&h=250&fit=crop",
-      date: "2024-12-15",
-      category: "Công nghệ"
-    },
-    {
-      id: 2, 
-      title: "Chương trình ưu đãi đặc biệt tháng 12 tại Geely Ninh Thuận",
-      excerpt: "Nhân dịp cuối năm, Geely Ninh Thuận triển khai chương trình ưu đãi hấp dẫn cho khách hàng mua xe...",
-      image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=400&h=250&fit=crop",
-      date: "2024-12-10",
-      category: "Khuyến mãi"
-    },
-    {
-      id: 3,
-      title: "Geely đạt chứng nhận an toàn 5 sao ASEAN NCAP",
-      excerpt: "Các dòng xe Geely Coolray, Monjaro tiếp tục khẳng định vị thế với chứng nhận an toàn cao nhất...",
-      image: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=400&h=250&fit=crop", 
-      date: "2024-12-05",
-      category: "An toàn"
+  useEffect(() => {
+    fetchNews();
+  }, []);
+
+  const fetchNews = async () => {
+    try {
+      const { data, error } = await (supabase as any)
+        .from('news')
+        .select('*')
+        .order('date', { ascending: false })
+        .limit(3);
+
+      if (error) throw error;
+      setNews(data || []);
+    } catch (error) {
+      console.error('Error fetching news:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-xl text-gray-600">Đang tải tin tức...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-20 bg-gray-50">
@@ -49,11 +70,11 @@ const NewsSection = () => {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {newsItems.map((item) => (
+          {news.map((item) => (
             <article key={item.id} className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-white rounded-lg">
               <div className="relative overflow-hidden">
                 <img 
-                  src={item.image} 
+                  src={item.image_url || "https://images.unsplash.com/photo-1593941707882-a5bac6861d75?w=400&h=250&fit=crop"} 
                   alt={`${item.title} - Tin tức Geely Ninh Thuận`}
                   className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
                   loading="lazy"
