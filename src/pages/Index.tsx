@@ -27,7 +27,7 @@ const Index = () => {
       name: "Geely Coolray",
       tagline: "Urban. Dynamic. Smart.",
       description: "SUV compact thông minh với công nghệ hiện đại và thiết kế trẻ trung, phù hợp cho cuộc sống đô thị năng động.",
-      price: "Từ 699 triệu VNĐ",
+      price: "Từ 538 triệu VNĐ",
       image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop",
       features: ["Động cơ 1.5L Turbo", "Hệ thống GKUI 19", "6 túi khí an toàn", "Phanh ABS + EBD"]
     },
