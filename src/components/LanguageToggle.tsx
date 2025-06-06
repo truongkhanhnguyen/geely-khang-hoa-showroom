@@ -1,61 +1,39 @@
 
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Globe } from "lucide-react";
 import { useState } from "react";
 
 const LanguageToggle = () => {
   const { language, setLanguage } = useLanguage();
-  const [isOpen, setIsOpen] = useState(false);
 
   const languages = [
-    { code: 'vi' as const, name: 'VI', flag: '🇻🇳' },
-    { code: 'en' as const, name: 'EN', flag: '🇺🇸' },
-    { code: 'ru' as const, name: 'RU', flag: '🇷🇺' },
-    { code: 'zh' as const, name: 'ZH', flag: '🇨🇳' }
+    { code: 'vi' as const, name: 'VI' },
+    { code: 'en' as const, name: 'EN' },
+    { code: 'ru' as const, name: 'RU' },
+    { code: 'zh' as const, name: 'ZH' }
   ];
 
-  const currentLang = languages.find(lang => lang.code === language);
   const currentIndex = languages.findIndex(lang => lang.code === language);
 
-  const nextLanguage = () => {
+  const toggleLanguage = () => {
     const nextIndex = (currentIndex + 1) % languages.length;
     setLanguage(languages[nextIndex].code);
   };
 
-  const prevLanguage = () => {
-    const prevIndex = (currentIndex - 1 + languages.length) % languages.length;
-    setLanguage(languages[prevIndex].code);
-  };
+  // Show current and next language
+  const currentLang = languages[currentIndex];
+  const nextLang = languages[(currentIndex + 1) % languages.length];
 
   return (
-    <div className="relative">
-      <div className="flex items-center bg-gray-100 rounded-full p-1 min-w-[120px]">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={prevLanguage}
-          className="rounded-full p-1 hover:bg-gray-200"
-        >
-          <ChevronLeft className="h-3 w-3" />
-        </Button>
-        
-        <div className="flex-1 text-center">
-          <div className="flex items-center justify-center space-x-1">
-            <span className="text-lg">{currentLang?.flag}</span>
-            <span className="text-xs font-medium text-gray-700">{currentLang?.name}</span>
-          </div>
-        </div>
-        
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={nextLanguage}
-          className="rounded-full p-1 hover:bg-gray-200"
-        >
-          <ChevronRight className="h-3 w-3" />
-        </Button>
-      </div>
+    <div className="flex items-center space-x-2">
+      <Globe className="h-5 w-5 text-gray-600" />
+      <button 
+        onClick={toggleLanguage}
+        className="text-gray-700 hover:text-gray-900 font-medium"
+      >
+        {currentLang.name} {nextLang.name}
+      </button>
     </div>
   );
 };

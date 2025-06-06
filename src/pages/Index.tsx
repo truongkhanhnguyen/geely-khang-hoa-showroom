@@ -92,6 +92,12 @@ const Index = () => {
               <a href="#cars" className="text-gray-700 hover:text-blue-600 transition-colors">{t('products')}</a>
               <a href="#services" className="text-gray-700 hover:text-blue-600 transition-colors">{t('services')}</a>
               <a href="#contact" className="text-gray-700 hover:text-blue-600 transition-colors">{t('contact')}</a>
+              <Button 
+                className="bg-black hover:bg-gray-800 text-white px-6 py-2 rounded-md font-medium"
+                onClick={() => window.location.href = '#contact'}
+              >
+                LIÊN HỆ
+              </Button>
               <LanguageToggle />
             </nav>
           </div>
