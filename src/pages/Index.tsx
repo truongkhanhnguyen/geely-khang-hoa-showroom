@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -82,9 +81,11 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">G</span>
-              </div>
+              <img 
+                src="/lovable-uploads/3f3f054c-409a-4bfd-84c6-f58576129a83.png" 
+                alt="Geely Logo"
+                className="h-8 w-auto"
+              />
               <span className="text-xl font-semibold text-gray-900">Geely Ninh Thuận</span>
             </div>
             
