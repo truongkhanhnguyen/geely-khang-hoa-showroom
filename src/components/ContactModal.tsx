@@ -77,7 +77,7 @@ Thành Phố Phan Rang, Ninh Thuận</p>
               <Phone className="w-5 h-5 text-blue-600 mt-1" />
               <div>
                 <h3 className="font-semibold text-gray-900">Hotline:</h3>
-                <p className="text-gray-600">0123 456 789</p>
+                <p className="text-gray-600">0879 89 0879</p>
               </div>
             </div>
             
