@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -7,23 +6,26 @@ import { Label } from "@/components/ui/label";
 import { User, Phone, MapPin, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
-
 interface ContactModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
-
-const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
-  const { toast } = useToast();
-  const { t } = useLanguage();
+const ContactModal = ({
+  isOpen,
+  onClose
+}: ContactModalProps) => {
+  const {
+    toast
+  } = useToast();
+  const {
+    t
+  } = useLanguage();
   const [formData, setFormData] = useState({
     name: "",
     phone: ""
   });
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!formData.name || !formData.phone) {
       toast({
         title: "Vui lòng điền đầy đủ thông tin",
@@ -35,22 +37,23 @@ const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
 
     // Simulate sending email to trg.khanhnguyen@gmail.com
     console.log('Gửi thông tin liên hệ đến trg.khanhnguyen@gmail.com:', formData);
-    
     toast({
       title: "Yêu cầu đã được gửi!",
       description: "Chúng tôi sẽ liên hệ lại với bạn trong thời gian sớm nhất."
     });
-
-    setFormData({ name: "", phone: "" });
+    setFormData({
+      name: "",
+      phone: ""
+    });
     onClose();
   };
-
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
-
-  return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+  return <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-center">
@@ -65,7 +68,8 @@ const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
               <MapPin className="w-5 h-5 text-blue-600 mt-1" />
               <div>
                 <h3 className="font-semibold text-gray-900">Địa chỉ showroom:</h3>
-                <p className="text-gray-600">123 Đường Lê Lợi, Phường Mỹ Bình, TP. Phan Rang - Tháp Chàm, Ninh Thuận</p>
+                <p className="text-gray-600">99 Thống Nhất, Thành Hải
+Thành Phố Phan Rang, Ninh Thuận</p>
               </div>
             </div>
             
@@ -98,14 +102,7 @@ const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
                   <User className="w-4 h-4 mr-2" />
                   Họ và tên *
                 </Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange("name", e.target.value)}
-                  placeholder="Nhập họ và tên"
-                  className="mt-1"
-                  required
-                />
+                <Input id="name" value={formData.name} onChange={e => handleInputChange("name", e.target.value)} placeholder="Nhập họ và tên" className="mt-1" required />
               </div>
 
               <div>
@@ -113,38 +110,21 @@ const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
                   <Phone className="w-4 h-4 mr-2" />
                   Số điện thoại *
                 </Label>
-                <Input
-                  id="phone"
-                  value={formData.phone}
-                  onChange={(e) => handleInputChange("phone", e.target.value)}
-                  placeholder="Nhập số điện thoại"
-                  className="mt-1"
-                  required
-                />
+                <Input id="phone" value={formData.phone} onChange={e => handleInputChange("phone", e.target.value)} placeholder="Nhập số điện thoại" className="mt-1" required />
               </div>
             </form>
           </div>
 
           <div className="flex space-x-3">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              className="flex-1"
-            >
+            <Button type="button" variant="outline" onClick={onClose} className="flex-1">
               Đóng
             </Button>
-            <Button
-              onClick={handleSubmit}
-              className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-            >
+            <Button onClick={handleSubmit} className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
               Gửi thông tin
             </Button>
           </div>
         </div>
       </DialogContent>
-    </Dialog>
-  );
+    </Dialog>;
 };
-
 export default ContactModal;
