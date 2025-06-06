@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Upload, Trash2, Eye } from "lucide-react";
+import { Upload, Trash2, Eye, Monitor, Smartphone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -15,6 +15,7 @@ interface WebsiteImage {
   id: string;
   name: string;
   url: string;
+  mobile_url?: string;
   category: string;
   recommended_size: string;
   description: string;
@@ -29,11 +30,12 @@ const ImageManagement = () => {
     name: "",
     category: "general",
     url: "",
+    mobile_url: "",
     description: ""
   });
 
   const imageCategories = [
-    { value: "hero", label: "Hero Banner", size: "1920x1080", description: "Hình ảnh banner chính" },
+    { value: "hero", label: "Hero Banner", size: "1920x1080 (Mobile: 768x1024)", description: "Hình ảnh banner chính" },
     { value: "car", label: "Xe hơi", size: "800x600", description: "Hình ảnh sản phẩm xe" },
     { value: "promotion", label: "Khuyến mãi", size: "400x250", description: "Hình ảnh khuyến mãi" },
     { value: "news", label: "Tin tức", size: "400x250", description: "Hình ảnh tin tức" },
@@ -70,7 +72,7 @@ const ImageManagement = () => {
     if (!uploadForm.name || !uploadForm.url) {
       toast({
         title: "Thiếu thông tin",
-        description: "Vui lòng điền đầy đủ tên và URL hình ảnh",
+        description: "Vui lòng điền đầy đủ tên và URL hình ảnh PC",
         variant: "destructive"
       });
       return;
@@ -84,6 +86,7 @@ const ImageManagement = () => {
         .insert([{
           name: uploadForm.name,
           url: uploadForm.url,
+          mobile_url: uploadForm.mobile_url || null,
           category: uploadForm.category,
           recommended_size: categoryInfo?.size || "Tùy chỉnh",
           description: uploadForm.description
@@ -100,6 +103,7 @@ const ImageManagement = () => {
         name: "",
         category: "general",
         url: "",
+        mobile_url: "",
         description: ""
       });
 
@@ -187,7 +191,7 @@ const ImageManagement = () => {
                 <SelectContent>
                   {imageCategories.map((cat) => (
                     <SelectItem key={cat.value} value={cat.value}>
-                      {cat.label} ({cat.size})
+                      {cat.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -195,13 +199,29 @@ const ImageManagement = () => {
             </div>
           </div>
 
-          <div>
-            <Label>URL hình ảnh *</Label>
-            <Input
-              value={uploadForm.url}
-              onChange={(e) => setUploadForm(prev => ({ ...prev, url: e.target.value }))}
-              placeholder="https://example.com/image.jpg"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label className="flex items-center">
+                <Monitor className="w-4 h-4 mr-1" />
+                URL hình ảnh PC/Desktop *
+              </Label>
+              <Input
+                value={uploadForm.url}
+                onChange={(e) => setUploadForm(prev => ({ ...prev, url: e.target.value }))}
+                placeholder="https://example.com/desktop-image.jpg"
+              />
+            </div>
+            <div>
+              <Label className="flex items-center">
+                <Smartphone className="w-4 h-4 mr-1" />
+                URL hình ảnh Mobile (tùy chọn)
+              </Label>
+              <Input
+                value={uploadForm.mobile_url}
+                onChange={(e) => setUploadForm(prev => ({ ...prev, mobile_url: e.target.value }))}
+                placeholder="https://example.com/mobile-image.jpg"
+              />
+            </div>
           </div>
 
           <div>
@@ -225,7 +245,7 @@ const ImageManagement = () => {
           <CardTitle>Hướng Dẫn Kích Thước Hình Ảnh</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {imageCategories.map((cat) => (
               <div key={cat.value} className="p-3 border rounded-lg">
                 <h4 className="font-semibold">{cat.label}</h4>
@@ -250,6 +270,7 @@ const ImageManagement = () => {
                 <TableHead>Tên</TableHead>
                 <TableHead>Danh mục</TableHead>
                 <TableHead>Kích thước</TableHead>
+                <TableHead>Thiết bị</TableHead>
                 <TableHead>Thao tác</TableHead>
               </TableRow>
             </TableHeader>
@@ -257,11 +278,30 @@ const ImageManagement = () => {
               {images.map((image) => (
                 <TableRow key={image.id}>
                   <TableCell>
-                    <img 
-                      src={image.url} 
-                      alt={image.name}
-                      className="w-16 h-16 object-cover rounded"
-                    />
+                    <div className="flex space-x-2">
+                      <div className="text-center">
+                        <img 
+                          src={image.url} 
+                          alt={`${image.name} - Desktop`}
+                          className="w-16 h-12 object-cover rounded border"
+                        />
+                        <div className="flex items-center justify-center mt-1">
+                          <Monitor className="w-3 h-3" />
+                        </div>
+                      </div>
+                      {image.mobile_url && (
+                        <div className="text-center">
+                          <img 
+                            src={image.mobile_url} 
+                            alt={`${image.name} - Mobile`}
+                            className="w-12 h-16 object-cover rounded border"
+                          />
+                          <div className="flex items-center justify-center mt-1">
+                            <Smartphone className="w-3 h-3" />
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <div>
@@ -277,6 +317,20 @@ const ImageManagement = () => {
                     </Badge>
                   </TableCell>
                   <TableCell>{image.recommended_size}</TableCell>
+                  <TableCell>
+                    <div className="flex space-x-1">
+                      <Badge variant="outline" className="text-xs">
+                        <Monitor className="w-3 h-3 mr-1" />
+                        PC
+                      </Badge>
+                      {image.mobile_url && (
+                        <Badge variant="outline" className="text-xs">
+                          <Smartphone className="w-3 h-3 mr-1" />
+                          Mobile
+                        </Badge>
+                      )}
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <div className="flex space-x-2">
                       <Button

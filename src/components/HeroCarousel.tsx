@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, Calculator, ArrowRight, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Car {
   name: string;
@@ -11,22 +12,116 @@ interface Car {
   description: string;
   price: string;
   image: string;
+  mobile_image?: string;
   features: string[];
 }
 
 interface HeroCarouselProps {
-  cars: Car[];
+  cars?: Car[];
   onTestDrive: (carName: string) => void;
   onPriceQuote: (carName: string) => void;
   onExplore: (carName: string) => void;
 }
 
-const HeroCarousel = ({ cars, onTestDrive, onPriceQuote, onExplore }: HeroCarouselProps) => {
+const HeroCarousel = ({ cars: propsCars, onTestDrive, onPriceQuote, onExplore }: HeroCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [cars, setCars] = useState<Car[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
   const { t } = useLanguage();
 
   useEffect(() => {
+    // Detect if mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (propsCars) {
+      setCars(propsCars);
+    } else {
+      fetchHeroImages();
+    }
+  }, [propsCars]);
+
+  const fetchHeroImages = async () => {
+    try {
+      const { data, error } = await (supabase as any)
+        .from('website_images')
+        .select('*')
+        .eq('category', 'hero')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      // Convert hero images to car format
+      const heroImages = data?.map((image: any, index: number) => ({
+        name: image.name,
+        tagline: image.description || "Geely Ninh Thuận",
+        description: `Khám phá ${image.name} - Xe hơi hiện đại với công nghệ tiên tiến`,
+        price: "Liên hệ để biết giá",
+        image: image.url,
+        mobile_image: image.mobile_url,
+        features: [
+          "Công nghệ hiện đại",
+          "Thiết kế sang trọng",
+          "An toàn cao cấp",
+          "Tiết kiệm nhiên liệu"
+        ]
+      })) || [];
+
+      // If no hero images, use default cars
+      if (heroImages.length === 0) {
+        const defaultCars = [
+          {
+            name: "Geely Coolray",
+            tagline: "Thông minh. Năng động. Tiến bộ.",
+            description: "SUV cỡ nhỏ với thiết kế trẻ trung, công nghệ thông minh và khả năng vận hành vượt trội.",
+            price: "Từ 599 triệu VNĐ",
+            image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop",
+            features: [
+              "Động cơ tăng áp 1.5L",
+              "Hộp số CVT",
+              "Màn hình cảm ứng 10.25 inch",
+              "6 túi khí an toàn"
+            ]
+          }
+        ];
+        setCars(defaultCars);
+      } else {
+        setCars(heroImages);
+      }
+    } catch (error) {
+      console.error('Error fetching hero images:', error);
+      // Fallback to default if error
+      const defaultCars = [
+        {
+          name: "Geely Coolray",
+          tagline: "Thông minh. Năng động. Tiến bộ.",
+          description: "SUV cỡ nhỏ với thiết kế trẻ trung, công nghệ thông minh và khả năng vận hành vượt trội.",
+          price: "Từ 599 triệu VNĐ",
+          image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop",
+          features: [
+            "Động cơ tăng áp 1.5L",
+            "Hộp số CVT",
+            "Màn hình cảm ứng 10.25 inch",
+            "6 túi khí an toàn"
+          ]
+        }
+      ];
+      setCars(defaultCars);
+    }
+  };
+
+  useEffect(() => {
+    if (cars.length === 0) return;
+    
     const interval = setInterval(() => {
       setIsTransitioning(true);
       setTimeout(() => {
@@ -54,7 +149,19 @@ const HeroCarousel = ({ cars, onTestDrive, onPriceQuote, onExplore }: HeroCarous
     }, 300);
   };
 
+  if (cars.length === 0) {
+    return (
+      <section className="relative h-screen overflow-hidden bg-gray-900 flex items-center justify-center">
+        <div className="text-white text-center">
+          <h2 className="text-3xl font-light mb-4">Đang tải...</h2>
+          <p className="text-gray-300">Vui lòng đợi trong giây lát</p>
+        </div>
+      </section>
+    );
+  }
+
   const currentCar = cars[currentIndex];
+  const currentImage = isMobile && currentCar.mobile_image ? currentCar.mobile_image : currentCar.image;
 
   return (
     <section className="relative h-screen overflow-hidden">
@@ -66,7 +173,7 @@ const HeroCarousel = ({ cars, onTestDrive, onPriceQuote, onExplore }: HeroCarous
           }`}
         >
           <img 
-            src={currentCar.image} 
+            src={currentImage} 
             alt={currentCar.name}
             className="w-full h-full object-cover"
           />
@@ -142,32 +249,38 @@ const HeroCarousel = ({ cars, onTestDrive, onPriceQuote, onExplore }: HeroCarous
       </div>
 
       {/* Navigation Arrows */}
-      <button
-        onClick={goToPrevious}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full backdrop-blur-sm transition-all"
-      >
-        <ChevronLeft className="h-6 w-6" />
-      </button>
-      
-      <button
-        onClick={goToNext}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full backdrop-blur-sm transition-all"
-      >
-        <ChevronRight className="h-6 w-6" />
-      </button>
+      {cars.length > 1 && (
+        <>
+          <button
+            onClick={goToPrevious}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full backdrop-blur-sm transition-all"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </button>
+          
+          <button
+            onClick={goToNext}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full backdrop-blur-sm transition-all"
+          >
+            <ChevronRight className="h-6 w-6" />
+          </button>
+        </>
+      )}
 
       {/* Dots Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex space-x-2">
-        {cars.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentIndex(index)}
-            className={`w-3 h-3 rounded-full transition-all ${
-              index === currentIndex ? 'bg-white' : 'bg-white/50'
-            }`}
-          />
-        ))}
-      </div>
+      {cars.length > 1 && (
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex space-x-2">
+          {cars.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`w-3 h-3 rounded-full transition-all ${
+                index === currentIndex ? 'bg-white' : 'bg-white/50'
+              }`}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 };
