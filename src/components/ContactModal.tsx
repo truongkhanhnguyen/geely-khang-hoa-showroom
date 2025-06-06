@@ -85,16 +85,14 @@ Thành Phố Phan Rang, Ninh Thuận</p>
               <Clock className="w-5 h-5 text-blue-600 mt-1" />
               <div>
                 <h3 className="font-semibold text-gray-900">Giờ làm việc:</h3>
-                <p className="text-gray-600">Thứ 2 - Chủ nhật: 8:00 - 18:00</p>
+                <p className="text-gray-600">7:30 AM - 17:30 PM</p>
               </div>
             </div>
           </div>
 
           {/* Contact Form */}
           <div className="border-t pt-4">
-            <h3 className="font-semibold text-gray-900 mb-3 text-center">
-              Để lại thông tin để được tư vấn miễn phí
-            </h3>
+            <h3 className="font-semibold text-gray-900 mb-3 text-center">CHỈ CẦN ĐỂ LẠI THÔNG TIN, CHÚNG TÔI SẼ GỌI LẠI NGAY!</h3>
             
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
