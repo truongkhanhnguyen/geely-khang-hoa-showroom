@@ -1,8 +1,7 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Calendar, Calculator, Phone } from "lucide-react";
+import { ArrowRight, Calendar, Calculator, Phone, Search, Globe } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import HeroCarousel from "@/components/HeroCarousel";
 import TestDriveModal from "@/components/TestDriveModal";
@@ -78,22 +77,87 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">G</span>
-              </div>
-              <span className="text-xl font-semibold text-gray-900">Geely Ninh Thuận</span>
+            {/* Logo */}
+            <div className="flex items-center">
+              <img 
+                src="/lovable-uploads/050a7fb7-961e-4f6a-87c6-0ef2d48be8c4.png" 
+                alt="Geely Logo" 
+                className="h-8 w-auto"
+              />
             </div>
             
-            <nav className="hidden md:flex items-center space-x-8">
-              <a href="#cars" className="text-gray-700 hover:text-blue-600 transition-colors">{t('products')}</a>
-              <a href="#services" className="text-gray-700 hover:text-blue-600 transition-colors">{t('services')}</a>
-              <a href="#contact" className="text-gray-700 hover:text-blue-600 transition-colors">{t('contact')}</a>
-              <LanguageToggle />
+            {/* Navigation Menu */}
+            <nav className="hidden lg:flex items-center space-x-8">
+              <div className="relative group">
+                <button className="text-gray-700 hover:text-blue-600 transition-colors font-medium flex items-center">
+                  VỀ CHÚNG TÔI
+                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="relative group">
+                <button className="text-gray-700 hover:text-blue-600 transition-colors font-medium flex items-center">
+                  SẢN PHẨM
+                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+              </div>
+              
+              <a href="#showroom" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+                ONLINE SHOWROOM
+              </a>
+              
+              <a href="#technology" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+                CÔNG NGHỆ
+              </a>
+              
+              <div className="relative group">
+                <button className="text-gray-700 hover:text-blue-600 transition-colors font-medium flex items-center">
+                  ĐẠI LÝ
+                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+              </div>
+              
+              <a href="#services" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+                DỊCH VỤ
+              </a>
+              
+              <div className="relative group">
+                <button className="text-gray-700 hover:text-blue-600 transition-colors font-medium flex items-center">
+                  TIN TỨC
+                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+              </div>
             </nav>
+
+            {/* Right Side Actions */}
+            <div className="flex items-center space-x-4">
+              {/* Contact Button */}
+              <Button 
+                className="bg-black text-white hover:bg-gray-800 px-6 py-2 rounded-none font-medium"
+                onClick={() => setShowTestDrive(true)}
+              >
+                LIÊN HỆ
+              </Button>
+              
+              {/* Language Toggle */}
+              <LanguageToggle />
+              
+              {/* Search Icon */}
+              <button className="text-gray-700 hover:text-blue-600 transition-colors">
+                <Search className="h-5 w-5" />
+              </button>
+            </div>
           </div>
         </div>
       </header>
