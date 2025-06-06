@@ -54,7 +54,7 @@ const NewsManagement = () => {
 
   const fetchNews = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('news')
         .select('*')
         .order('date', { ascending: false });
@@ -86,7 +86,7 @@ const NewsManagement = () => {
     try {
       if (editingId) {
         // Update existing news
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('news')
           .update(formData)
           .eq('id', editingId);
@@ -99,7 +99,7 @@ const NewsManagement = () => {
         });
       } else {
         // Create new news
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('news')
           .insert([formData]);
 
@@ -149,7 +149,7 @@ const NewsManagement = () => {
     if (!confirm("Bạn có chắc chắn muốn xóa tin tức này?")) return;
 
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('news')
         .delete()
         .eq('id', id);

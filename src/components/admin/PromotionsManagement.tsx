@@ -62,7 +62,7 @@ const PromotionsManagement = () => {
 
   const fetchPromotions = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('promotions')
         .select('*')
         .order('created_at', { ascending: false });
@@ -94,7 +94,7 @@ const PromotionsManagement = () => {
     try {
       if (editingId) {
         // Update existing promotion
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('promotions')
           .update(formData)
           .eq('id', editingId);
@@ -107,7 +107,7 @@ const PromotionsManagement = () => {
         });
       } else {
         // Create new promotion
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('promotions')
           .insert([formData]);
 
@@ -159,7 +159,7 @@ const PromotionsManagement = () => {
     if (!confirm("Bạn có chắc chắn muốn xóa khuyến mãi này?")) return;
 
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('promotions')
         .delete()
         .eq('id', id);

@@ -47,7 +47,7 @@ const ImageManagement = () => {
 
   const fetchImages = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('website_images')
         .select('*')
         .order('created_at', { ascending: false });
@@ -79,7 +79,7 @@ const ImageManagement = () => {
     try {
       const categoryInfo = imageCategories.find(cat => cat.value === uploadForm.category);
       
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('website_images')
         .insert([{
           name: uploadForm.name,
@@ -116,7 +116,7 @@ const ImageManagement = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('website_images')
         .delete()
         .eq('id', id);
