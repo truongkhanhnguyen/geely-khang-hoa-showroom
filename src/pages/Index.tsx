@@ -80,13 +80,13 @@ const Index = () => {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-3">
               <img 
                 src="/lovable-uploads/3f3f054c-409a-4bfd-84c6-f58576129a83.png" 
                 alt="Geely Logo"
                 className="h-8 w-auto"
               />
-              <span className="text-xl font-semibold text-gray-900">Geely Ninh Thuận</span>
+              <span className="text-xl font-bold text-gray-900 tracking-wider" style={{ fontFamily: 'Arial, sans-serif' }}>NINH THUẬN</span>
             </div>
             
             <nav className="hidden md:flex items-center space-x-8">
