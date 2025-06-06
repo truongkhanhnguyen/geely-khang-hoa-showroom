@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Calendar, Calculator, Phone, Search, Globe } from "lucide-react";
+import { ArrowRight, Calendar, Calculator, Phone, ChevronDown, Search, Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import HeroCarousel from "@/components/HeroCarousel";
 import TestDriveModal from "@/components/TestDriveModal";
@@ -83,7 +83,7 @@ const Index = () => {
             {/* Logo */}
             <div className="flex items-center">
               <img 
-                src="/lovable-uploads/050a7fb7-961e-4f6a-87c6-0ef2d48be8c4.png" 
+                src="/lovable-uploads/8dcb7d1c-48ca-4595-874b-17b05d041ced.png" 
                 alt="Geely Logo" 
                 className="h-8 w-auto"
               />
@@ -92,70 +92,68 @@ const Index = () => {
             {/* Navigation Menu */}
             <nav className="hidden lg:flex items-center space-x-8">
               <div className="relative group">
-                <button className="text-gray-700 hover:text-blue-600 transition-colors font-medium flex items-center">
-                  VỀ CHÚNG TÔI
-                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                <button className="flex items-center space-x-1 text-gray-700 hover:text-black font-medium">
+                  <span>VỀ CHÚNG TÔI</span>
+                  <ChevronDown className="h-4 w-4" />
                 </button>
               </div>
               
               <div className="relative group">
-                <button className="text-gray-700 hover:text-blue-600 transition-colors font-medium flex items-center">
-                  SẢN PHẨM
-                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                <button className="flex items-center space-x-1 text-gray-700 hover:text-black font-medium">
+                  <span>SẢN PHẨM</span>
+                  <ChevronDown className="h-4 w-4" />
                 </button>
               </div>
               
-              <a href="#showroom" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+              <a href="#showroom" className="text-gray-700 hover:text-black font-medium">
                 ONLINE SHOWROOM
               </a>
               
-              <a href="#technology" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+              <a href="#technology" className="text-gray-700 hover:text-black font-medium">
                 CÔNG NGHỆ
               </a>
               
               <div className="relative group">
-                <button className="text-gray-700 hover:text-blue-600 transition-colors font-medium flex items-center">
-                  ĐẠI LÝ
-                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                <button className="flex items-center space-x-1 text-gray-700 hover:text-black font-medium">
+                  <span>ĐẠI LÝ</span>
+                  <ChevronDown className="h-4 w-4" />
                 </button>
               </div>
               
-              <a href="#services" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+              <a href="#services" className="text-gray-700 hover:text-black font-medium">
                 DỊCH VỤ
               </a>
               
               <div className="relative group">
-                <button className="text-gray-700 hover:text-blue-600 transition-colors font-medium flex items-center">
-                  TIN TỨC
-                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                <button className="flex items-center space-x-1 text-gray-700 hover:text-black font-medium">
+                  <span>TIN TỨC</span>
+                  <ChevronDown className="h-4 w-4" />
                 </button>
               </div>
             </nav>
 
             {/* Right Side Actions */}
             <div className="flex items-center space-x-4">
-              {/* Contact Button */}
               <Button 
-                className="bg-black text-white hover:bg-gray-800 px-6 py-2 rounded-none font-medium"
+                className="bg-black text-white hover:bg-gray-800 font-medium px-6"
                 onClick={() => setShowTestDrive(true)}
               >
                 LIÊN HỆ
               </Button>
               
-              {/* Language Toggle */}
-              <LanguageToggle />
+              <div className="flex items-center space-x-2 text-sm">
+                <button className="px-2 py-1 text-gray-700 hover:text-black font-medium">ZH</button>
+                <span className="text-gray-400">|</span>
+                <button className="px-2 py-1 text-gray-700 hover:text-black font-medium">EN</button>
+              </div>
               
-              {/* Search Icon */}
-              <button className="text-gray-700 hover:text-blue-600 transition-colors">
+              <button className="p-2 text-gray-700 hover:text-black">
                 <Search className="h-5 w-5" />
+              </button>
+              
+              {/* Mobile Menu Button */}
+              <button className="lg:hidden p-2 text-gray-700 hover:text-black">
+                <Menu className="h-5 w-5" />
               </button>
             </div>
           </div>
