@@ -7,11 +7,9 @@ import { supabase } from '@/integrations/supabase/client';
 interface CarImageCarouselProps {
   carModel: string;
   images?: string[];
-  onTestDrive?: () => void;
-  onPriceQuote?: () => void;
 }
 
-const CarImageCarousel = ({ carModel, images: propImages, onTestDrive, onPriceQuote }: CarImageCarouselProps) => {
+const CarImageCarousel = ({ carModel, images: propImages }: CarImageCarouselProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [images, setImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -94,86 +92,53 @@ const CarImageCarousel = ({ carModel, images: propImages, onTestDrive, onPriceQu
   }
 
   return (
-    <div className="relative">
-      {/* Image Container */}
-      <div className="relative w-full h-[600px] overflow-hidden group">
-        <img
-          src={images[currentImageIndex]}
-          alt={`${carModel} - Hình ${currentImageIndex + 1}`}
-          className="w-full h-full object-cover transition-all duration-500"
-        />
+    <div className="relative w-full h-[600px] overflow-hidden">
+      <img
+        src={images[currentImageIndex]}
+        alt={`${carModel} - Hình ${currentImageIndex + 1}`}
+        className="w-full h-full object-cover transition-all duration-500"
+      />
 
-        {images.length > 1 && (
-          <>
-            {/* Navigation arrows */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={prevImage}
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
+      {images.length > 1 && (
+        <>
+          {/* Navigation arrows */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={prevImage}
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={nextImage}
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={nextImage}
+          >
+            <ChevronRight className="h-5 w-5" />
+          </Button>
 
-            {/* Dots indicator */}
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-              {images.map((_, index) => (
-                <button
-                  key={index}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    index === currentImageIndex ? 'bg-white' : 'bg-white/50'
-                  }`}
-                  onClick={() => setCurrentImageIndex(index)}
-                />
-              ))}
-            </div>
-          </>
-        )}
-
-        {/* Image counter */}
-        <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-lg text-sm">
-          {currentImageIndex + 1} / {images.length}
-        </div>
-      </div>
-
-      {/* Action Buttons - Moved outside the image container */}
-      {(onTestDrive || onPriceQuote) && (
-        <div className="bg-white py-8">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {onTestDrive && (
-                <Button 
-                  size="lg"
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-lg"
-                  onClick={onTestDrive}
-                >
-                  Đặt lịch lái thử
-                </Button>
-              )}
-              
-              {onPriceQuote && (
-                <Button 
-                  variant="outline"
-                  size="lg"
-                  className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-3 rounded-lg"
-                  onClick={onPriceQuote}
-                >
-                  Báo giá
-                </Button>
-              )}
-            </div>
+          {/* Dots indicator */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+            {images.map((_, index) => (
+              <button
+                key={index}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                }`}
+                onClick={() => setCurrentImageIndex(index)}
+              />
+            ))}
           </div>
-        </div>
+        </>
       )}
+
+      {/* Image counter */}
+      <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-lg text-sm">
+        {currentImageIndex + 1} / {images.length}
+      </div>
     </div>
   );
 };
