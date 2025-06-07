@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Calculator, ArrowRight, ChevronLeft, ChevronRight, Eye } from "lucide-react";
+import { Calendar, Calculator, ArrowRight, ChevronLeft, ChevronRight, Eye, Download } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -312,20 +311,25 @@ const HeroCarousel = ({
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3 md:gap-4 animate-fade-in">
-                <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-full text-sm md:text-base font-medium" onClick={() => onExplore(currentCar.name)}>
-                  <Eye className="mr-2 h-4 w-4 md:h-5 md:w-5" />
-                  Khám phá
-                  <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
+                {/* Tải Catalogue - White button with border and download icon */}
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  className="bg-white/90 hover:bg-white border-2 border-gray-300 text-gray-800 hover:text-gray-900 px-4 md:px-6 py-2 md:py-3 rounded-none text-sm md:text-base font-medium uppercase tracking-wide"
+                  onClick={() => onExplore(currentCar.name)}
+                >
+                  <Download className="mr-2 h-4 w-4 md:h-5 md:w-5" />
+                  TẢI CATALOGUE
                 </Button>
 
-                <Button size="lg" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-full text-sm md:text-base font-medium" onClick={() => onTestDrive(currentCar.name)}>
-                  <Calendar className="mr-2 h-4 w-4 md:h-5 md:w-5" />
-                  {t('scheduleTestDrive')}
-                </Button>
-                
-                <Button variant="outline" size="lg" onClick={() => onPriceQuote(currentCar.name)} className="border-white hover:bg-white px-4 md:px-6 py-2 md:py-3 rounded-full text-sm md:text-base text-gray-950 font-medium">
-                  <Calculator className="mr-2 h-4 w-4 md:h-5 md:w-5" />
-                  {t('viewQuote')}
+                {/* Đăng ký lái thử - Dark button with arrow */}
+                <Button 
+                  size="lg" 
+                  className="bg-gray-900 hover:bg-black text-white px-4 md:px-6 py-2 md:py-3 rounded-none text-sm md:text-base font-medium uppercase tracking-wide"
+                  onClick={() => onTestDrive(currentCar.name)}
+                >
+                  ĐĂNG KÝ LÁI THỬ
+                  <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
                 </Button>
               </div>
             </div>
