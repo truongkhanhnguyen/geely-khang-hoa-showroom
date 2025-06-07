@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -85,18 +84,10 @@ const PriceQuoteModal = ({ isOpen, onClose, selectedCar }: PriceQuoteModalProps)
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader className="relative">
+        <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold text-red-600">
             BÁO GIÁ XE GEELY CHI NHÁNH KHÁNH HÒA
           </DialogTitle>
-          <Button
-            variant="outline"
-            size="icon"
-            className="absolute -top-2 -right-2"
-            onClick={handleClose}
-          >
-            <X className="h-4 w-4" />
-          </Button>
           <div className="text-center text-sm text-gray-600">
             442 Lê Hồng Phong, Phường Phước Hải, Thành phố Nha Trang, Tỉnh Khánh Hòa
           </div>
