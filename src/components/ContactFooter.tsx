@@ -1,27 +1,20 @@
-
 import { Card } from "@/components/ui/card";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
-
 const ContactFooter = () => {
-  const { t } = useLanguage();
+  const {
+    t
+  } = useLanguage();
   const navigate = useNavigate();
-
-  return (
-    <footer className="bg-white text-gray-900 py-16 border-t border-gray-200">
+  return <footer className="bg-white text-gray-900 py-16 border-t border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
-              <img 
-                src="/lovable-uploads/53460547-efd5-41cc-9b2d-92f168c32983.png" 
-                alt="Geely Logo" 
-                className="h-8 w-auto cursor-pointer hover:opacity-80 transition-opacity"
-                onClick={() => navigate('/')}
-              />
-              <span className="text-xl font-semibold text-gray-900">Geely Ninh Thuận</span>
+              <img src="/lovable-uploads/53460547-efd5-41cc-9b2d-92f168c32983.png" alt="Geely Logo" className="h-8 w-auto cursor-pointer hover:opacity-80 transition-opacity" onClick={() => navigate('/')} />
+              
             </div>
             <p className="text-gray-600 text-sm leading-relaxed">
               Đại lý chính thức của Geely tại Ninh Thuận, mang đến những chiếc xe chất lượng cao với công nghệ tiên tiến và dịch vụ chuyên nghiệp.
@@ -102,8 +95,6 @@ const ContactFooter = () => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default ContactFooter;
