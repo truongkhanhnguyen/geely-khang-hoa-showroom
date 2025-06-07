@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Upload, Trash2, Eye, Monitor, Smartphone, Image, Info } from "lucide-react";
+import { Upload, Trash2, Eye, Monitor, Smartphone, Image, Info, Car } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -31,59 +31,73 @@ const ImageManagement = () => {
   const [uploadForm, setUploadForm] = useState({
     name: "",
     category: "general",
+    carModel: "", // New field for car model
     description: "",
     desktopFile: null as File | null,
     mobileFile: null as File | null
   });
 
+  const carModels = [
+    { value: "coolray", label: "Geely Coolray" },
+    { value: "monjaro", label: "Geely Monjaro" },
+    { value: "ex5", label: "Geely EX5" },
+    { value: "general", label: "Chung (tất cả xe)" }
+  ];
+
   const imageCategories = [
     { 
       value: "hero", 
-      label: "Hero Banner", 
+      label: "🎯 Hero Banner - Trang chủ", 
       size: "1920x1080 (Mobile: 768x1024)", 
-      description: "Hình ảnh banner chính trang chủ",
-      position: "Trang chủ - Phần đầu (carousel chính)",
-      usage: "Hiển thị ở banner chính, tự động chuyển đổi"
+      description: "Hình ảnh banner chính trang chủ - hiển thị ở carousel đầu trang",
+      position: "Trang chủ - Banner carousel chính (tự động chuyển đổi)",
+      usage: "Hiển thị làm hình nền chính, kèm thông tin xe và nút CTA",
+      requiresCar: true
     },
     { 
       value: "car", 
-      label: "Xe hơi", 
-      size: "800x600", 
-      description: "Hình ảnh sản phẩm xe",
-      position: "Trang sản phẩm, gallery xe",
-      usage: "Hiển thị trong danh sách xe và chi tiết sản phẩm"
+      label: "🚗 Thư viện xe", 
+      size: "1920x1080", 
+      description: "Hình ảnh chi tiết sản phẩm xe cho trang chi tiết",
+      position: "Trang chi tiết xe - Gallery carousel",
+      usage: "Hiển thị trong gallery chi tiết từng dòng xe",
+      requiresCar: true
     },
     { 
       value: "promotion", 
-      label: "Khuyến mãi", 
+      label: "🎁 Khuyến mãi", 
       size: "400x250", 
-      description: "Hình ảnh khuyến mãi",
+      description: "Hình ảnh khuyến mãi, ưu đãi",
       position: "Trang chủ - Phần khuyến mãi, trang khuyến mãi riêng",
-      usage: "Hiển thị trong card khuyến mãi"
+      usage: "Hiển thị trong card khuyến mãi",
+      requiresCar: false
     },
     { 
       value: "news", 
-      label: "Tin tức", 
+      label: "📰 Tin tức", 
       size: "400x250", 
-      description: "Hình ảnh tin tức",
+      description: "Hình ảnh tin tức, blog",
       position: "Trang chủ - Phần tin tức, trang tin tức riêng",
-      usage: "Hiển thị làm thumbnail cho bài viết"
+      usage: "Hiển thị làm thumbnail cho bài viết",
+      requiresCar: false
     },
     { 
       value: "gallery", 
-      label: "Thư viện", 
+      label: "🖼️ Thư viện chung", 
       size: "600x400", 
-      description: "Hình ảnh thư viện",
+      description: "Hình ảnh thư viện, album",
       position: "Trang gallery, album hình ảnh",
-      usage: "Hiển thị trong bộ sưu tập hình ảnh"
+      usage: "Hiển thị trong bộ sưu tập hình ảnh",
+      requiresCar: false
     },
     { 
       value: "general", 
-      label: "Tổng quát", 
+      label: "📎 Tổng quát", 
       size: "Tùy chỉnh", 
       description: "Hình ảnh khác",
       position: "Các vị trí khác trên website",
-      usage: "Sử dụng cho mục đích chung"
+      usage: "Sử dụng cho mục đích chung",
+      requiresCar: false
     }
   ];
 
@@ -139,34 +153,51 @@ const ImageManagement = () => {
       return;
     }
 
+    const selectedCategory = imageCategories.find(cat => cat.value === uploadForm.category);
+    if (selectedCategory?.requiresCar && !uploadForm.carModel) {
+      toast({
+        title: "Thiếu thông tin",
+        description: "Vui lòng chọn dòng xe cho danh mục này",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setUploading(true);
     
     try {
       const timestamp = Date.now();
       const categoryInfo = imageCategories.find(cat => cat.value === uploadForm.category);
 
+      // Create filename with car model if applicable
+      const carModelPrefix = uploadForm.carModel && uploadForm.carModel !== 'general' ? `-${uploadForm.carModel}` : '';
+      
       // Upload desktop file
-      const desktopFileName = `${uploadForm.category}-${timestamp}-desktop.${uploadForm.desktopFile.name.split('.').pop()}`;
+      const desktopFileName = `${uploadForm.category}${carModelPrefix}-${timestamp}-desktop.${uploadForm.desktopFile.name.split('.').pop()}`;
       const desktopUrl = await uploadFileToStorage(uploadForm.desktopFile, desktopFileName);
 
       // Upload mobile file if provided
       let mobileUrl = null;
       let mobileFileName = null;
       if (uploadForm.mobileFile) {
-        mobileFileName = `${uploadForm.category}-${timestamp}-mobile.${uploadForm.mobileFile.name.split('.').pop()}`;
+        mobileFileName = `${uploadForm.category}${carModelPrefix}-${timestamp}-mobile.${uploadForm.mobileFile.name.split('.').pop()}`;
         mobileUrl = await uploadFileToStorage(uploadForm.mobileFile, mobileFileName);
       }
+
+      // Create comprehensive description
+      const carModelLabel = carModels.find(car => car.value === uploadForm.carModel)?.label || '';
+      const fullDescription = `${uploadForm.description}${carModelLabel ? ` - ${carModelLabel}` : ''}`;
 
       // Save metadata to database
       const { error } = await supabase
         .from('website_images')
         .insert([{
-          name: uploadForm.name,
+          name: `${uploadForm.name}${carModelLabel ? ` - ${carModelLabel}` : ''}`,
           url: desktopUrl,
           mobile_url: mobileUrl,
           category: uploadForm.category,
           recommended_size: categoryInfo?.size || "Tùy chỉnh",
-          description: uploadForm.description,
+          description: fullDescription,
           file_name: desktopFileName,
           file_size: uploadForm.desktopFile.size
         }]);
@@ -174,13 +205,15 @@ const ImageManagement = () => {
       if (error) throw error;
 
       toast({
-        title: "Thành công",
-        description: "Đã upload hình ảnh thành công"
+        title: "✅ Upload thành công!",
+        description: `Đã upload hình ảnh cho ${categoryInfo?.label}${carModelLabel ? ` - ${carModelLabel}` : ''}`
       });
 
+      // Reset form
       setUploadForm({
         name: "",
         category: "general",
+        carModel: "",
         description: "",
         desktopFile: null,
         mobileFile: null
@@ -287,20 +320,20 @@ const ImageManagement = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <Label>Tên hình ảnh *</Label>
               <Input
                 value={uploadForm.name}
                 onChange={(e) => setUploadForm(prev => ({ ...prev, name: e.target.value }))}
-                placeholder="Ví dụ: Hero Banner Trang Chủ"
+                placeholder="Ví dụ: Hero Banner Coolray"
               />
             </div>
             <div>
               <Label>Danh mục *</Label>
               <Select 
                 value={uploadForm.category} 
-                onValueChange={(value) => setUploadForm(prev => ({ ...prev, category: value }))}
+                onValueChange={(value) => setUploadForm(prev => ({ ...prev, category: value, carModel: "" }))}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -314,6 +347,29 @@ const ImageManagement = () => {
                 </SelectContent>
               </Select>
             </div>
+            {selectedCategory?.requiresCar && (
+              <div>
+                <Label className="flex items-center">
+                  <Car className="w-4 h-4 mr-1" />
+                  Dòng xe *
+                </Label>
+                <Select 
+                  value={uploadForm.carModel} 
+                  onValueChange={(value) => setUploadForm(prev => ({ ...prev, carModel: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Chọn dòng xe" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {carModels.map((car) => (
+                      <SelectItem key={car.value} value={car.value}>
+                        {car.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
 
           {/* Category Information Display */}
@@ -323,18 +379,25 @@ const ImageManagement = () => {
                 <div className="flex items-start space-x-2">
                   <Info className="w-5 h-5 text-blue-600 mt-0.5" />
                   <div className="space-y-2">
-                    <h4 className="font-semibold text-blue-900">Thông tin danh mục: {selectedCategory.label}</h4>
+                    <h4 className="font-semibold text-blue-900">
+                      📍 {selectedCategory.label}
+                      {selectedCategory.requiresCar && uploadForm.carModel && (
+                        <span className="ml-2 text-green-700">
+                          → {carModels.find(car => car.value === uploadForm.carModel)?.label}
+                        </span>
+                      )}
+                    </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                       <div>
-                        <span className="font-medium text-blue-800">Kích thước khuyến nghị:</span>
+                        <span className="font-medium text-blue-800">📏 Kích thước khuyến nghị:</span>
                         <p className="text-blue-700">{selectedCategory.size}</p>
                       </div>
                       <div>
-                        <span className="font-medium text-blue-800">Vị trí hiển thị:</span>
+                        <span className="font-medium text-blue-800">📍 Vị trí hiển thị:</span>
                         <p className="text-blue-700">{selectedCategory.position}</p>
                       </div>
                       <div className="md:col-span-2">
-                        <span className="font-medium text-blue-800">Cách sử dụng:</span>
+                        <span className="font-medium text-blue-800">🎯 Cách sử dụng:</span>
                         <p className="text-blue-700">{selectedCategory.usage}</p>
                       </div>
                     </div>
@@ -344,6 +407,7 @@ const ImageManagement = () => {
             </Card>
           )}
 
+          {/* File Upload Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label className="flex items-center">
@@ -366,7 +430,7 @@ const ImageManagement = () => {
                 </p>
               )}
               <p className="text-xs text-gray-500 mt-1">
-                📱 Hiển thị trên máy tính, laptop, tablet ngang
+                💻 Hiển thị trên máy tính, laptop, tablet ngang
               </p>
             </div>
             <div>
@@ -427,7 +491,7 @@ const ImageManagement = () => {
       {/* Detailed Sizes Guide */}
       <Card>
         <CardHeader>
-          <CardTitle>📐 Hướng Dẫn Chi Tiết Kích Thước & Vị Trí</CardTitle>
+          <CardTitle>📐 Hướng Dẫn Chi Tiết Vị Trí & Dòng Xe</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -437,6 +501,11 @@ const ImageManagement = () => {
                   <Badge className={getCategoryBadgeColor(cat.value)}>
                     {cat.label}
                   </Badge>
+                  {cat.requiresCar && (
+                    <Badge variant="outline" className="text-xs">
+                      🚗 Cần chọn dòng xe
+                    </Badge>
+                  )}
                 </div>
                 
                 <div className="space-y-2 text-sm">
@@ -455,10 +524,12 @@ const ImageManagement = () => {
                     <p className="text-gray-600">{cat.usage}</p>
                   </div>
                   
-                  <div>
-                    <span className="font-semibold text-gray-700">💡 Ghi chú:</span>
-                    <p className="text-gray-600">{cat.description}</p>
-                  </div>
+                  {cat.requiresCar && (
+                    <div>
+                      <span className="font-semibold text-gray-700">🚗 Dòng xe:</span>
+                      <p className="text-gray-600">Coolray, Monjaro, EX5, hoặc Chung (tất cả xe)</p>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -467,11 +538,11 @@ const ImageManagement = () => {
           <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
             <h4 className="font-semibold text-yellow-800 mb-2">⚠️ Lưu ý quan trọng:</h4>
             <ul className="text-sm text-yellow-700 space-y-1">
-              <li>• Hình ảnh PC/Desktop là bắt buộc cho tất cả danh mục</li>
-              <li>• Hình ảnh Mobile chỉ cần thiết cho Hero Banner để tối ưu hiển thị trên điện thoại</li>
-              <li>• Nếu không có hình Mobile, hệ thống sẽ tự động sử dụng hình PC</li>
+              <li>• <strong>Hero Banner</strong>: Phải chọn dòng xe cụ thể để hiển thị đúng thông tin trên trang chủ</li>
+              <li>• <strong>Thư viện xe</strong>: Phải chọn dòng xe để hiển thị trong gallery chi tiết từng xe</li>
+              <li>• <strong>Khuyến mãi/Tin tức</strong>: Không cần chọn dòng xe, áp dụng chung</li>
+              <li>• Hình Mobile chỉ cần thiết cho Hero Banner để tối ưu hiển thị trên điện thoại</li>
               <li>• Kích thước file nên dưới 5MB để tăng tốc độ tải</li>
-              <li>• Định dạng khuyến nghị: JPG, PNG, WebP</li>
             </ul>
           </div>
         </CardContent>
@@ -480,14 +551,14 @@ const ImageManagement = () => {
       {/* Images List */}
       <Card>
         <CardHeader>
-          <CardTitle>Danh Sách Hình Ảnh ({images.length})</CardTitle>
+          <CardTitle>📋 Danh Sách Hình Ảnh ({images.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Hình ảnh</TableHead>
-                <TableHead>Tên</TableHead>
+                <TableHead>Tên & Dòng xe</TableHead>
                 <TableHead>Danh mục</TableHead>
                 <TableHead>Kích thước file</TableHead>
                 <TableHead>Thiết bị</TableHead>

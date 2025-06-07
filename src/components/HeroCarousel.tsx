@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Calculator, ArrowRight, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
+
 interface Car {
   name: string;
   tagline: string;
@@ -13,12 +14,14 @@ interface Car {
   mobile_image?: string;
   features: string[];
 }
+
 interface HeroCarouselProps {
   cars?: Car[];
   onTestDrive: (carName: string) => void;
   onPriceQuote: (carName: string) => void;
   onExplore: (carName: string) => void;
 }
+
 const HeroCarousel = ({
   cars: propsCars,
   onTestDrive,
@@ -29,9 +32,33 @@ const HeroCarousel = ({
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [cars, setCars] = useState<Car[]>([]);
   const [isMobile, setIsMobile] = useState(false);
-  const {
-    t
-  } = useLanguage();
+  const { t } = useLanguage();
+
+  // Car models mapping to database description patterns
+  const carModelsMapping = {
+    "coolray": {
+      name: "Geely Coolray",
+      tagline: "Urban. Dynamic. Smart.",
+      description: "SUV compact thông minh với công nghệ hiện đại và thiết kế trẻ trung, phù hợp cho cuộc sống đô thị năng động.",
+      price: "Từ 538 triệu VNĐ",
+      features: ["Động cơ 1.5L Turbo", "Hệ thống GKUI 19", "6 túi khí an toàn", "Phanh ABS + EBD"]
+    },
+    "monjaro": {
+      name: "Geely Monjaro", 
+      tagline: "Premium. Powerful. Refined.",
+      description: "SUV 7 chỗ cao cấp với không gian rộng rãi và trang bị công nghệ tiên tiến, hoàn hảo cho gia đình hiện đại.",
+      price: "Từ 1.469 triệu VNĐ",
+      features: ["Động cơ 2.0L Turbo", "Hệ thống giải trí 12.3''", "Cruise Control thích ứng", "Cửa sổ trời toàn cảnh"]
+    },
+    "ex5": {
+      name: "Geely EX5",
+      tagline: "Electric. Efficient. Future.", 
+      description: "SUV điện thông minh với công nghệ pin tiên tiến và khả năng vận hành êm ái, dẫn đầu xu hướng xanh.",
+      price: "Từ 769 triệu VNĐ",
+      features: ["100% động cơ điện", "Phạm vi 400km", "Sạc nhanh 30 phút", "Hệ thống tự lái L2"]
+    }
+  };
+
   useEffect(() => {
     // Detect if mobile
     const checkMobile = () => {
@@ -41,6 +68,7 @@ const HeroCarousel = ({
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
   useEffect(() => {
     if (propsCars) {
       setCars(propsCars);
@@ -48,37 +76,79 @@ const HeroCarousel = ({
       fetchHeroImages();
     }
   }, [propsCars]);
+
   const fetchHeroImages = async () => {
     try {
-      const {
-        data,
-        error
-      } = await (supabase as any).from('website_images').select('*').eq('category', 'hero').order('created_at', {
-        ascending: false
-      });
+      const { data, error } = await supabase
+        .from('website_images')
+        .select('*')
+        .eq('category', 'hero')
+        .order('created_at', { ascending: false });
+
       if (error) throw error;
 
-      // Convert hero images to car format
-      const heroImages = data?.map((image: any, index: number) => ({
-        name: image.name,
-        tagline: image.description || "Geely Ninh Thuận",
-        description: `Khám phá ${image.name} - Xe hơi hiện đại với công nghệ tiên tiến`,
-        price: "Liên hệ để biết giá",
-        image: image.url,
-        mobile_image: image.mobile_url,
-        features: ["Công nghệ hiện đại", "Thiết kế sang trọng", "An toàn cao cấp", "Tiết kiệm nhiên liệu"]
-      })) || [];
+      console.log('Fetched hero images:', data);
 
-      // If no hero images, use default cars
+      // Convert hero images to car format by matching with car models
+      const heroImages = data?.map((image: any) => {
+        // Try to detect car model from description or name
+        const imageName = image.name.toLowerCase();
+        const imageDesc = (image.description || '').toLowerCase();
+        
+        let carModel = 'general';
+        let carInfo = null;
+
+        // Check for specific car models in name or description
+        if (imageName.includes('coolray') || imageDesc.includes('coolray')) {
+          carModel = 'coolray';
+          carInfo = carModelsMapping.coolray;
+        } else if (imageName.includes('monjaro') || imageDesc.includes('monjaro')) {
+          carModel = 'monjaro';
+          carInfo = carModelsMapping.monjaro;
+        } else if (imageName.includes('ex5') || imageDesc.includes('ex5')) {
+          carModel = 'ex5';
+          carInfo = carModelsMapping.ex5;
+        }
+
+        // Use car-specific info if found, otherwise use generic
+        if (carInfo) {
+          return {
+            name: carInfo.name,
+            tagline: carInfo.tagline,
+            description: carInfo.description,
+            price: carInfo.price,
+            image: image.url,
+            mobile_image: image.mobile_url,
+            features: carInfo.features
+          };
+        } else {
+          // Generic car for images not matching specific models
+          return {
+            name: image.name,
+            tagline: "Geely Ninh Thuận",
+            description: image.description || `Khám phá ${image.name} - Xe hơi hiện đại với công nghệ tiên tiến`,
+            price: "Liên hệ để biết giá",
+            image: image.url,
+            mobile_image: image.mobile_url,
+            features: ["Công nghệ hiện đại", "Thiết kế sang trọng", "An toàn cao cấp", "Tiết kiệm nhiên liệu"]
+          };
+        }
+      }) || [];
+
+      console.log('Processed hero cars:', heroImages);
+
+      // If no hero images found, use default cars
       if (heroImages.length === 0) {
-        const defaultCars = [{
-          name: "Geely Coolray",
-          tagline: "Thông minh. Năng động. Tiến bộ.",
-          description: "SUV cỡ nhỏ với thiết kế trẻ trung, công nghệ thông minh và khả năng vận hành vượt trội.",
-          price: "Từ 599 triệu VNĐ",
-          image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop",
-          features: ["Động cơ tăng áp 1.5L", "Hộp số CVT", "Màn hình cảm ứng 10.25 inch", "6 túi khí an toàn"]
-        }];
+        const defaultCars = [
+          carModelsMapping.coolray,
+          carModelsMapping.monjaro, 
+          carModelsMapping.ex5
+        ].map(car => ({
+          ...car,
+          image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop"
+        }));
+        
+        console.log('Using default cars:', defaultCars);
         setCars(defaultCars);
       } else {
         setCars(heroImages);
@@ -86,17 +156,18 @@ const HeroCarousel = ({
     } catch (error) {
       console.error('Error fetching hero images:', error);
       // Fallback to default if error
-      const defaultCars = [{
-        name: "Geely Coolray",
-        tagline: "Thông minh. Năng động. Tiến bộ.",
-        description: "SUV cỡ nhỏ với thiết kế trẻ trung, công nghệ thông minh và khả năng vận hành vượt trội.",
-        price: "Từ 599 triệu VNĐ",
-        image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop",
-        features: ["Động cơ tăng áp 1.5L", "Hộp số CVT", "Màn hình cảm ứng 10.25 inch", "6 túi khí an toàn"]
-      }];
+      const defaultCars = [
+        carModelsMapping.coolray,
+        carModelsMapping.monjaro,
+        carModelsMapping.ex5
+      ].map(car => ({
+        ...car,
+        image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop"
+      }));
       setCars(defaultCars);
     }
   };
+
   useEffect(() => {
     if (cars.length === 0) return;
     const interval = setInterval(() => {
@@ -108,6 +179,7 @@ const HeroCarousel = ({
     }, 10000);
     return () => clearInterval(interval);
   }, [cars.length]);
+
   const goToPrevious = () => {
     setIsTransitioning(true);
     setTimeout(() => {
@@ -115,6 +187,7 @@ const HeroCarousel = ({
       setIsTransitioning(false);
     }, 300);
   };
+
   const goToNext = () => {
     setIsTransitioning(true);
     setTimeout(() => {
@@ -122,6 +195,7 @@ const HeroCarousel = ({
       setIsTransitioning(false);
     }, 300);
   };
+
   if (cars.length === 0) {
     return <section className="relative h-screen overflow-hidden bg-gray-900 flex items-center justify-center">
         <div className="text-white text-center">
@@ -130,9 +204,12 @@ const HeroCarousel = ({
         </div>
       </section>;
   }
+
   const currentCar = cars[currentIndex];
   const currentImage = isMobile && currentCar.mobile_image ? currentCar.mobile_image : currentCar.image;
-  return <section className="relative h-screen overflow-hidden">
+
+  return (
+    <section className="relative h-screen overflow-hidden">
       {/* Background Image with transition */}
       <div className="absolute inset-0">
         <div className={`w-full h-full transition-transform duration-700 ease-in-out ${isTransitioning ? 'transform translate-x-[-100%]' : 'transform translate-x-0'}`}>
@@ -162,10 +239,12 @@ const HeroCarousel = ({
               <div className="space-y-3 md:space-y-4 mb-4 md:mb-8">
                 <h4 className="text-sm md:text-lg font-semibold text-white">{t('features')}</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-1 md:gap-2">
-                  {currentCar.features.map((feature, idx) => <div key={idx} className="flex items-center text-gray-200 text-xs md:text-base">
+                  {currentCar.features.map((feature, idx) => (
+                    <div key={idx} className="flex items-center text-gray-200 text-xs md:text-base">
                       <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-blue-400 rounded-full mr-2 md:mr-3"></div>
                       {feature}
-                    </div>)}
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -194,7 +273,8 @@ const HeroCarousel = ({
       </div>
 
       {/* Navigation Arrows */}
-      {cars.length > 1 && <>
+      {cars.length > 1 && (
+        <>
           <button onClick={goToPrevious} className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 text-white p-2 md:p-3 rounded-full backdrop-blur-sm transition-all">
             <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
           </button>
@@ -202,12 +282,23 @@ const HeroCarousel = ({
           <button onClick={goToNext} className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 text-white p-2 md:p-3 rounded-full backdrop-blur-sm transition-all">
             <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
           </button>
-        </>}
+        </>
+      )}
 
       {/* Dots Indicator */}
-      {cars.length > 1 && <div className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-20 flex space-x-2">
-          {cars.map((_, index) => <button key={index} onClick={() => setCurrentIndex(index)} className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full transition-all ${index === currentIndex ? 'bg-white' : 'bg-white/50'}`} />)}
-        </div>}
-    </section>;
+      {cars.length > 1 && (
+        <div className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-20 flex space-x-2">
+          {cars.map((_, index) => (
+            <button 
+              key={index} 
+              onClick={() => setCurrentIndex(index)} 
+              className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full transition-all ${index === currentIndex ? 'bg-white' : 'bg-white/50'}`} 
+            />
+          ))}
+        </div>
+      )}
+    </section>
+  );
 };
+
 export default HeroCarousel;
