@@ -144,9 +144,12 @@ const PromotionsPage = () => {
                 <span>Quay lại</span>
               </Button>
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">G</span>
-                </div>
+                <img 
+                  src="/lovable-uploads/53460547-efd5-41cc-9b2d-92f168c32983.png" 
+                  alt="Geely Logo" 
+                  className="h-8 w-auto cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={() => navigate('/')}
+                />
                 <span className="text-xl font-semibold text-gray-900">Khuyến mãi</span>
               </div>
             </div>

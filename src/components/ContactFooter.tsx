@@ -2,9 +2,11 @@
 import { Card } from "@/components/ui/card";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useNavigate } from "react-router-dom";
 
 const ContactFooter = () => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   return (
     <footer className="bg-gray-900 text-white py-16">
@@ -14,9 +16,10 @@ const ContactFooter = () => {
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
               <img 
-                src="/lovable-uploads/fcdb7433-edf5-46e0-a645-63687828d441.png" 
+                src="/lovable-uploads/53460547-efd5-41cc-9b2d-92f168c32983.png" 
                 alt="Geely Logo" 
-                className="h-8 w-auto"
+                className="h-8 w-auto cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={() => navigate('/')}
               />
               <span className="text-xl font-semibold">Geely Ninh Thuận</span>
             </div>
