@@ -96,8 +96,8 @@ const Index = () => {
         </div>
       </header>
 
-      {/* SEO optimized Hero Carousel */}
-      <HeroCarousel cars={cars} onTestDrive={handleTestDrive} onPriceQuote={handlePriceQuote} onExplore={handleExplore} />
+      {/* SEO optimized Hero Carousel - Now fetches from database */}
+      <HeroCarousel onTestDrive={handleTestDrive} onPriceQuote={handlePriceQuote} onExplore={handleExplore} />
 
       {/* SEO optimized Services Section */}
       <section id="services" className="py-20 bg-gray-50">
