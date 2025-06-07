@@ -76,7 +76,7 @@ const EX5Details = () => {
               </Button>
               <div className="flex items-center space-x-3">
                 <img 
-                  src="/lovable-uploads/53460547-efd5-41cc-9b2d-92f168c32983.png" 
+                  src="/lovable-uploads/fcdb7433-edf5-46e0-a645-63687828d441.png" 
                   alt="Geely Logo" 
                   className="h-8 w-auto cursor-pointer hover:opacity-80 transition-opacity"
                   onClick={() => navigate('/')}
@@ -91,36 +91,12 @@ const EX5Details = () => {
 
       {/* Hero Carousel Section */}
       <section className="pt-16">
-        <CarImageCarousel images={carImages} carModel="EX5" />
-        
-        {/* Overlay Content */}
-        <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-10 text-center">
-          <p className="text-2xl md:text-3xl font-medium text-green-300 mb-8">Electric. Efficient. Future.</p>
-          <p className="text-xl text-gray-200 mb-12 max-w-3xl mx-auto">
-            SUV điện thông minh với công nghệ pin tiên tiến và khả năng vận hành êm ái, dẫn đầu xu hướng xanh.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg"
-              className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white px-8 py-3 rounded-full"
-              onClick={() => setShowTestDrive(true)}
-            >
-              <Calendar className="mr-2 h-5 w-5" />
-              Đặt lịch lái thử
-            </Button>
-            
-            <Button 
-              variant="outline"
-              size="lg"
-              className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 rounded-full"
-              onClick={() => setShowPriceQuote(true)}
-            >
-              <Calculator className="mr-2 h-5 w-5" />
-              Xem báo giá
-            </Button>
-          </div>
-        </div>
+        <CarImageCarousel 
+          images={carImages} 
+          carModel="EX5"
+          onTestDrive={() => setShowTestDrive(true)}
+          onPriceQuote={() => setShowPriceQuote(true)}
+        />
       </section>
 
       {/* Specifications */}

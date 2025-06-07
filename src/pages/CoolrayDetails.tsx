@@ -78,7 +78,8 @@ const CoolrayDetails = () => {
                 <img 
                   src="/lovable-uploads/fcdb7433-edf5-46e0-a645-63687828d441.png" 
                   alt="Geely Logo" 
-                  className="h-8 w-auto"
+                  className="h-8 w-auto cursor-pointer hover:opacity-80 transition-opacity"
+                  onClick={() => navigate('/')}
                 />
                 <span className="text-xl font-semibold text-gray-900">Geely Coolray</span>
               </div>
@@ -90,36 +91,12 @@ const CoolrayDetails = () => {
 
       {/* Hero Carousel Section */}
       <section className="pt-16">
-        <CarImageCarousel images={carImages} carModel="Coolray" />
-        
-        {/* Overlay Content */}
-        <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-10 text-center">
-          <p className="text-2xl md:text-3xl font-medium text-blue-300 mb-8">Urban. Dynamic. Smart.</p>
-          <p className="text-xl text-gray-200 mb-12 max-w-3xl mx-auto">
-            SUV compact thông minh với công nghệ hiện đại và thiết kế trẻ trung, phù hợp cho cuộc sống đô thị năng động.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg"
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-full"
-              onClick={() => setShowTestDrive(true)}
-            >
-              <Calendar className="mr-2 h-5 w-5" />
-              Đặt lịch lái thử
-            </Button>
-            
-            <Button 
-              variant="outline"
-              size="lg"
-              className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 rounded-full"
-              onClick={() => setShowPriceQuote(true)}
-            >
-              <Calculator className="mr-2 h-5 w-5" />
-              Xem báo giá
-            </Button>
-          </div>
-        </div>
+        <CarImageCarousel 
+          images={carImages} 
+          carModel="Coolray"
+          onTestDrive={() => setShowTestDrive(true)}
+          onPriceQuote={() => setShowPriceQuote(true)}
+        />
       </section>
 
       {/* Specifications */}
