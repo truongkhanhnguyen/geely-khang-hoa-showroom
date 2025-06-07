@@ -72,10 +72,10 @@ const Index = () => {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
-              <img src="/lovable-uploads/3f3f054c-409a-4bfd-84c6-f58576129a83.png" alt="Geely Logo" className="h-8 w-auto" />
-              <span className="text-xl font-bold text-gray-900 tracking-wider" style={{
+          <div className="flex justify-between items-center h-14 md:h-16">
+            <div className="flex items-center space-x-2 md:space-x-3">
+              <img src="/lovable-uploads/3f3f054c-409a-4bfd-84c6-f58576129a83.png" alt="Geely Logo" className="h-6 md:h-8 w-auto" />
+              <span className="text-sm md:text-xl font-bold text-gray-900 tracking-wider" style={{
               fontFamily: 'Arial, sans-serif'
             }}>NINH THUẬN</span>
             </div>
@@ -100,10 +100,10 @@ const Index = () => {
       <section id="services" className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h1 className="text-3xl md:text-5xl font-light text-gray-900 mb-4">
+            <h1 className="text-2xl md:text-3xl lg:text-5xl font-light text-gray-900 mb-4">
               Dịch vụ chuyên nghiệp <span className="text-blue-600 font-medium">Geely Ninh Thuận</span>
             </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
               Đại lý chính hãng Geely tại Ninh Thuận - Lái thử miễn phí, vay 80%, bảo hành toàn quốc
             </p>
           </div>
