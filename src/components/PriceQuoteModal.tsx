@@ -1,10 +1,11 @@
+
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { X } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
 
 interface PriceQuoteModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ type CarVariant = "Standard" | "Premium" | "Flagship";
 
 const PriceQuoteModal = ({ isOpen, onClose, selectedCar }: PriceQuoteModalProps) => {
   const [showQuote, setShowQuote] = useState(false);
+  const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [formData, setFormData] = useState({
     carModel: selectedCar || "",
     name: "",
@@ -40,6 +42,8 @@ const PriceQuoteModal = ({ isOpen, onClose, selectedCar }: PriceQuoteModalProps)
       Flagship: { basePrice: 950000000, promotion: 47500000, finalPrice: 902500000 }
     }
   };
+
+  const variants: CarVariant[] = ["Standard", "Premium", "Flagship"];
 
   const calculateRegistrationFees = (variant: CarVariant, basePrice: number) => {
     const registrationTax = Math.round(basePrice * 0.1);
@@ -80,16 +84,17 @@ const PriceQuoteModal = ({ isOpen, onClose, selectedCar }: PriceQuoteModalProps)
   };
 
   const selectedCarData = formData.carModel ? carPrices[formData.carModel as CarModel] : null;
+  const currentVariant = variants[selectedVariantIndex];
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold text-red-600">
-            BÁO GIÁ XE GEELY CHI NHÁNH KHÁNH HÒA
+            BÁO GIÁ XE GEELY CHI NHÁNH NINH THUẬN
           </DialogTitle>
           <div className="text-center text-sm text-gray-600">
-            442 Lê Hồng Phong, Phường Phước Hải, Thành phố Nha Trang, Tỉnh Khánh Hòa
+            99 Thống Nhất, Thành Hải, Thành phố Phan Rang, Tỉnh Ninh Thuận
           </div>
           <div className="text-center text-sm font-semibold">
             HOTLINE: 0879890879
@@ -157,121 +162,210 @@ const PriceQuoteModal = ({ isOpen, onClose, selectedCar }: PriceQuoteModalProps)
                 <h3 className="text-2xl font-bold text-blue-600">{formData.carModel.toUpperCase()}</h3>
               </div>
 
-              {/* Main Price Table */}
-              <div className="mb-6">
-                <table className="w-full border-collapse border border-gray-300">
-                  <thead>
-                    <tr className="bg-blue-900 text-white">
-                      <th className="border border-gray-300 p-3 text-left">STT</th>
-                      <th className="border border-gray-300 p-3 text-left">CÁC KHOẢN CHI PHÍ</th>
-                      <th className="border border-gray-300 p-3 text-center">STANDARD</th>
-                      <th className="border border-gray-300 p-3 text-center">PREMIUM</th>
-                      <th className="border border-gray-300 p-3 text-center">FLAGSHIP</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="border border-gray-300 p-3">1</td>
-                      <td className="border border-gray-300 p-3 font-semibold">GIÁ BÁN NIÊM YẾT</td>
-                      <td className="border border-gray-300 p-3 text-center">{formatPrice(selectedCarData.Standard.basePrice)}</td>
-                      <td className="border border-gray-300 p-3 text-center">{formatPrice(selectedCarData.Premium.basePrice)}</td>
-                      <td className="border border-gray-300 p-3 text-center">{formatPrice(selectedCarData.Flagship.basePrice)}</td>
-                    </tr>
-                    <tr>
-                      <td className="border border-gray-300 p-3">2</td>
-                      <td className="border border-gray-300 p-3 font-semibold">CSKM THÁNG 05.2025</td>
-                      <td className="border border-gray-300 p-3 text-center text-red-600">{formatPrice(selectedCarData.Standard.promotion)}</td>
-                      <td className="border border-gray-300 p-3 text-center text-red-600">{formatPrice(selectedCarData.Premium.promotion)}</td>
-                      <td className="border border-gray-300 p-3 text-center text-red-600">{formatPrice(selectedCarData.Flagship.promotion)}</td>
-                    </tr>
-                    <tr>
-                      <td className="border border-gray-300 p-3">3</td>
-                      <td className="border border-gray-300 p-3 font-semibold">GIÁ HĐMB XHĐ</td>
-                      <td className="border border-gray-300 p-3 text-center font-semibold">{formatPrice(selectedCarData.Standard.finalPrice)}</td>
-                      <td className="border border-gray-300 p-3 text-center font-semibold">{formatPrice(selectedCarData.Premium.finalPrice)}</td>
-                      <td className="border border-gray-300 p-3 text-center font-semibold">{formatPrice(selectedCarData.Flagship.finalPrice)}</td>
-                    </tr>
-                  </tbody>
-                </table>
+              {/* Mobile View with Slider */}
+              <div className="md:hidden mb-6">
+                <div className="mb-4">
+                  <Label className="text-base font-semibold">
+                    Chọn phiên bản: {currentVariant}
+                  </Label>
+                  <Slider
+                    value={[selectedVariantIndex]}
+                    onValueChange={(value) => setSelectedVariantIndex(value[0])}
+                    max={2}
+                    step={1}
+                    className="mt-2"
+                  />
+                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>Standard</span>
+                    <span>Premium</span>
+                    <span>Flagship</span>
+                  </div>
+                </div>
+
+                <div className="bg-white border border-gray-300 rounded-lg p-4">
+                  <h4 className="text-lg font-bold text-center mb-4">{currentVariant}</h4>
+                  
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="font-medium">Giá bán niêm yết:</span>
+                      <span>{formatPrice(selectedCarData[currentVariant].basePrice)}</span>
+                    </div>
+                    <div className="flex justify-between text-red-600">
+                      <span className="font-medium">CSKM tháng 05.2025:</span>
+                      <span>-{formatPrice(selectedCarData[currentVariant].promotion)}</span>
+                    </div>
+                    <div className="flex justify-between font-bold border-t pt-2">
+                      <span>Giá HĐMB:</span>
+                      <span>{formatPrice(selectedCarData[currentVariant].finalPrice)}</span>
+                    </div>
+                    
+                    <div className="mt-4 pt-4 border-t">
+                      <h5 className="font-medium mb-2">Chi phí đăng ký biển số:</h5>
+                      {(() => {
+                        const fees = calculateRegistrationFees(currentVariant, selectedCarData[currentVariant].basePrice);
+                        return (
+                          <div className="space-y-1 text-sm">
+                            <div className="flex justify-between">
+                              <span>Thuế trước bạ (10%):</span>
+                              <span>{formatPrice(fees.registrationTax)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Phí biển số:</span>
+                              <span>1,000,000</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Phí đăng kiểm:</span>
+                              <span>{formatPrice(fees.inspection)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Phí đường bộ 12 tháng:</span>
+                              <span>1,560,000</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Bảo hiểm TNDS:</span>
+                              <span>550,000</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Phí dịch vụ đăng ký xe:</span>
+                              <span>5,000,000</span>
+                            </div>
+                            <div className="flex justify-between font-bold border-t pt-2">
+                              <span>Tổng phí đăng ký:</span>
+                              <span>{formatPrice(fees.totalRegistration)}</span>
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                    
+                    <div className="bg-blue-100 p-3 rounded mt-4">
+                      <div className="flex justify-between font-bold text-blue-600 text-lg">
+                        <span>TỔNG GIÁ LĂN BÁNH:</span>
+                        <span>{formatPrice(selectedCarData[currentVariant].finalPrice + calculateRegistrationFees(currentVariant, selectedCarData[currentVariant].basePrice).totalRegistration)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              {/* Registration Fees Table */}
-              <div className="mb-6">
-                <table className="w-full border-collapse border border-gray-300">
-                  <thead>
-                    <tr className="bg-blue-900 text-white">
-                      <th className="border border-gray-300 p-3 text-left">STT</th>
-                      <th className="border border-gray-300 p-3 text-left">CÁC KHOẢN CHI PHÍ ĐĂNG KÝ BIỂN SỐ</th>
-                      <th className="border border-gray-300 p-3 text-center">STANDARD</th>
-                      <th className="border border-gray-300 p-3 text-center">PREMIUM</th>
-                      <th className="border border-gray-300 p-3 text-center">FLAGSHIP</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(["Standard", "Premium", "Flagship"] as CarVariant[]).map((variant, index) => {
-                      const fees = calculateRegistrationFees(variant, selectedCarData[variant].basePrice);
-                      return index === 0 ? (
-                        <>
-                          <tr key="tax">
-                            <td className="border border-gray-300 p-2" rowSpan={7}>4</td>
-                            <td className="border border-gray-300 p-2">THUẾ TRƯỚC BẠ (TẠM TÍNH 10%)</td>
-                            <td className="border border-gray-300 p-2 text-center">{formatPrice(calculateRegistrationFees("Standard", selectedCarData.Standard.basePrice).registrationTax)}</td>
-                            <td className="border border-gray-300 p-2 text-center">{formatPrice(calculateRegistrationFees("Premium", selectedCarData.Premium.basePrice).registrationTax)}</td>
-                            <td className="border border-gray-300 p-2 text-center">{formatPrice(calculateRegistrationFees("Flagship", selectedCarData.Flagship.basePrice).registrationTax)}</td>
-                          </tr>
-                          <tr>
-                            <td className="border border-gray-300 p-2">PHÍ BIỂN SỐ</td>
-                            <td className="border border-gray-300 p-2 text-center">1,000,000</td>
-                            <td className="border border-gray-300 p-2 text-center">1,000,000</td>
-                            <td className="border border-gray-300 p-2 text-center">1,000,000</td>
-                          </tr>
-                          <tr>
-                            <td className="border border-gray-300 p-2">PHÍ ĐĂNG KIỂM</td>
-                            <td className="border border-gray-300 p-2 text-center">95,000</td>
-                            <td className="border border-gray-300 p-2 text-center">150,000</td>
-                            <td className="border border-gray-300 p-2 text-center">150,000</td>
-                          </tr>
-                          <tr>
-                            <td className="border border-gray-300 p-2">PHÍ ĐƯỜNG BỘ 12 THÁNG</td>
-                            <td className="border border-gray-300 p-2 text-center">1,560,000</td>
-                            <td className="border border-gray-300 p-2 text-center">1,560,000</td>
-                            <td className="border border-gray-300 p-2 text-center">1,560,000</td>
-                          </tr>
-                          <tr>
-                            <td className="border border-gray-300 p-2">BẢO HIỂM TNDS</td>
-                            <td className="border border-gray-300 p-2 text-center">550,000</td>
-                            <td className="border border-gray-300 p-2 text-center">550,000</td>
-                            <td className="border border-gray-300 p-2 text-center">550,000</td>
-                          </tr>
-                          <tr>
-                            <td className="border border-gray-300 p-2">PHÍ DỊCH VỤ ĐĂNG KÝ XE</td>
-                            <td className="border border-gray-300 p-2 text-center">5,000,000</td>
-                            <td className="border border-gray-300 p-2 text-center">5,000,000</td>
-                            <td className="border border-gray-300 p-2 text-center">5,000,000</td>
-                          </tr>
-                          <tr>
-                            <td className="border border-gray-300 p-2 font-semibold">TỔNG PHÍ ĐĂNG KÝ BIỂN SỐ</td>
-                            <td className="border border-gray-300 p-2 text-center font-semibold">{formatPrice(calculateRegistrationFees("Standard", selectedCarData.Standard.basePrice).totalRegistration)}</td>
-                            <td className="border border-gray-300 p-2 text-center font-semibold">{formatPrice(calculateRegistrationFees("Premium", selectedCarData.Premium.basePrice).totalRegistration)}</td>
-                            <td className="border border-gray-300 p-2 text-center font-semibold">{formatPrice(calculateRegistrationFees("Flagship", selectedCarData.Flagship.basePrice).totalRegistration)}</td>
-                          </tr>
-                        </>
-                      ) : null;
-                    })}
-                    <tr className="bg-blue-100">
-                      <td className="border border-gray-300 p-3 font-bold" colSpan={2}>TỔNG GIÁ TRỊ XE LĂN BÁNH</td>
-                      <td className="border border-gray-300 p-3 text-center font-bold text-blue-600 text-lg">
-                        {formatPrice(selectedCarData.Standard.finalPrice + calculateRegistrationFees("Standard", selectedCarData.Standard.basePrice).totalRegistration)}
-                      </td>
-                      <td className="border border-gray-300 p-3 text-center font-bold text-blue-600 text-lg">
-                        {formatPrice(selectedCarData.Premium.finalPrice + calculateRegistrationFees("Premium", selectedCarData.Premium.basePrice).totalRegistration)}
-                      </td>
-                      <td className="border border-gray-300 p-3 text-center font-bold text-blue-600 text-lg">
-                        {formatPrice(selectedCarData.Flagship.finalPrice + calculateRegistrationFees("Flagship", selectedCarData.Flagship.basePrice).totalRegistration)}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+              {/* Desktop View - Full Table */}
+              <div className="hidden md:block">
+                {/* Main Price Table */}
+                <div className="mb-6">
+                  <table className="w-full border-collapse border border-gray-300">
+                    <thead>
+                      <tr className="bg-blue-900 text-white">
+                        <th className="border border-gray-300 p-3 text-left">STT</th>
+                        <th className="border border-gray-300 p-3 text-left">CÁC KHOẢN CHI PHÍ</th>
+                        <th className="border border-gray-300 p-3 text-center">STANDARD</th>
+                        <th className="border border-gray-300 p-3 text-center">PREMIUM</th>
+                        <th className="border border-gray-300 p-3 text-center">FLAGSHIP</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="border border-gray-300 p-3">1</td>
+                        <td className="border border-gray-300 p-3 font-semibold">GIÁ BÁN NIÊM YẾT</td>
+                        <td className="border border-gray-300 p-3 text-center">{formatPrice(selectedCarData.Standard.basePrice)}</td>
+                        <td className="border border-gray-300 p-3 text-center">{formatPrice(selectedCarData.Premium.basePrice)}</td>
+                        <td className="border border-gray-300 p-3 text-center">{formatPrice(selectedCarData.Flagship.basePrice)}</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-gray-300 p-3">2</td>
+                        <td className="border border-gray-300 p-3 font-semibold">CSKM THÁNG 05.2025</td>
+                        <td className="border border-gray-300 p-3 text-center text-red-600">{formatPrice(selectedCarData.Standard.promotion)}</td>
+                        <td className="border border-gray-300 p-3 text-center text-red-600">{formatPrice(selectedCarData.Premium.promotion)}</td>
+                        <td className="border border-gray-300 p-3 text-center text-red-600">{formatPrice(selectedCarData.Flagship.promotion)}</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-gray-300 p-3">3</td>
+                        <td className="border border-gray-300 p-3 font-semibold">GIÁ HĐMB XHĐ</td>
+                        <td className="border border-gray-300 p-3 text-center font-semibold">{formatPrice(selectedCarData.Standard.finalPrice)}</td>
+                        <td className="border border-gray-300 p-3 text-center font-semibold">{formatPrice(selectedCarData.Premium.finalPrice)}</td>
+                        <td className="border border-gray-300 p-3 text-center font-semibold">{formatPrice(selectedCarData.Flagship.finalPrice)}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Registration Fees Table */}
+                <div className="mb-6">
+                  <table className="w-full border-collapse border border-gray-300">
+                    <thead>
+                      <tr className="bg-blue-900 text-white">
+                        <th className="border border-gray-300 p-3 text-left">STT</th>
+                        <th className="border border-gray-300 p-3 text-left">CÁC KHOẢN CHI PHÍ ĐĂNG KÝ BIỂN SỐ</th>
+                        <th className="border border-gray-300 p-3 text-center">STANDARD</th>
+                        <th className="border border-gray-300 p-3 text-center">PREMIUM</th>
+                        <th className="border border-gray-300 p-3 text-center">FLAGSHIP</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(["Standard", "Premium", "Flagship"] as CarVariant[]).map((variant, index) => {
+                        const fees = calculateRegistrationFees(variant, selectedCarData[variant].basePrice);
+                        return index === 0 ? (
+                          <>
+                            <tr key="tax">
+                              <td className="border border-gray-300 p-2" rowSpan={7}>4</td>
+                              <td className="border border-gray-300 p-2">THUẾ TRƯỚC BẠ (TẠM TÍNH 10%)</td>
+                              <td className="border border-gray-300 p-2 text-center">{formatPrice(calculateRegistrationFees("Standard", selectedCarData.Standard.basePrice).registrationTax)}</td>
+                              <td className="border border-gray-300 p-2 text-center">{formatPrice(calculateRegistrationFees("Premium", selectedCarData.Premium.basePrice).registrationTax)}</td>
+                              <td className="border border-gray-300 p-2 text-center">{formatPrice(calculateRegistrationFees("Flagship", selectedCarData.Flagship.basePrice).registrationTax)}</td>
+                            </tr>
+                            <tr>
+                              <td className="border border-gray-300 p-2">PHÍ BIỂN SỐ</td>
+                              <td className="border border-gray-300 p-2 text-center">1,000,000</td>
+                              <td className="border border-gray-300 p-2 text-center">1,000,000</td>
+                              <td className="border border-gray-300 p-2 text-center">1,000,000</td>
+                            </tr>
+                            <tr>
+                              <td className="border border-gray-300 p-2">PHÍ ĐĂNG KIỂM</td>
+                              <td className="border border-gray-300 p-2 text-center">95,000</td>
+                              <td className="border border-gray-300 p-2 text-center">150,000</td>
+                              <td className="border border-gray-300 p-2 text-center">150,000</td>
+                            </tr>
+                            <tr>
+                              <td className="border border-gray-300 p-2">PHÍ ĐƯỜNG BỘ 12 THÁNG</td>
+                              <td className="border border-gray-300 p-2 text-center">1,560,000</td>
+                              <td className="border border-gray-300 p-2 text-center">1,560,000</td>
+                              <td className="border border-gray-300 p-2 text-center">1,560,000</td>
+                            </tr>
+                            <tr>
+                              <td className="border border-gray-300 p-2">BẢO HIỂM TNDS</td>
+                              <td className="border border-gray-300 p-2 text-center">550,000</td>
+                              <td className="border border-gray-300 p-2 text-center">550,000</td>
+                              <td className="border border-gray-300 p-2 text-center">550,000</td>
+                            </tr>
+                            <tr>
+                              <td className="border border-gray-300 p-2">PHÍ DỊCH VỤ ĐĂNG KÝ XE</td>
+                              <td className="border border-gray-300 p-2 text-center">5,000,000</td>
+                              <td className="border border-gray-300 p-2 text-center">5,000,000</td>
+                              <td className="border border-gray-300 p-2 text-center">5,000,000</td>
+                            </tr>
+                            <tr>
+                              <td className="border border-gray-300 p-2 font-semibold">TỔNG PHÍ ĐĂNG KÝ BIỂN SỐ</td>
+                              <td className="border border-gray-300 p-2 text-center font-semibold">{formatPrice(calculateRegistrationFees("Standard", selectedCarData.Standard.basePrice).totalRegistration)}</td>
+                              <td className="border border-gray-300 p-2 text-center font-semibold">{formatPrice(calculateRegistrationFees("Premium", selectedCarData.Premium.basePrice).totalRegistration)}</td>
+                              <td className="border border-gray-300 p-2 text-center font-semibold">{formatPrice(calculateRegistrationFees("Flagship", selectedCarData.Flagship.basePrice).totalRegistration)}</td>
+                            </tr>
+                          </>
+                        ) : null;
+                      })}
+                      <tr className="bg-blue-100">
+                        <td className="border border-gray-300 p-3 font-bold" colSpan={2}>TỔNG GIÁ TRỊ XE LĂN BÁNH</td>
+                        <td className="border border-gray-300 p-3 text-center font-bold text-blue-600 text-lg">
+                          {formatPrice(selectedCarData.Standard.finalPrice + calculateRegistrationFees("Standard", selectedCarData.Standard.basePrice).totalRegistration)}
+                        </td>
+                        <td className="border border-gray-300 p-3 text-center font-bold text-blue-600 text-lg">
+                          {formatPrice(selectedCarData.Premium.finalPrice + calculateRegistrationFees("Premium", selectedCarData.Premium.basePrice).totalRegistration)}
+                        </td>
+                        <td className="border border-gray-300 p-3 text-center font-bold text-blue-600 text-lg">
+                          {formatPrice(selectedCarData.Flagship.finalPrice + calculateRegistrationFees("Flagship", selectedCarData.Flagship.basePrice).totalRegistration)}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
 
               <div className="text-sm text-gray-600 space-y-2">

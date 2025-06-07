@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Calendar, Clock, User, Phone, Mail, MessageSquare } from "lucide-react";
+import { User, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface TestDriveModalProps {
@@ -20,21 +19,18 @@ const TestDriveModal = ({ isOpen, onClose, selectedCar }: TestDriveModalProps) =
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    email: "",
     car: selectedCar,
-    date: "",
-    time: "",
-    notes: ""
+    variant: ""
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validate required fields
-    if (!formData.name || !formData.phone || !formData.car || !formData.date || !formData.time) {
+    if (!formData.phone) {
       toast({
-        title: "Vui lòng điền đầy đủ thông tin",
-        description: "Các trường có dấu * là bắt buộc",
+        title: "Vui lòng điền số điện thoại",
+        description: "Số điện thoại là thông tin bắt buộc",
         variant: "destructive"
       });
       return;
@@ -43,18 +39,15 @@ const TestDriveModal = ({ isOpen, onClose, selectedCar }: TestDriveModalProps) =
     // Simulate booking submission
     toast({
       title: "Đặt lịch thành công!",
-      description: `Chúng tôi sẽ liên hệ với bạn để xác nhận lịch lái thử ${formData.car} vào ${formData.date} lúc ${formData.time}.`
+      description: `Chúng tôi sẽ liên hệ với bạn để xác nhận lịch lái thử ${formData.car} ${formData.variant ? `phiên bản ${formData.variant}` : ''}.`
     });
 
     // Reset form and close modal
     setFormData({
       name: "",
       phone: "",
-      email: "",
       car: "",
-      date: "",
-      time: "",
-      notes: ""
+      variant: ""
     });
     onClose();
   };
@@ -82,7 +75,7 @@ const TestDriveModal = ({ isOpen, onClose, selectedCar }: TestDriveModalProps) =
             <div>
               <Label htmlFor="name" className="flex items-center text-sm font-medium text-gray-700">
                 <User className="w-4 h-4 mr-2" />
-                Họ và tên *
+                Họ và tên
               </Label>
               <Input
                 id="name"
@@ -90,7 +83,6 @@ const TestDriveModal = ({ isOpen, onClose, selectedCar }: TestDriveModalProps) =
                 onChange={(e) => handleInputChange("name", e.target.value)}
                 placeholder="Nhập họ và tên của bạn"
                 className="mt-1"
-                required
               />
             </div>
 
@@ -110,24 +102,8 @@ const TestDriveModal = ({ isOpen, onClose, selectedCar }: TestDriveModalProps) =
             </div>
 
             <div>
-              <Label htmlFor="email" className="flex items-center text-sm font-medium text-gray-700">
-                <Mail className="w-4 h-4 mr-2" />
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleInputChange("email", e.target.value)}
-                placeholder="Nhập địa chỉ email"
-                className="mt-1"
-              />
-            </div>
-
-            <div>
               <Label className="flex items-center text-sm font-medium text-gray-700">
-                <Calendar className="w-4 h-4 mr-2" />
-                Dòng xe *
+                Dòng xe
               </Label>
               <Select value={formData.car} onValueChange={(value) => handleInputChange("car", value)}>
                 <SelectTrigger className="mt-1">
@@ -142,56 +118,19 @@ const TestDriveModal = ({ isOpen, onClose, selectedCar }: TestDriveModalProps) =
             </div>
 
             <div>
-              <Label htmlFor="date" className="flex items-center text-sm font-medium text-gray-700">
-                <Calendar className="w-4 h-4 mr-2" />
-                Ngày lái thử *
+              <Label className="flex items-center text-sm font-medium text-gray-700">
+                Phiên bản
               </Label>
-              <Input
-                id="date"
-                type="date"
-                value={formData.date}
-                onChange={(e) => handleInputChange("date", e.target.value)}
-                className="mt-1"
-                min={new Date().toISOString().split('T')[0]}
-                required
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="time" className="flex items-center text-sm font-medium text-gray-700">
-                <Clock className="w-4 h-4 mr-2" />
-                Giờ lái thử *
-              </Label>
-              <Select value={formData.time} onValueChange={(value) => handleInputChange("time", value)}>
+              <Select value={formData.variant} onValueChange={(value) => handleInputChange("variant", value)}>
                 <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Chọn giờ" />
+                  <SelectValue placeholder="Chọn phiên bản" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="08:00">08:00</SelectItem>
-                  <SelectItem value="09:00">09:00</SelectItem>
-                  <SelectItem value="10:00">10:00</SelectItem>
-                  <SelectItem value="11:00">11:00</SelectItem>
-                  <SelectItem value="14:00">14:00</SelectItem>
-                  <SelectItem value="15:00">15:00</SelectItem>
-                  <SelectItem value="16:00">16:00</SelectItem>
-                  <SelectItem value="17:00">17:00</SelectItem>
+                  <SelectItem value="Standard">Standard</SelectItem>
+                  <SelectItem value="Premium">Premium</SelectItem>
+                  <SelectItem value="Flagship">Flagship</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="notes" className="flex items-center text-sm font-medium text-gray-700">
-                <MessageSquare className="w-4 h-4 mr-2" />
-                Ghi chú
-              </Label>
-              <Textarea
-                id="notes"
-                value={formData.notes}
-                onChange={(e) => handleInputChange("notes", e.target.value)}
-                placeholder="Ghi chú thêm (nếu có)"
-                className="mt-1 resize-none"
-                rows={3}
-              />
             </div>
           </div>
 
