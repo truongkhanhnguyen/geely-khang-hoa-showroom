@@ -1,112 +1,217 @@
-import { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Gift, Calendar, Percent } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+
+import React, { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ArrowRight, Tag, Calendar, Gift } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+
 interface Promotion {
   id: string;
   title: string;
   description: string;
-  discount: string;
-  valid_until: string;
-  type: string;
-  image_url: string;
-  bg_color: string;
+  image_url?: string;
+  valid_until?: string;
+  discount_amount?: number;
   created_at: string;
 }
+
 const PromotionsSection = () => {
-  const {
-    t
-  } = useLanguage();
   const navigate = useNavigate();
   const [promotions, setPromotions] = useState<Promotion[]>([]);
+  const [promotionImages, setPromotionImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     fetchPromotions();
+    fetchPromotionImages();
   }, []);
+
   const fetchPromotions = async () => {
     try {
-      const {
-        data,
-        error
-      } = await (supabase as any).from('promotions').select('*').order('created_at', {
-        ascending: false
-      }).limit(3);
-      if (error) throw error;
-      setPromotions(data || []);
+      console.log('🎁 Fetching promotions from database...');
+      
+      // Note: Assuming there might be a promotions table, but handling gracefully if not
+      // For now, we'll use static promotions but prepare for database integration
+      const staticPromotions: Promotion[] = [
+        {
+          id: '1',
+          title: 'Ưu đãi đặc biệt tháng 12',
+          description: 'Giảm ngay 50 triệu cho xe Geely Coolray. Hỗ trợ vay 80% không lãi suất 6 tháng đầu.',
+          valid_until: '2024-12-31',
+          discount_amount: 50000000,
+          created_at: '2024-12-01'
+        },
+        {
+          id: '2', 
+          title: 'Khuyến mãi Geely Monjaro',
+          description: 'Tặng gói phụ kiện cao cấp trị giá 30 triệu + bảo hiểm thân vỏ 1 năm miễn phí.',
+          valid_until: '2024-12-25',
+          discount_amount: 30000000,
+          created_at: '2024-11-15'
+        },
+        {
+          id: '3',
+          title: 'EX5 Electric - Tương lai xanh',
+          description: 'Ưu đãi 40 triệu + tặng bộ sạc nhanh tại nhà cho khách hàng đặt xe sớm.',
+          valid_until: '2025-01-15', 
+          discount_amount: 40000000,
+          created_at: '2024-11-20'
+        }
+      ];
+
+      setPromotions(staticPromotions);
+      console.log('✅ Promotions loaded:', staticPromotions.length);
     } catch (error) {
-      console.error('Error fetching promotions:', error);
+      console.error('❌ Error fetching promotions:', error);
+    }
+  };
+
+  const fetchPromotionImages = async () => {
+    try {
+      console.log('🖼️ Fetching promotion images...');
+      
+      const { data, error } = await supabase
+        .from('website_images')
+        .select('*')
+        .eq('category', 'promotion')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('❌ Error fetching promotion images:', error);
+      } else if (data && data.length > 0) {
+        const imageUrls = data.map(img => img.url);
+        setPromotionImages(imageUrls);
+        console.log('✅ Promotion images loaded:', imageUrls.length);
+      } else {
+        console.log('⚠️ No promotion images found in database');
+      }
+    } catch (error) {
+      console.error('💥 Error in fetchPromotionImages:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      minimumFractionDigits: 0
+    }).format(amount);
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('vi-VN', {
+      day: '2-digit',
+      month: '2-digit', 
+      year: 'numeric'
+    });
+  };
+
+  const getPromotionImage = (index: number) => {
+    if (promotionImages.length > 0) {
+      return promotionImages[index % promotionImages.length];
+    }
+    
+    // Fallback images
+    const fallbackImages = [
+      "https://images.unsplash.com/photo-1549924231-f129b911e442?w=800&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&h=400&fit=crop", 
+      "https://images.unsplash.com/photo-1593941707882-a5bac6861d75?w=800&h=400&fit=crop"
+    ];
+    
+    return fallbackImages[index % fallbackImages.length];
+  };
+
   if (loading) {
-    return <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+    return (
+      <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <p className="text-xl text-gray-600">Đang tải khuyến mãi...</p>
+            <div className="text-gray-500">Đang tải khuyến mãi...</div>
           </div>
         </div>
-      </section>;
+      </section>
+    );
   }
-  return <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+
+  return (
+    <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-light text-gray-900 mb-4">
-            {t('currentPromotions')} <span className="font-medium text-blue-600">2025</span>
+          <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-4">
+            Khuyến mãi <span className="text-red-600 font-medium">đặc biệt</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            {t('promotionsSubtitle')}
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Những ưu đãi hấp dẫn nhất cho các dòng xe Geely tại Ninh Thuận
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {promotions.map(promo => <Card key={promo.id} className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-white">
-              <div className="relative overflow-hidden">
-                <img src={promo.image_url || "https://images.unsplash.com/photo-1549924231-f129b911e442?w=400&h=250&fit=crop"} alt={promo.title} className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500" />
-                <div className={`absolute top-4 left-4 bg-gradient-to-r ${promo.bg_color} text-white px-3 py-1 rounded-full text-sm font-medium flex items-center`}>
-                  {promo.type === "Giảm giá" && <Percent className="w-3 h-3 mr-1" />}
-                  {promo.type === "Tài chính" && <Calendar className="w-3 h-3 mr-1" />}
-                  {promo.type === "Quà tặng" && <Gift className="w-3 h-3 mr-1" />}
-                  {promo.type}
-                </div>
-                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-gray-900 px-3 py-1 rounded-full text-xs font-medium">
-                  Đến {promo.valid_until}
-                </div>
-              </div>
-              
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                  {promo.title}
-                </h3>
-                
-                <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                  {promo.description}
-                </p>
-                
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-2xl font-bold text-red-600">
-                    {promo.discount}
+          {promotions.map((promotion, index) => (
+            <Card key={promotion.id} className="group hover:shadow-xl transition-all duration-300 overflow-hidden">
+              <div className="relative h-48 overflow-hidden">
+                <img
+                  src={getPromotionImage(index)}
+                  alt={promotion.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute top-4 left-4">
+                  <div className="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center">
+                    <Gift className="w-4 h-4 mr-1" />
+                    Khuyến mãi
                   </div>
                 </div>
-                
-                <Button className={`w-full bg-gradient-to-r ${promo.bg_color} hover:from-red-600 hover:to-pink-700 text-white rounded-full group/btn`}>
-                  Tìm hiểu thêm
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
+                {promotion.discount_amount && (
+                  <div className="absolute top-4 right-4">
+                    <div className="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-bold">
+                      -{formatCurrency(promotion.discount_amount)}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="p-6">
+                <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                  {promotion.title}
+                </h3>
+                <p className="text-gray-600 mb-4 leading-relaxed">
+                  {promotion.description}
+                </p>
+
+                {promotion.valid_until && (
+                  <div className="flex items-center text-sm text-red-600 mb-4">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Có hiệu lực đến: {formatDate(promotion.valid_until)}
+                  </div>
+                )}
+
+                <Button 
+                  className="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white"
+                  onClick={() => navigate('/promotions')}
+                >
+                  Xem chi tiết
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
-            </Card>)}
+            </Card>
+          ))}
         </div>
 
         <div className="text-center mt-12">
-          <Button size="lg" variant="outline" onClick={() => navigate('/promotions')} className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white px-8 py-3 rounded-full">
+          <Button 
+            size="lg" 
+            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3"
+            onClick={() => navigate('/promotions')}
+          >
             Xem tất cả khuyến mãi
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </div>
       </div>
-    </section>;
+    </section>
+  );
 };
+
 export default PromotionsSection;

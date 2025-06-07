@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ interface Car {
   image: string;
   mobile_image?: string;
   features: string[];
+  priority?: number;
 }
 
 interface HeroCarouselProps {
@@ -34,28 +36,31 @@ const HeroCarousel = ({
   const [isMobile, setIsMobile] = useState(false);
   const { t } = useLanguage();
 
-  // Car models mapping to database description patterns
+  // Car models mapping với thứ tự ưu tiên
   const carModelsMapping = {
     "coolray": {
       name: "Geely Coolray",
       tagline: "Urban. Dynamic. Smart.",
       description: "SUV compact thông minh với công nghệ hiện đại và thiết kế trẻ trung, phù hợp cho cuộc sống đô thị năng động.",
       price: "Từ 538 triệu VNĐ",
-      features: ["Động cơ 1.5L Turbo", "Hệ thống GKUI 19", "6 túi khí an toàn", "Phanh ABS + EBD"]
+      features: ["Động cơ 1.5L Turbo", "Hệ thống GKUI 19", "6 túi khí an toàn", "Phanh ABS + EBD"],
+      priority: 1
     },
     "monjaro": {
       name: "Geely Monjaro", 
       tagline: "Premium. Powerful. Refined.",
       description: "SUV 7 chỗ cao cấp với không gian rộng rãi và trang bị công nghệ tiên tiến, hoàn hảo cho gia đình hiện đại.",
       price: "Từ 1.469 triệu VNĐ",
-      features: ["Động cơ 2.0L Turbo", "Hệ thống giải trí 12.3''", "Cruise Control thích ứng", "Cửa sổ trời toàn cảnh"]
+      features: ["Động cơ 2.0L Turbo", "Hệ thống giải trí 12.3''", "Cruise Control thích ứng", "Cửa sổ trời toàn cảnh"],
+      priority: 2
     },
     "ex5": {
       name: "Geely EX5",
       tagline: "Electric. Efficient. Future.", 
       description: "SUV điện thông minh với công nghệ pin tiên tiến và khả năng vận hành êm ái, dẫn đầu xu hướng xanh.",
       price: "Từ 769 triệu VNĐ",
-      features: ["100% động cơ điện", "Phạm vi 400km", "Sạc nhanh 30 phút", "Hệ thống tự lái L2"]
+      features: ["100% động cơ điện", "Phạm vi 400km", "Sạc nhanh 30 phút", "Hệ thống tự lái L2"],
+      priority: 3
     }
   };
 
@@ -168,7 +173,8 @@ const HeroCarousel = ({
           price: carInfo.price,
           image: image.url,
           mobile_image: image.mobile_url,
-          features: carInfo.features
+          features: carInfo.features,
+          priority: carInfo.priority || 999
         } : {
           name: image.name,
           tagline: "Geely Ninh Thuận",
@@ -176,7 +182,8 @@ const HeroCarousel = ({
           price: "Liên hệ để biết giá",
           image: image.url,
           mobile_image: image.mobile_url,
-          features: ["Công nghệ hiện đại", "Thiết kế sang trọng", "An toàn cao cấp", "Tiết kiệm nhiên liệu"]
+          features: ["Công nghệ hiện đại", "Thiết kế sang trọng", "An toàn cao cấp", "Tiết kiệm nhiên liệu"],
+          priority: 999
         };
 
         console.log('✅ Created car object:', carObject);
@@ -185,11 +192,14 @@ const HeroCarousel = ({
         return carObject;
       });
 
+      // Sắp xếp theo thứ tự ưu tiên (priority thấp hơn = hiển thị trước)
+      const sortedCars = heroImages.sort((a, b) => (a.priority || 999) - (b.priority || 999));
+
       console.log('\n🎯 FINAL PROCESSING RESULT:');
-      console.log('Total hero cars created:', heroImages.length);
-      console.log('All hero cars:', heroImages);
+      console.log('Total hero cars created:', sortedCars.length);
+      console.log('Sorted hero cars by priority:', sortedCars);
       
-      setCars(heroImages);
+      setCars(sortedCars);
 
     } catch (error) {
       console.error('💥 CRITICAL ERROR in fetchHeroImages:', error);
@@ -210,7 +220,7 @@ const HeroCarousel = ({
         setCurrentIndex(prevIndex => (prevIndex + 1) % cars.length);
         setIsTransitioning(false);
       }, 300);
-    }, 10000);
+    }, 12000); // Tăng thời gian để xem rõ hơn
     return () => clearInterval(interval);
   }, [cars.length]);
 
@@ -256,38 +266,45 @@ const HeroCarousel = ({
 
   return (
     <section className="relative h-screen overflow-hidden">
-      {/* Background Image with transition */}
+      {/* Background Image with improved visibility */}
       <div className="absolute inset-0">
         <div className={`w-full h-full transition-transform duration-700 ease-in-out ${isTransitioning ? 'transform translate-x-[-100%]' : 'transform translate-x-0'}`}>
-          <img src={currentImage} alt={currentCar.name} className="w-full h-full object-cover" />
+          <img 
+            src={currentImage} 
+            alt={currentCar.name} 
+            className="w-full h-full object-cover object-center"
+            style={{ objectPosition: 'center center' }}
+          />
         </div>
-        <div className="absolute inset-0 bg-black/50 md:bg-black/40"></div>
+        {/* Reduced overlay opacity để hình xe rõ hơn */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/20 md:from-black/60 md:via-black/30 md:to-transparent"></div>
       </div>
 
-      {/* Content */}
+      {/* Content với improved layout */}
       <div className="relative z-10 h-full flex items-center">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="text-white">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-light mb-2 md:mb-4 animate-fade-in">
+          <div className="grid lg:grid-cols-12 gap-12 items-center h-full">
+            {/* Content bên trái - chiếm ít không gian hơn để hình xe rõ hơn */}
+            <div className="lg:col-span-5 text-white">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light mb-2 md:mb-4 animate-fade-in leading-tight">
                 {currentCar.name}
               </h1>
               <p className="text-lg sm:text-xl md:text-2xl font-medium text-blue-300 mb-4 md:mb-6 animate-fade-in">
                 {currentCar.tagline}
               </p>
-              <p className="text-sm sm:text-base md:text-lg text-gray-200 mb-4 md:mb-8 leading-relaxed animate-fade-in">
+              <p className="text-sm sm:text-base md:text-lg text-gray-200 mb-4 md:mb-6 leading-relaxed animate-fade-in max-w-lg">
                 {currentCar.description}
               </p>
-              <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4 md:mb-8 animate-fade-in">
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6 animate-fade-in">
                 {currentCar.price}
               </p>
 
-              <div className="space-y-3 md:space-y-4 mb-4 md:mb-8">
+              <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
                 <h4 className="text-sm md:text-lg font-semibold text-white">{t('features')}</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-1 md:gap-2">
-                  {currentCar.features.map((feature, idx) => (
-                    <div key={idx} className="flex items-center text-gray-200 text-xs md:text-base">
-                      <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-blue-400 rounded-full mr-2 md:mr-3"></div>
+                <div className="grid grid-cols-1 gap-1 md:gap-2">
+                  {currentCar.features.slice(0, 4).map((feature, idx) => (
+                    <div key={idx} className="flex items-center text-gray-200 text-xs md:text-sm">
+                      <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-blue-400 rounded-full mr-2 md:mr-3 flex-shrink-0"></div>
                       {feature}
                     </div>
                   ))}
@@ -295,25 +312,26 @@ const HeroCarousel = ({
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3 md:gap-4 animate-fade-in">
-                <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 md:px-8 py-2 md:py-3 rounded-full text-sm md:text-base" onClick={() => onExplore(currentCar.name)}>
+                <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-full text-sm md:text-base font-medium" onClick={() => onExplore(currentCar.name)}>
                   <Eye className="mr-2 h-4 w-4 md:h-5 md:w-5" />
                   Khám phá
                   <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
                 </Button>
 
-                <Button size="lg" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 md:px-8 py-2 md:py-3 rounded-full text-sm md:text-base" onClick={() => onTestDrive(currentCar.name)}>
+                <Button size="lg" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-full text-sm md:text-base font-medium" onClick={() => onTestDrive(currentCar.name)}>
                   <Calendar className="mr-2 h-4 w-4 md:h-5 md:w-5" />
                   {t('scheduleTestDrive')}
-                  <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
                 </Button>
                 
-                <Button variant="outline" size="lg" onClick={() => onPriceQuote(currentCar.name)} className="border-white hover:bg-white px-6 md:px-8 py-2 md:py-3 rounded-full text-sm md:text-base text-gray-950">
+                <Button variant="outline" size="lg" onClick={() => onPriceQuote(currentCar.name)} className="border-white hover:bg-white px-4 md:px-6 py-2 md:py-3 rounded-full text-sm md:text-base text-gray-950 font-medium">
                   <Calculator className="mr-2 h-4 w-4 md:h-5 md:w-5" />
                   {t('viewQuote')}
-                  <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
                 </Button>
               </div>
             </div>
+            
+            {/* Khoảng trống để hình xe hiển thị rõ hơn */}
+            <div className="hidden lg:block lg:col-span-7"></div>
           </div>
         </div>
       </div>
@@ -321,23 +339,11 @@ const HeroCarousel = ({
       {/* Navigation Arrows */}
       {cars.length > 1 && (
         <>
-          <button onClick={() => {
-            setIsTransitioning(true);
-            setTimeout(() => {
-              setCurrentIndex(prevIndex => (prevIndex - 1 + cars.length) % cars.length);
-              setIsTransitioning(false);
-            }, 300);
-          }} className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 text-white p-2 md:p-3 rounded-full backdrop-blur-sm transition-all">
+          <button onClick={goToPrevious} className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 text-white p-2 md:p-3 rounded-full backdrop-blur-sm transition-all">
             <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
           </button>
           
-          <button onClick={() => {
-            setIsTransitioning(true);
-            setTimeout(() => {
-              setCurrentIndex(prevIndex => (prevIndex + 1) % cars.length);
-              setIsTransitioning(false);
-            }, 300);
-          }} className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 text-white p-2 md:p-3 rounded-full backdrop-blur-sm transition-all">
+          <button onClick={goToNext} className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 text-white p-2 md:p-3 rounded-full backdrop-blur-sm transition-all">
             <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
           </button>
         </>
