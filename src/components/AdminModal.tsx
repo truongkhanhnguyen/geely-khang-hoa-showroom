@@ -4,7 +4,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { X } from "lucide-react";
 
 interface AdminModalProps {
   isOpen: boolean;
@@ -37,18 +36,10 @@ const AdminModal = ({ isOpen, onClose, onLogin }: AdminModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-md">
-        <DialogHeader className="relative">
+        <DialogHeader>
           <DialogTitle className="text-center text-xl font-semibold">
             Đăng nhập Admin
           </DialogTitle>
-          <Button
-            variant="outline"
-            size="icon"
-            className="absolute -top-2 -right-2"
-            onClick={handleClose}
-          >
-            <X className="h-4 w-4" />
-          </Button>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 p-4">

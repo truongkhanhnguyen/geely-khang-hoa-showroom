@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { X } from "lucide-react";
 import PriceManagement from "./admin/PriceManagement";
 import ImageManagement from "./admin/ImageManagement";
 import PromotionsManagement from "./admin/PromotionsManagement";
@@ -18,18 +17,10 @@ const AdminPanel = ({ isOpen, onClose }: AdminPanelProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader className="relative">
+        <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold text-blue-600">
             Quản Lý Admin - Geely Ninh Thuận
           </DialogTitle>
-          <Button
-            variant="outline"
-            size="icon"
-            className="absolute -top-2 -right-2"
-            onClick={onClose}
-          >
-            <X className="h-4 w-4" />
-          </Button>
         </DialogHeader>
 
         <div className="p-6">
