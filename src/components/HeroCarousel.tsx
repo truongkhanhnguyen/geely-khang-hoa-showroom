@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -70,18 +71,21 @@ const HeroCarousel = ({
   }, []);
 
   useEffect(() => {
+    console.log('=== HERO CAROUSEL DEBUGGING ===');
     if (propsCars) {
-      console.log('Using props cars:', propsCars);
+      console.log('Using props cars (from Index.tsx):', propsCars);
       setCars(propsCars);
     } else {
-      console.log('Fetching hero images from database...');
+      console.log('No props cars provided, fetching from database...');
       fetchHeroImages();
     }
   }, [propsCars]);
 
   const fetchHeroImages = async () => {
     try {
-      console.log('Querying hero images from database...');
+      console.log('🔍 Querying database for hero images...');
+      console.log('Query: SELECT * FROM website_images WHERE category = "hero" ORDER BY created_at DESC');
+      
       const { data, error } = await supabase
         .from('website_images')
         .select('*')
@@ -89,29 +93,44 @@ const HeroCarousel = ({
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Database error:', error);
+        console.error('❌ Database query error:', error);
         throw error;
       }
 
-      console.log('Fetched hero images:', data);
+      console.log('✅ Database query successful!');
+      console.log('📊 Raw data from database:', data);
+      console.log('📈 Number of records found:', data?.length || 0);
 
       if (!data || data.length === 0) {
-        console.log('No hero images found in database, using default cars');
+        console.log('⚠️ No hero images found in database, using default cars');
         const defaultCars = Object.values(carModelsMapping).map(car => ({
           ...car,
           image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop"
         }));
+        console.log('🔄 Setting default cars:', defaultCars);
         setCars(defaultCars);
         return;
       }
 
-      // Convert hero images to car format by matching with car models
-      const heroImages = data.map((image: any) => {
-        console.log('Processing image:', image);
+      // Process each image from database
+      console.log('🔄 Processing each image from database...');
+      const heroImages = data.map((image: any, index: number) => {
+        console.log(`\n--- Processing Image ${index + 1} ---`);
+        console.log('Image object:', {
+          id: image.id,
+          name: image.name,
+          description: image.description,
+          category: image.category,
+          url: image.url,
+          mobile_url: image.mobile_url
+        });
         
         // Try to detect car model from description or name
         const imageName = image.name.toLowerCase();
         const imageDesc = (image.description || '').toLowerCase();
+        
+        console.log('🔍 Checking image name:', imageName);
+        console.log('🔍 Checking image description:', imageDesc);
         
         let carModel = 'general';
         let carInfo = null;
@@ -120,51 +139,53 @@ const HeroCarousel = ({
         if (imageName.includes('coolray') || imageDesc.includes('coolray')) {
           carModel = 'coolray';
           carInfo = carModelsMapping.coolray;
-          console.log('Matched Coolray for image:', image.name);
+          console.log('✅ MATCHED COOLRAY for image:', image.name);
         } else if (imageName.includes('monjaro') || imageDesc.includes('monjaro')) {
           carModel = 'monjaro';
           carInfo = carModelsMapping.monjaro;
-          console.log('Matched Monjaro for image:', image.name);
+          console.log('✅ MATCHED MONJARO for image:', image.name);
         } else if (imageName.includes('ex5') || imageDesc.includes('ex5')) {
           carModel = 'ex5';
           carInfo = carModelsMapping.ex5;
-          console.log('Matched EX5 for image:', image.name);
+          console.log('✅ MATCHED EX5 for image:', image.name);
+        } else {
+          console.log('❌ NO MATCH found for image:', image.name);
         }
 
-        // Use car-specific info if found, otherwise use generic
-        if (carInfo) {
-          console.log('Using car info for:', carInfo.name);
-          return {
-            name: carInfo.name,
-            tagline: carInfo.tagline,
-            description: carInfo.description,
-            price: carInfo.price,
-            image: image.url,
-            mobile_image: image.mobile_url,
-            features: carInfo.features
-          };
-        } else {
-          console.log('Using generic info for:', image.name);
-          // Generic car for images not matching specific models
-          return {
-            name: image.name,
-            tagline: "Geely Ninh Thuận",
-            description: image.description || `Khám phá ${image.name} - Xe hơi hiện đại với công nghệ tiên tiến`,
-            price: "Liên hệ để biết giá",
-            image: image.url,
-            mobile_image: image.mobile_url,
-            features: ["Công nghệ hiện đại", "Thiết kế sang trọng", "An toàn cao cấp", "Tiết kiệm nhiên liệu"]
-          };
-        }
+        // Create car object
+        const carObject = carInfo ? {
+          name: carInfo.name,
+          tagline: carInfo.tagline,
+          description: carInfo.description,
+          price: carInfo.price,
+          image: image.url,
+          mobile_image: image.mobile_url,
+          features: carInfo.features
+        } : {
+          name: image.name,
+          tagline: "Geely Ninh Thuận",
+          description: image.description || `Khám phá ${image.name} - Xe hơi hiện đại với công nghệ tiên tiến`,
+          price: "Liên hệ để biết giá",
+          image: image.url,
+          mobile_image: image.mobile_url,
+          features: ["Công nghệ hiện đại", "Thiết kế sang trọng", "An toàn cao cấp", "Tiết kiệm nhiên liệu"]
+        };
+
+        console.log('🚗 Created car object:', carObject);
+        console.log('🖼️ Image URL being used:', carObject.image);
+        
+        return carObject;
       });
 
-      console.log('Processed hero cars:', heroImages);
+      console.log('\n🎯 FINAL RESULT:');
+      console.log('📋 Total processed hero cars:', heroImages.length);
+      console.log('🚗 All hero cars:', heroImages);
+      
       setCars(heroImages);
 
     } catch (error) {
-      console.error('Error fetching hero images:', error);
-      // Fallback to default if error
-      console.log('Using fallback default cars due to error');
+      console.error('💥 Critical error in fetchHeroImages:', error);
+      console.log('🔄 Using fallback default cars due to error');
       const defaultCars = Object.values(carModelsMapping).map(car => ({
         ...car,
         image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop"
@@ -201,10 +222,13 @@ const HeroCarousel = ({
     }, 300);
   };
 
-  console.log('Current cars state:', cars);
-  console.log('Current index:', currentIndex);
+  console.log('\n🎬 RENDER INFO:');
+  console.log('📊 Current cars state:', cars);
+  console.log('📍 Current index:', currentIndex);
+  console.log('📱 Is mobile:', isMobile);
 
   if (cars.length === 0) {
+    console.log('⏳ No cars to display, showing loading...');
     return <section className="relative h-screen overflow-hidden bg-gray-900 flex items-center justify-center">
         <div className="text-white text-center">
           <h2 className="text-3xl font-light mb-4">Đang tải...</h2>
@@ -216,8 +240,10 @@ const HeroCarousel = ({
   const currentCar = cars[currentIndex];
   const currentImage = isMobile && currentCar.mobile_image ? currentCar.mobile_image : currentCar.image;
 
-  console.log('Displaying car:', currentCar.name);
-  console.log('Using image:', currentImage);
+  console.log('\n🎯 DISPLAYING:');
+  console.log('🚗 Current car:', currentCar.name);
+  console.log('🖼️ Image URL:', currentImage);
+  console.log('📱 Using mobile image:', isMobile && currentCar.mobile_image ? 'YES' : 'NO');
 
   return (
     <section className="relative h-screen overflow-hidden">
