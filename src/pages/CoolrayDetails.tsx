@@ -90,7 +90,7 @@ const CoolrayDetails = () => {
 
       {/* Hero Carousel Section */}
       <section className="pt-16">
-        <CarImageCarousel images={carImages} carName="Geely Coolray" />
+        <CarImageCarousel images={carImages} carModel="Coolray" />
         
         {/* Overlay Content */}
         <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-10 text-center">
