@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Upload, Trash2, Eye, Monitor, Smartphone, Image } from "lucide-react";
+import { Upload, Trash2, Eye, Monitor, Smartphone, Image, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -38,12 +37,54 @@ const ImageManagement = () => {
   });
 
   const imageCategories = [
-    { value: "hero", label: "Hero Banner", size: "1920x1080 (Mobile: 768x1024)", description: "Hình ảnh banner chính" },
-    { value: "car", label: "Xe hơi", size: "800x600", description: "Hình ảnh sản phẩm xe" },
-    { value: "promotion", label: "Khuyến mãi", size: "400x250", description: "Hình ảnh khuyến mãi" },
-    { value: "news", label: "Tin tức", size: "400x250", description: "Hình ảnh tin tức" },
-    { value: "gallery", label: "Thư viện", size: "600x400", description: "Hình ảnh thư viện" },
-    { value: "general", label: "Tổng quát", size: "Tùy chỉnh", description: "Hình ảnh khác" }
+    { 
+      value: "hero", 
+      label: "Hero Banner", 
+      size: "1920x1080 (Mobile: 768x1024)", 
+      description: "Hình ảnh banner chính trang chủ",
+      position: "Trang chủ - Phần đầu (carousel chính)",
+      usage: "Hiển thị ở banner chính, tự động chuyển đổi"
+    },
+    { 
+      value: "car", 
+      label: "Xe hơi", 
+      size: "800x600", 
+      description: "Hình ảnh sản phẩm xe",
+      position: "Trang sản phẩm, gallery xe",
+      usage: "Hiển thị trong danh sách xe và chi tiết sản phẩm"
+    },
+    { 
+      value: "promotion", 
+      label: "Khuyến mãi", 
+      size: "400x250", 
+      description: "Hình ảnh khuyến mãi",
+      position: "Trang chủ - Phần khuyến mãi, trang khuyến mãi riêng",
+      usage: "Hiển thị trong card khuyến mãi"
+    },
+    { 
+      value: "news", 
+      label: "Tin tức", 
+      size: "400x250", 
+      description: "Hình ảnh tin tức",
+      position: "Trang chủ - Phần tin tức, trang tin tức riêng",
+      usage: "Hiển thị làm thumbnail cho bài viết"
+    },
+    { 
+      value: "gallery", 
+      label: "Thư viện", 
+      size: "600x400", 
+      description: "Hình ảnh thư viện",
+      position: "Trang gallery, album hình ảnh",
+      usage: "Hiển thị trong bộ sưu tập hình ảnh"
+    },
+    { 
+      value: "general", 
+      label: "Tổng quát", 
+      size: "Tùy chỉnh", 
+      description: "Hình ảnh khác",
+      position: "Các vị trí khác trên website",
+      usage: "Sử dụng cho mục đích chung"
+    }
   ];
 
   useEffect(() => {
@@ -229,6 +270,8 @@ const ImageManagement = () => {
     return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
   };
 
+  const selectedCategory = imageCategories.find(cat => cat.value === uploadForm.category);
+
   if (loading) {
     return <div className="text-center py-8">Đang tải...</div>;
   }
@@ -273,6 +316,34 @@ const ImageManagement = () => {
             </div>
           </div>
 
+          {/* Category Information Display */}
+          {selectedCategory && (
+            <Card className="bg-blue-50 border-blue-200">
+              <CardContent className="pt-4">
+                <div className="flex items-start space-x-2">
+                  <Info className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-blue-900">Thông tin danh mục: {selectedCategory.label}</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <span className="font-medium text-blue-800">Kích thước khuyến nghị:</span>
+                        <p className="text-blue-700">{selectedCategory.size}</p>
+                      </div>
+                      <div>
+                        <span className="font-medium text-blue-800">Vị trí hiển thị:</span>
+                        <p className="text-blue-700">{selectedCategory.position}</p>
+                      </div>
+                      <div className="md:col-span-2">
+                        <span className="font-medium text-blue-800">Cách sử dụng:</span>
+                        <p className="text-blue-700">{selectedCategory.usage}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label className="flex items-center">
@@ -294,6 +365,9 @@ const ImageManagement = () => {
                   {uploadForm.desktopFile.name} ({formatFileSize(uploadForm.desktopFile.size)})
                 </p>
               )}
+              <p className="text-xs text-gray-500 mt-1">
+                📱 Hiển thị trên máy tính, laptop, tablet ngang
+              </p>
             </div>
             <div>
               <Label className="flex items-center">
@@ -315,6 +389,9 @@ const ImageManagement = () => {
                   {uploadForm.mobileFile.name} ({formatFileSize(uploadForm.mobileFile.size)})
                 </p>
               )}
+              <p className="text-xs text-gray-500 mt-1">
+                📱 Hiển thị trên điện thoại, tablet dọc (nếu không có sẽ dùng ảnh PC)
+              </p>
             </div>
           </div>
 
@@ -347,20 +424,55 @@ const ImageManagement = () => {
         </CardContent>
       </Card>
 
-      {/* Recommended Sizes Guide */}
+      {/* Detailed Sizes Guide */}
       <Card>
         <CardHeader>
-          <CardTitle>Hướng Dẫn Kích Thước Hình Ảnh</CardTitle>
+          <CardTitle>📐 Hướng Dẫn Chi Tiết Kích Thước & Vị Trí</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {imageCategories.map((cat) => (
-              <div key={cat.value} className="p-3 border rounded-lg">
-                <h4 className="font-semibold">{cat.label}</h4>
-                <p className="text-sm text-gray-600">Kích thước: {cat.size}</p>
-                <p className="text-xs text-gray-500 mt-1">{cat.description}</p>
+              <div key={cat.value} className="p-4 border rounded-lg space-y-3">
+                <div className="flex items-center space-x-2">
+                  <Badge className={getCategoryBadgeColor(cat.value)}>
+                    {cat.label}
+                  </Badge>
+                </div>
+                
+                <div className="space-y-2 text-sm">
+                  <div>
+                    <span className="font-semibold text-gray-700">📏 Kích thước:</span>
+                    <p className="text-gray-600">{cat.size}</p>
+                  </div>
+                  
+                  <div>
+                    <span className="font-semibold text-gray-700">📍 Vị trí hiển thị:</span>
+                    <p className="text-gray-600">{cat.position}</p>
+                  </div>
+                  
+                  <div>
+                    <span className="font-semibold text-gray-700">🎯 Cách sử dụng:</span>
+                    <p className="text-gray-600">{cat.usage}</p>
+                  </div>
+                  
+                  <div>
+                    <span className="font-semibold text-gray-700">💡 Ghi chú:</span>
+                    <p className="text-gray-600">{cat.description}</p>
+                  </div>
+                </div>
               </div>
             ))}
+          </div>
+          
+          <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <h4 className="font-semibold text-yellow-800 mb-2">⚠️ Lưu ý quan trọng:</h4>
+            <ul className="text-sm text-yellow-700 space-y-1">
+              <li>• Hình ảnh PC/Desktop là bắt buộc cho tất cả danh mục</li>
+              <li>• Hình ảnh Mobile chỉ cần thiết cho Hero Banner để tối ưu hiển thị trên điện thoại</li>
+              <li>• Nếu không có hình Mobile, hệ thống sẽ tự động sử dụng hình PC</li>
+              <li>• Kích thước file nên dưới 5MB để tăng tốc độ tải</li>
+              <li>• Định dạng khuyến nghị: JPG, PNG, WebP</li>
+            </ul>
           </div>
         </CardContent>
       </Card>
