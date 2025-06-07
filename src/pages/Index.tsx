@@ -78,7 +78,7 @@ const Index = () => {
               <img 
                 src="/lovable-uploads/53460547-efd5-41cc-9b2d-92f168c32983.png" 
                 alt="Geely Ninh Thuận Logo" 
-                className="h-8 md:h-10 w-auto"
+                className="h-10 md:h-12 w-auto"
               />
             </div>
             
