@@ -75,6 +75,45 @@ export type Database = {
         }
         Relationships: []
       }
+      website_images: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          file_name: string | null
+          file_size: number | null
+          id: string
+          mobile_url: string | null
+          name: string
+          recommended_size: string
+          url: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          id?: string
+          mobile_url?: string | null
+          name: string
+          recommended_size: string
+          url: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          id?: string
+          mobile_url?: string | null
+          name?: string
+          recommended_size?: string
+          url?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

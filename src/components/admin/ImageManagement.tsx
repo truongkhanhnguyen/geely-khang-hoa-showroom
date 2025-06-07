@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Upload, Trash2, Eye, Monitor, Smartphone } from "lucide-react";
+import { Upload, Trash2, Eye, Monitor, Smartphone, Image } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -19,6 +19,8 @@ interface WebsiteImage {
   category: string;
   recommended_size: string;
   description: string;
+  file_name?: string;
+  file_size?: number;
   created_at: string;
 }
 
@@ -26,12 +28,13 @@ const ImageManagement = () => {
   const { toast } = useToast();
   const [images, setImages] = useState<WebsiteImage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
   const [uploadForm, setUploadForm] = useState({
     name: "",
     category: "general",
-    url: "",
-    mobile_url: "",
-    description: ""
+    description: "",
+    desktopFile: null as File | null,
+    mobileFile: null as File | null
   });
 
   const imageCategories = [
@@ -49,7 +52,7 @@ const ImageManagement = () => {
 
   const fetchImages = async () => {
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('website_images')
         .select('*')
         .order('created_at', { ascending: false });
@@ -68,59 +71,123 @@ const ImageManagement = () => {
     }
   };
 
+  const uploadFileToStorage = async (file: File, fileName: string): Promise<string> => {
+    const { data, error } = await supabase.storage
+      .from('website-images')
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (error) throw error;
+
+    const { data: urlData } = supabase.storage
+      .from('website-images')
+      .getPublicUrl(data.path);
+
+    return urlData.publicUrl;
+  };
+
   const handleUpload = async () => {
-    if (!uploadForm.name || !uploadForm.url) {
+    if (!uploadForm.name || !uploadForm.desktopFile) {
       toast({
         title: "Thiếu thông tin",
-        description: "Vui lòng điền đầy đủ tên và URL hình ảnh PC",
+        description: "Vui lòng điền đầy đủ tên và chọn file hình ảnh PC",
         variant: "destructive"
       });
       return;
     }
 
+    setUploading(true);
+    
     try {
+      const timestamp = Date.now();
       const categoryInfo = imageCategories.find(cat => cat.value === uploadForm.category);
-      
-      const { error } = await (supabase as any)
+
+      // Upload desktop file
+      const desktopFileName = `${uploadForm.category}-${timestamp}-desktop.${uploadForm.desktopFile.name.split('.').pop()}`;
+      const desktopUrl = await uploadFileToStorage(uploadForm.desktopFile, desktopFileName);
+
+      // Upload mobile file if provided
+      let mobileUrl = null;
+      let mobileFileName = null;
+      if (uploadForm.mobileFile) {
+        mobileFileName = `${uploadForm.category}-${timestamp}-mobile.${uploadForm.mobileFile.name.split('.').pop()}`;
+        mobileUrl = await uploadFileToStorage(uploadForm.mobileFile, mobileFileName);
+      }
+
+      // Save metadata to database
+      const { error } = await supabase
         .from('website_images')
         .insert([{
           name: uploadForm.name,
-          url: uploadForm.url,
-          mobile_url: uploadForm.mobile_url || null,
+          url: desktopUrl,
+          mobile_url: mobileUrl,
           category: uploadForm.category,
           recommended_size: categoryInfo?.size || "Tùy chỉnh",
-          description: uploadForm.description
+          description: uploadForm.description,
+          file_name: desktopFileName,
+          file_size: uploadForm.desktopFile.size
         }]);
 
       if (error) throw error;
 
       toast({
         title: "Thành công",
-        description: "Đã thêm hình ảnh mới"
+        description: "Đã upload hình ảnh thành công"
       });
 
       setUploadForm({
         name: "",
         category: "general",
-        url: "",
-        mobile_url: "",
-        description: ""
+        description: "",
+        desktopFile: null,
+        mobileFile: null
       });
+
+      // Reset file inputs
+      const desktopInput = document.getElementById('desktop-file') as HTMLInputElement;
+      const mobileInput = document.getElementById('mobile-file') as HTMLInputElement;
+      if (desktopInput) desktopInput.value = '';
+      if (mobileInput) mobileInput.value = '';
 
       fetchImages();
     } catch (error) {
       console.error('Error uploading image:', error);
       toast({
         title: "Lỗi",
-        description: "Không thể thêm hình ảnh",
+        description: "Không thể upload hình ảnh. Vui lòng thử lại.",
         variant: "destructive"
       });
+    } finally {
+      setUploading(false);
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, fileName?: string, mobileFileName?: string) => {
     try {
-      const { error } = await (supabase as any)
+      // Delete files from storage
+      if (fileName) {
+        await supabase.storage
+          .from('website-images')
+          .remove([fileName]);
+      }
+      
+      if (mobileFileName) {
+        // Extract mobile file name from URL if needed
+        const mobileUrl = images.find(img => img.id === id)?.mobile_url;
+        if (mobileUrl) {
+          const mobilePath = mobileUrl.split('/').pop();
+          if (mobilePath) {
+            await supabase.storage
+              .from('website-images')
+              .remove([mobilePath]);
+          }
+        }
+      }
+
+      // Delete record from database
+      const { error } = await supabase
         .from('website_images')
         .delete()
         .eq('id', id);
@@ -155,6 +222,13 @@ const ImageManagement = () => {
     return colors[category] || colors.general;
   };
 
+  const formatFileSize = (bytes?: number) => {
+    if (!bytes) return 'N/A';
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+  };
+
   if (loading) {
     return <div className="text-center py-8">Đang tải...</div>;
   }
@@ -166,7 +240,7 @@ const ImageManagement = () => {
         <CardHeader>
           <CardTitle className="flex items-center">
             <Upload className="w-5 h-5 mr-2" />
-            Thêm Hình Ảnh Mới
+            Upload Hình Ảnh Mới
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -203,24 +277,44 @@ const ImageManagement = () => {
             <div>
               <Label className="flex items-center">
                 <Monitor className="w-4 h-4 mr-1" />
-                URL hình ảnh PC/Desktop *
+                Hình ảnh PC/Desktop *
               </Label>
               <Input
-                value={uploadForm.url}
-                onChange={(e) => setUploadForm(prev => ({ ...prev, url: e.target.value }))}
-                placeholder="https://example.com/desktop-image.jpg"
+                id="desktop-file"
+                type="file"
+                accept="image/*"
+                onChange={(e) => setUploadForm(prev => ({ 
+                  ...prev, 
+                  desktopFile: e.target.files?.[0] || null 
+                }))}
+                className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
+              {uploadForm.desktopFile && (
+                <p className="text-sm text-gray-500 mt-1">
+                  {uploadForm.desktopFile.name} ({formatFileSize(uploadForm.desktopFile.size)})
+                </p>
+              )}
             </div>
             <div>
               <Label className="flex items-center">
                 <Smartphone className="w-4 h-4 mr-1" />
-                URL hình ảnh Mobile (tùy chọn)
+                Hình ảnh Mobile (tùy chọn)
               </Label>
               <Input
-                value={uploadForm.mobile_url}
-                onChange={(e) => setUploadForm(prev => ({ ...prev, mobile_url: e.target.value }))}
-                placeholder="https://example.com/mobile-image.jpg"
+                id="mobile-file"
+                type="file"
+                accept="image/*"
+                onChange={(e) => setUploadForm(prev => ({ 
+                  ...prev, 
+                  mobileFile: e.target.files?.[0] || null 
+                }))}
+                className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
+              {uploadForm.mobileFile && (
+                <p className="text-sm text-gray-500 mt-1">
+                  {uploadForm.mobileFile.name} ({formatFileSize(uploadForm.mobileFile.size)})
+                </p>
+              )}
             </div>
           </div>
 
@@ -233,8 +327,22 @@ const ImageManagement = () => {
             />
           </div>
 
-          <Button onClick={handleUpload} className="w-full">
-            Thêm Hình Ảnh
+          <Button 
+            onClick={handleUpload} 
+            className="w-full" 
+            disabled={uploading}
+          >
+            {uploading ? (
+              <>
+                <Upload className="w-4 h-4 mr-2 animate-spin" />
+                Đang upload...
+              </>
+            ) : (
+              <>
+                <Image className="w-4 h-4 mr-2" />
+                Upload Hình Ảnh
+              </>
+            )}
           </Button>
         </CardContent>
       </Card>
@@ -269,7 +377,7 @@ const ImageManagement = () => {
                 <TableHead>Hình ảnh</TableHead>
                 <TableHead>Tên</TableHead>
                 <TableHead>Danh mục</TableHead>
-                <TableHead>Kích thước</TableHead>
+                <TableHead>Kích thước file</TableHead>
                 <TableHead>Thiết bị</TableHead>
                 <TableHead>Thao tác</TableHead>
               </TableRow>
@@ -316,7 +424,12 @@ const ImageManagement = () => {
                       {imageCategories.find(cat => cat.value === image.category)?.label || image.category}
                     </Badge>
                   </TableCell>
-                  <TableCell>{image.recommended_size}</TableCell>
+                  <TableCell>
+                    <p className="text-sm">{formatFileSize(image.file_size)}</p>
+                    {image.file_name && (
+                      <p className="text-xs text-gray-500">{image.file_name}</p>
+                    )}
+                  </TableCell>
                   <TableCell>
                     <div className="flex space-x-1">
                       <Badge variant="outline" className="text-xs">
@@ -343,7 +456,7 @@ const ImageManagement = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleDelete(image.id)}
+                        onClick={() => handleDelete(image.id, image.file_name)}
                         className="text-red-600 hover:text-red-700"
                       >
                         <Trash2 className="w-4 h-4" />
