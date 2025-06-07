@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, Calendar, Calculator, Fuel, Gauge, Shield, Cog, Eye, Zap } from "lucide-react";
@@ -77,10 +76,9 @@ const MonjaroDetails = () => {
               </Button>
               <div className="flex items-center space-x-3">
                 <img 
-                  src="/lovable-uploads/53460547-efd5-41cc-9b2d-92f168c32983.png" 
+                  src="/lovable-uploads/fcdb7433-edf5-46e0-a645-63687828d441.png" 
                   alt="Geely Logo" 
-                  className="h-8 w-auto cursor-pointer hover:opacity-80 transition-opacity"
-                  onClick={() => navigate('/')}
+                  className="h-8 w-auto"
                 />
                 <span className="text-xl font-semibold text-gray-900">Geely Monjaro</span>
               </div>
@@ -91,7 +89,7 @@ const MonjaroDetails = () => {
       </header>
 
       {/* Hero Carousel Section */}
-      <section className="pt-16 relative">
+      <section className="pt-16">
         <CarImageCarousel images={carImages} carModel="Monjaro" />
         
         {/* Overlay Content */}

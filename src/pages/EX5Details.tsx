@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, Calendar, Calculator, Battery, Gauge, Shield, Cog, Eye, Zap } from "lucide-react";
@@ -91,7 +90,7 @@ const EX5Details = () => {
       </header>
 
       {/* Hero Carousel Section */}
-      <section className="pt-16 relative">
+      <section className="pt-16">
         <CarImageCarousel images={carImages} carModel="EX5" />
         
         {/* Overlay Content */}
