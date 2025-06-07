@@ -14,6 +14,7 @@ import PromotionsSection from "@/components/PromotionsSection";
 import ContactFooter from "@/components/ContactFooter";
 import NewsSection from "@/components/NewsSection";
 import ContactModal from "@/components/ContactModal";
+
 const Index = () => {
   const {
     t
@@ -42,7 +43,7 @@ const Index = () => {
     tagline: "Electric. Efficient. Future.",
     description: "SUV điện thông minh với công nghệ pin tiên tiến và khả năng vận hành êm ái, dẫn đầu xu hướng xanh.",
     price: "Từ 769 triệu VNĐ",
-    image: "https://images.unsplash.com/photo-1593941707882-a5bac6861d75?w=1920&h=1080&fit=crop",
+    image: "https://images.unsplash.com/photo-1593941707882-a5bac6861975?w=1920&h=1080&fit=crop",
     features: ["100% động cơ điện", "Phạm vi 400km", "Sạc nhanh 30 phút", "Hệ thống tự lái L2"]
   }];
   const handleTestDrive = (carName: string) => {
@@ -74,10 +75,8 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14 md:h-16">
             <div className="flex items-center space-x-2 md:space-x-3">
-              <img src="/lovable-uploads/3f3f054c-409a-4bfd-84c6-f58576129a83.png" alt="Geely Logo" className="h-6 md:h-8 w-auto" />
-              <span className="text-sm md:text-xl font-bold text-gray-900 tracking-wider" style={{
-              fontFamily: 'Arial, sans-serif'
-            }}>NINH THUẬN</span>
+              <img src="/lovable-uploads/3f3f054c-409a-4bfd-84c6-f58576129a83.png" alt="Geely Logo" className="h-5 md:h-7 w-auto" />
+              <img src="/lovable-uploads/c3dc1241-c76f-4ee8-9a33-113bac92b56d.png" alt="Geely Ninh Thuận" className="h-4 md:h-6 w-auto" />
             </div>
             
             <nav className="hidden md:flex items-center space-x-8">
@@ -171,4 +170,5 @@ const Index = () => {
       <ContactModal isOpen={showContactModal} onClose={() => setShowContactModal(false)} />
     </div>;
 };
+
 export default Index;
