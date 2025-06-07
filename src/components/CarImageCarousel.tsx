@@ -77,7 +77,7 @@ const CarImageCarousel = ({ carModel, images: propImages }: CarImageCarouselProp
 
   if (loading) {
     return (
-      <div className="relative w-full h-64 md:h-96 bg-gray-200 rounded-lg flex items-center justify-center">
+      <div className="relative w-full h-[600px] bg-gray-200 flex items-center justify-center">
         <div className="text-gray-500">Đang tải hình ảnh...</div>
       </div>
     );
@@ -85,14 +85,14 @@ const CarImageCarousel = ({ carModel, images: propImages }: CarImageCarouselProp
 
   if (images.length === 0) {
     return (
-      <div className="relative w-full h-64 md:h-96 bg-gray-200 rounded-lg flex items-center justify-center">
+      <div className="relative w-full h-[600px] bg-gray-200 flex items-center justify-center">
         <div className="text-gray-500">Không có hình ảnh</div>
       </div>
     );
   }
 
   return (
-    <div className="relative w-full h-64 md:h-96 rounded-lg overflow-hidden group">
+    <div className="relative w-full h-[600px] overflow-hidden">
       <img
         src={images[currentImageIndex]}
         alt={`${carModel} - Hình ${currentImageIndex + 1}`}
@@ -105,7 +105,7 @@ const CarImageCarousel = ({ carModel, images: propImages }: CarImageCarouselProp
           <Button
             variant="ghost"
             size="icon"
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
             onClick={prevImage}
           >
             <ChevronLeft className="h-5 w-5" />
@@ -114,7 +114,7 @@ const CarImageCarousel = ({ carModel, images: propImages }: CarImageCarouselProp
           <Button
             variant="ghost"
             size="icon"
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
             onClick={nextImage}
           >
             <ChevronRight className="h-5 w-5" />
@@ -136,7 +136,7 @@ const CarImageCarousel = ({ carModel, images: propImages }: CarImageCarouselProp
       )}
 
       {/* Image counter */}
-      <div className="absolute top-4 right-4 bg-black/50 text-white px-2 py-1 rounded text-sm">
+      <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-lg text-sm">
         {currentImageIndex + 1} / {images.length}
       </div>
     </div>
