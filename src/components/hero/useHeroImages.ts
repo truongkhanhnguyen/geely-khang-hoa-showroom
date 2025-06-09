@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { Car } from './types';
@@ -79,7 +78,10 @@ export const useHeroImages = (propsCars?: Car[]) => {
           }
 
           // Get cheapest variant price for this car model
+          console.log('🔍 Getting price for car model:', carDetail.name);
           const priceInfo = getCheapestVariantForModel(carDetail.name);
+          console.log('💰 Price info received:', priceInfo);
+          
           const isPriceAvailable = priceInfo?.price_available ?? false;
           
           let displayPrice = "Liên hệ để biết giá";
@@ -92,7 +94,7 @@ export const useHeroImages = (propsCars?: Car[]) => {
             }
           }
           
-          console.log('💰 Price info for', carDetail.name, ':', {
+          console.log('💰 Final price display for', carDetail.name, ':', {
             priceInfo,
             isPriceAvailable,
             displayPrice

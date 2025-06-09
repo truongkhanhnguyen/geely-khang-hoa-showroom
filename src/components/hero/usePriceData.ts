@@ -46,9 +46,21 @@ export const usePriceData = () => {
 
   // Get cheapest available variant for each car model
   const getCheapestVariantForModel = (carModel: string) => {
-    const modelPrices = priceData.filter(price => price.car_model === carModel);
+    console.log('🔍 Looking for cheapest variant for:', carModel);
+    console.log('📋 Available price data:', priceData);
     
-    if (modelPrices.length === 0) return null;
+    const modelPrices = priceData.filter(price => {
+      const matches = price.car_model === carModel;
+      console.log(`🔍 Checking: ${price.car_model} === ${carModel} = ${matches}`);
+      return matches;
+    });
+    
+    console.log('🎯 Found model prices for', carModel, ':', modelPrices);
+    
+    if (modelPrices.length === 0) {
+      console.log('❌ No prices found for', carModel);
+      return null;
+    }
     
     // Sort by price (cheapest first) and find the first available one
     const sortedPrices = modelPrices.sort((a, b) => 
@@ -59,7 +71,11 @@ export const usePriceData = () => {
     const availablePrice = sortedPrices.find(price => price.price_available);
     
     // If no available price, return the cheapest one (but mark as unavailable)
-    return availablePrice || sortedPrices[0];
+    const result = availablePrice || sortedPrices[0];
+    
+    console.log('💰 Final price result for', carModel, ':', result);
+    
+    return result;
   };
 
   return {
