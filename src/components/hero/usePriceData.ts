@@ -20,24 +20,19 @@ export const usePriceData = () => {
 
   const fetchPriceData = async () => {
     try {
-      console.log('🔍 Fetching price data from database...');
-      
       const { data: pricesData, error: pricesError } = await supabase
         .from('car_prices')
         .select('car_model, base_price, promotion, price_available, variant')
         .order('car_model')
-        .order('base_price'); // Order by price to get cheapest first
+        .order('base_price');
 
       if (pricesError) {
-        console.error('❌ Prices database error:', pricesError);
         throw pricesError;
       }
 
-      console.log('📊 Raw prices data:', pricesData);
       setPriceData(pricesData || []);
       
     } catch (error) {
-      console.error('💥 Error fetching price data:', error);
       setPriceData([]);
     } finally {
       setLoading(false);
@@ -46,19 +41,9 @@ export const usePriceData = () => {
 
   // Get cheapest available variant for each car model
   const getCheapestVariantForModel = (carModel: string) => {
-    console.log('🔍 Looking for cheapest variant for:', carModel);
-    console.log('📋 Available price data:', priceData);
-    
-    const modelPrices = priceData.filter(price => {
-      const matches = price.car_model === carModel;
-      console.log(`🔍 Checking: ${price.car_model} === ${carModel} = ${matches}`);
-      return matches;
-    });
-    
-    console.log('🎯 Found model prices for', carModel, ':', modelPrices);
+    const modelPrices = priceData.filter(price => price.car_model === carModel);
     
     if (modelPrices.length === 0) {
-      console.log('❌ No prices found for', carModel);
       return null;
     }
     
@@ -72,8 +57,6 @@ export const usePriceData = () => {
     
     // If no available price, return the cheapest one (but mark as unavailable)
     const result = availablePrice || sortedPrices[0];
-    
-    console.log('💰 Final price result for', carModel, ':', result);
     
     return result;
   };

@@ -1,7 +1,5 @@
 
-import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PriceManagement from "./admin/PriceManagement";
 import ImageManagement from "./admin/ImageManagement";
@@ -28,22 +26,18 @@ const AdminPanel = ({ isOpen, onClose }: AdminPanelProps) => {
 
         <div className="p-6">
           <Tabs defaultValue="car-details" className="w-full">
-            <TabsList className="grid w-full grid-cols-7">
-              <TabsTrigger value="car-details">Chi Tiết Xe</TabsTrigger>
-              <TabsTrigger value="hero-logos">Logo Hero</TabsTrigger>
-              <TabsTrigger value="prices">Quản Lý Giá Xe</TabsTrigger>
-              <TabsTrigger value="images">Quản Lý Hình Ảnh</TabsTrigger>
-              <TabsTrigger value="promotions">Quản Lý Khuyến Mãi</TabsTrigger>
-              <TabsTrigger value="news">Quản Lý Tin Tức</TabsTrigger>
-              <TabsTrigger value="seo">SEO & Meta</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-4 md:grid-cols-7">
+              <TabsTrigger value="car-details" className="text-xs md:text-sm">Chi Tiết Xe</TabsTrigger>
+              <TabsTrigger value="prices" className="text-xs md:text-sm">Giá Xe</TabsTrigger>
+              <TabsTrigger value="images" className="text-xs md:text-sm">Hình Ảnh</TabsTrigger>
+              <TabsTrigger value="promotions" className="text-xs md:text-sm">Khuyến Mãi</TabsTrigger>
+              <TabsTrigger value="news" className="text-xs md:text-sm">Tin Tức</TabsTrigger>
+              <TabsTrigger value="hero-logos" className="text-xs md:text-sm">Logo</TabsTrigger>
+              <TabsTrigger value="seo" className="text-xs md:text-sm">SEO</TabsTrigger>
             </TabsList>
 
             <TabsContent value="car-details" className="space-y-6">
               <CarDetailsManagement />
-            </TabsContent>
-
-            <TabsContent value="hero-logos" className="space-y-6">
-              <HeroLogoManagement />
             </TabsContent>
 
             <TabsContent value="prices" className="space-y-6">
@@ -60,6 +54,10 @@ const AdminPanel = ({ isOpen, onClose }: AdminPanelProps) => {
 
             <TabsContent value="news" className="space-y-6">
               <NewsManagement />
+            </TabsContent>
+
+            <TabsContent value="hero-logos" className="space-y-6">
+              <HeroLogoManagement />
             </TabsContent>
 
             <TabsContent value="seo" className="space-y-6">
