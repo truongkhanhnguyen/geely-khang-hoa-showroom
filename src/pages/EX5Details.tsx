@@ -1,297 +1,338 @@
-import React, { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Calendar, DollarSign, Sparkles, Car, BatteryCharging, GaugeCircle, ShieldCheck } from "lucide-react";
-import { useNavigate } from 'react-router-dom';
-import CarImageCarousel from '@/components/CarImageCarousel';
-import ContactFooter from '@/components/ContactFooter';
-import FloatingButtons from '@/components/FloatingButtons';
-import TestDriveModal from '@/components/TestDriveModal';
-import PriceQuoteModal from '@/components/PriceQuoteModal';
-import { useLanguage } from '@/contexts/LanguageContext';
 
-interface CarSpec {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}
+import React, { useState } from 'react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CarImageCarousel } from '@/components/CarImageCarousel';
+import { TestDriveModal } from '@/components/TestDriveModal';
+import { PriceQuoteModal } from '@/components/PriceQuoteModal';
+import { ContactModal } from '@/components/ContactModal';
+import { ContactFooter } from '@/components/ContactFooter';
+import { ArrowLeft, Calendar, Clock, DollarSign, Phone, MessageCircle, Calculator, Zap, Battery } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const EX5Details = () => {
-  const { t } = useLanguage();
+  const navigate = useNavigate();
   const [showTestDriveModal, setShowTestDriveModal] = useState(false);
   const [showPriceQuoteModal, setShowPriceQuoteModal] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
 
-  const carImages = [
-    "https://images.unsplash.com/photo-1593941707882-a5bac6861d75?w=1920&h=1080&fit=crop",
-    "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop",
-    "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=1920&h=1080&fit=crop"
+  const ex5Images = [
+    "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1549399737-4e4285dd019c?w=800&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1563720223185-11003d516935?w=800&h=600&fit=crop"
   ];
 
-  const carSpecs: CarSpec[] = [
-    { icon: <Car className="h-4 w-4" />, label: "Kiểu xe", value: "SUV Điện" },
-    { icon: <BatteryCharging className="h-4 w-4" />, label: "Quãng đường di chuyển", value: "400 km" },
-    { icon: <GaugeCircle className="h-4 w-4" />, label: "Công suất", value: "160 kW" },
-    { icon: <ShieldCheck className="h-4 w-4" />, label: "An toàn", value: "5 sao NCAP" }
+  const specifications = {
+    motorPower: "150 kW (201 HP)",
+    torque: "310 Nm",
+    battery: "61.9 kWh Lithium-ion",
+    range: "400 km (NEDC)",
+    charging: "DC Fast Charging 80% in 30min",
+    drivetrain: "FWD",
+    acceleration: "7.6 seconds (0-100km/h)",
+    topSpeed: "150 km/h",
+    seating: "5 seats",
+    length: "4495mm",
+    width: "1834mm",
+    height: "1596mm",
+    wheelbase: "2650mm",
+    groundClearance: "180mm",
+    curbWeight: "1650kg"
+  };
+
+  const features = [
+    "10.25 inch touchscreen infotainment",
+    "Digital instrument cluster",
+    "Wireless charging pad",
+    "Automatic climate control",
+    "Leather seats",
+    "Remote vehicle control via app",
+    "Regenerative braking system",
+    "Multiple driving modes",
+    "LED headlights and DRL",
+    "Keyless entry and start",
+    "Premium sound system",
+    "Panoramic sunroof"
+  ];
+
+  const safetyFeatures = [
+    "6 airbags",
+    "ABS with EBD",
+    "Electronic Stability Control",
+    "Traction Control System",
+    "Hill Start Assist",
+    "Rear parking sensors",
+    "Reversing camera",
+    "ISOFIX child seat anchors",
+    "Emergency brake assist",
+    "Electronic brakeforce distribution",
+    "Tire pressure monitoring",
+    "Security alarm system"
   ];
 
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
-              <img 
-                src="/lovable-uploads/53460547-efd5-41cc-9b2d-92f168c32983.png" 
-                alt="Geely Logo" 
-                className="h-8 w-auto cursor-pointer hover:opacity-80 transition-opacity"
-              />
-              <span className="text-xl font-semibold text-gray-900">Geely Ninh Thuận</span>
-            </div>
-            <div className="space-x-4">
-              <Button variant="ghost">Về chúng tôi</Button>
-              <Button variant="ghost">Sản phẩm</Button>
-              <Button variant="ghost">Tin tức</Button>
-              <Button variant="ghost">Liên hệ</Button>
-            </div>
-          </div>
+      <div className="bg-gradient-to-r from-green-900 to-blue-900 text-white py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => navigate('/')}
+            className="text-white hover:text-green-200 mr-4"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Quay lại
+          </Button>
+          <h1 className="text-2xl font-bold">Geely EX5</h1>
         </div>
-      </header>
+      </div>
 
-      {/* Hero Section with Gallery */}
-      <section className="pt-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-start">
-            {/* Left: Car Gallery */}
-            <div className="relative">
-              <CarImageCarousel 
-                carModel="EX5"
-                images={carImages}
-              />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid lg:grid-cols-2 gap-12">
+          {/* Image Gallery */}
+          <div>
+            <CarImageCarousel images={ex5Images} />
+          </div>
+
+          {/* Car Info */}
+          <div>
+            <div className="mb-6">
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">Geely EX5</h1>
+              <p className="text-xl text-gray-600 mb-4">SUV điện cao cấp, thân thiện môi trường</p>
               
-              {/* Action Buttons - Positioned at bottom right of gallery */}
-              <div className="absolute bottom-4 right-4 flex flex-col gap-3 z-10">
-                <Button
-                  onClick={() => setShowTestDriveModal(true)}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                >
-                  <Calendar className="mr-2 h-4 w-4" />
-                  Đặt lịch lái thử
-                </Button>
-                
-                <Button
-                  onClick={() => setShowPriceQuoteModal(true)}
-                  variant="outline"
-                  className="bg-white/90 backdrop-blur-sm border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-medium px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                >
-                  <DollarSign className="mr-2 h-4 w-4" />
-                  Xem báo giá
-                </Button>
-              </div>
-            </div>
-
-            {/* Right: Car Info */}
-            <div className="space-y-8">
-              <div>
-                <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
-                  Geely <span className="text-green-600 font-medium">EX5</span>
-                </h1>
-                <p className="text-xl text-gray-600 leading-relaxed">
-                  SUV điện thông minh với công nghệ pin tiên tiến và khả năng di chuyển 
-                  ấn tượng, đánh dấu tương lai xanh của ngành ô tô.
-                </p>
+              <div className="flex items-center gap-4 mb-6">
+                <Badge variant="secondary" className="flex items-center bg-green-100 text-green-800">
+                  <Zap className="w-4 h-4 mr-1" />
+                  Electric
+                </Badge>
+                <Badge variant="secondary" className="flex items-center">
+                  <Calendar className="w-4 h-4 mr-1" />
+                  2024
+                </Badge>
+                <Badge variant="secondary" className="flex items-center">
+                  <Clock className="w-4 h-4 mr-1" />
+                  Mới ra mắt
+                </Badge>
               </div>
 
-              {/* Price Section - Coming Soon */}
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-8">
-                <div className="text-center">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-                    <Clock className="h-8 w-8 text-green-600" />
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg mb-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-3xl font-bold text-green-600">COMING SOON</p>
+                    <p className="text-gray-600">Sắp ra mắt tại Ninh Thuận</p>
                   </div>
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-2">COMING SOON</h3>
-                  <p className="text-gray-600 mb-4">
-                    Mẫu xe điện này sắp được ra mắt tại thị trường Việt Nam
-                  </p>
-                  <div className="text-sm text-green-600 bg-green-100 rounded-full px-4 py-2 inline-block">
-                    Liên hệ để được thông báo khi có sẵn
-                  </div>
+                  <Battery className="w-12 h-12 text-green-600" />
                 </div>
               </div>
+            </div>
 
-              {/* Key Features */}
-              <div className="grid grid-cols-2 gap-4">
-                {carSpecs.map((spec, index) => (
-                  <div key={index} className="flex items-center space-x-3 bg-gray-50 rounded-xl p-4">
-                    <div className="text-blue-600">{spec.icon}</div>
-                    <div>
-                      <p className="text-gray-900 font-medium">{spec.label}</p>
-                      <p className="text-gray-600 text-sm">{spec.value}</p>
+            {/* Action Buttons */}
+            <div className="grid grid-cols-2 gap-4 mb-8">
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
+                onClick={() => setShowTestDriveModal(true)}
+              >
+                <Calendar className="w-5 h-5 mr-2" />
+                Đặt lịch lái thử
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+                onClick={() => setShowPriceQuoteModal(true)}
+              >
+                <Calculator className="w-5 h-5 mr-2" />
+                Báo giá
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Button 
+                variant="outline"
+                className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+                onClick={() => setShowContactModal(true)}
+              >
+                <Phone className="w-5 h-5 mr-2" />
+                Gọi ngay
+              </Button>
+              <Button 
+                variant="outline"
+                className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+                onClick={() => setShowContactModal(true)}
+              >
+                <MessageCircle className="w-5 h-5 mr-2" />
+                Nhắn tin
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Detailed Information */}
+        <div className="mt-16">
+          <Tabs defaultValue="overview" className="w-full">
+            <TabsList className="grid w-full grid-cols-4 mb-8">
+              <TabsTrigger value="overview">Tổng quan</TabsTrigger>
+              <TabsTrigger value="specifications">Thông số</TabsTrigger>
+              <TabsTrigger value="features">Tính năng</TabsTrigger>
+              <TabsTrigger value="safety">An toàn</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="overview" className="space-y-6">
+              <Card className="p-6">
+                <h3 className="text-2xl font-semibold mb-4">Giới thiệu Geely EX5</h3>
+                <div className="prose max-w-none">
+                  <p className="text-gray-600 leading-relaxed mb-4">
+                    Geely EX5 là mẫu SUV điện hoàn toàn đầu tiên của Geely tại Việt Nam, đánh dấu bước chuyển mình 
+                    của thương hiệu vào thời đại xe điện. Với thiết kế hiện đại và công nghệ tiên tiến, EX5 hứa hẹn 
+                    sẽ mang đến trải nghiệm lái xe hoàn toàn mới.
+                  </p>
+                  <p className="text-gray-600 leading-relaxed mb-4">
+                    Được trang bị motor điện công suất 150kW và pin lithium-ion dung lượng 61.9kWh, EX5 có thể 
+                    di chuyển quãng đường lên đến 400km với một lần sạc đầy. Hệ thống sạc nhanh DC cho phép sạc 
+                    từ 20% lên 80% chỉ trong 30 phút.
+                  </p>
+                  <p className="text-gray-600 leading-relaxed">
+                    Ngoài việc thân thiện với môi trường, EX5 còn mang lại trải nghiệm lái xe êm ái, yên tĩnh 
+                    và tiết kiệm chi phí vận hành. Đây là lựa chọn lý tưởng cho những khách hàng muốn sở hữu 
+                    một chiếc SUV điện cao cấp với công nghệ hiện đại.
+                  </p>
+                </div>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="specifications" className="space-y-6">
+              <Card className="p-6">
+                <h3 className="text-2xl font-semibold mb-6">Thông số kỹ thuật</h3>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-3">Hệ thống điện & Vận hành</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Công suất motor:</span>
+                        <span className="font-medium">{specifications.motorPower}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Mô-men xoắn:</span>
+                        <span className="font-medium">{specifications.torque}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Pin:</span>
+                        <span className="font-medium">{specifications.battery}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Quãng đường di chuyển:</span>
+                        <span className="font-medium">{specifications.range}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Sạc nhanh:</span>
+                        <span className="font-medium">{specifications.charging}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Dẫn động:</span>
+                        <span className="font-medium">{specifications.drivetrain}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Tăng tốc 0-100km/h:</span>
+                        <span className="font-medium">{specifications.acceleration}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Tốc độ tối đa:</span>
+                        <span className="font-medium">{specifications.topSpeed}</span>
+                      </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-3">Kích thước & Trọng lượng</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Số chỗ ngồi:</span>
+                        <span className="font-medium">{specifications.seating}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Chiều dài:</span>
+                        <span className="font-medium">{specifications.length}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Chiều rộng:</span>
+                        <span className="font-medium">{specifications.width}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Chiều cao:</span>
+                        <span className="font-medium">{specifications.height}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Chiều dài cơ sở:</span>
+                        <span className="font-medium">{specifications.wheelbase}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Khoảng sáng gầm:</span>
+                        <span className="font-medium">{specifications.groundClearance}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Trọng lượng không tải:</span>
+                        <span className="font-medium">{specifications.curbWeight}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="features" className="space-y-6">
+              <Card className="p-6">
+                <h3 className="text-2xl font-semibold mb-6">Tính năng nổi bật</h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {features.map((feature, index) => (
+                    <div key={index} className="flex items-center space-x-3">
+                      <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                      <span className="text-gray-700">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="safety" className="space-y-6">
+              <Card className="p-6">
+                <h3 className="text-2xl font-semibold mb-6">Tính năng an toàn</h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {safetyFeatures.map((feature, index) => (
+                    <div key={index} className="flex items-center space-x-3">
+                      <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                      <span className="text-gray-700">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
-      </section>
-
-      {/* Specifications */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-light text-gray-900 mb-8 text-center">
-            Thông số <span className="text-green-600 font-medium">kỹ thuật</span>
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white rounded-2xl shadow-md p-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                Động cơ và hiệu suất
-              </h3>
-              <ul className="space-y-2 text-gray-600">
-                <li>
-                  <strong>Loại động cơ:</strong> Điện
-                </li>
-                <li>
-                  <strong>Công suất tối đa:</strong> 160 kW (218 mã lực)
-                </li>
-                <li>
-                  <strong>Mô-men xoắn cực đại:</strong> 300 Nm
-                </li>
-                <li>
-                  <strong>Hệ dẫn động:</strong> Cầu trước (FWD)
-                </li>
-                <li>
-                  <strong>Thời gian tăng tốc 0-100 km/h:</strong> 8.9 giây
-                </li>
-              </ul>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-md p-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                Kích thước và trọng lượng
-              </h3>
-              <ul className="space-y-2 text-gray-600">
-                <li>
-                  <strong>Chiều dài:</strong> 4.500 mm
-                </li>
-                <li>
-                  <strong>Chiều rộng:</strong> 1.834 mm
-                </li>
-                <li>
-                  <strong>Chiều cao:</strong> 1.615 mm
-                </li>
-                <li>
-                  <strong>Chiều dài cơ sở:</strong> 2.665 mm
-                </li>
-                <li>
-                  <strong>Trọng lượng không tải:</strong> 1.650 kg
-                </li>
-              </ul>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-md p-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                Ngoại thất
-              </h3>
-              <ul className="space-y-2 text-gray-600">
-                <li>
-                  <strong>Đèn pha:</strong> LED
-                </li>
-                <li>
-                  <strong>Mâm xe:</strong> Hợp kim 18 inch
-                </li>
-                <li>
-                  <strong>Gương chiếu hậu:</strong> Chỉnh điện, gập điện, tích hợp báo rẽ
-                </li>
-                <li>
-                  <strong>Cửa sổ trời:</strong> Panorama
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Electric Features */}
-      <section className="py-16 bg-gradient-to-br from-green-50 to-emerald-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-light text-gray-900 mb-8 text-center">
-            Tính năng <span className="text-green-600 font-medium">điện</span> nổi bật
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white rounded-2xl shadow-md p-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                Pin và sạc
-              </h3>
-              <ul className="space-y-2 text-gray-600">
-                <li>
-                  <strong>Loại pin:</strong> Lithium-ion
-                </li>
-                <li>
-                  <strong>Dung lượng pin:</strong> 52.5 kWh
-                </li>
-                <li>
-                  <strong>Thời gian sạc nhanh (DC):</strong> 30 phút (30-80%)
-                </li>
-                <li>
-                  <strong>Thời gian sạc chậm (AC):</strong> 8 tiếng
-                </li>
-              </ul>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-md p-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                Công nghệ điện
-              </h3>
-              <ul className="space-y-2 text-gray-600">
-                <li>
-                  <strong>Hệ thống quản lý pin:</strong> Thông minh
-                </li>
-                <li>
-                  <strong>Chế độ lái:</strong> Tiết kiệm, Thông thường, Thể thao
-                </li>
-                <li>
-                  <strong>Phanh tái tạo năng lượng:</strong> Có
-                </li>
-              </ul>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-md p-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                Tiện nghi điện
-              </h3>
-              <ul className="space-y-2 text-gray-600">
-                <li>
-                  <strong>Màn hình hiển thị thông tin:</strong> LCD 12.3 inch
-                </li>
-                <li>
-                  <strong>Điều hòa:</strong> Tự động, 2 vùng
-                </li>
-                <li>
-                  <strong>Cổng sạc USB:</strong> Hàng ghế trước và sau
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
+      </div>
 
       {/* Contact Footer */}
       <ContactFooter />
 
       {/* Modals */}
-      <TestDriveModal
+      <TestDriveModal 
         isOpen={showTestDriveModal}
         onClose={() => setShowTestDriveModal(false)}
-        carModel="Geely EX5"
+        selectedCar="Geely EX5"
       />
-
-      <PriceQuoteModal
+      <PriceQuoteModal 
         isOpen={showPriceQuoteModal}
         onClose={() => setShowPriceQuoteModal(false)}
-        carModel="Geely EX5"
+        selectedCar="Geely EX5"
       />
-
-      {/* Floating Buttons */}
-      <FloatingButtons />
+      <ContactModal 
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+      />
     </div>
   );
 };
