@@ -34,7 +34,7 @@ const Index = () => {
   }, {
     name: "Geely Monjaro",
     tagline: "Premium. Powerful. Refined.",
-    description: "SUV 7 chỗ cao cấp với không gian rộng rãi và trang bị công nghệ tiên tiến, hoàn hảo cho gia đình hiện đại.",
+    description: "SUV cao cấp với không gian rộng rãi, công nghệ tiên tiến, và thiết kế hiện đại.",
     price: "Từ 1.469 triệu VNĐ",
     image: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=1920&h=1080&fit=crop",
     features: ["Động cơ 2.0L Turbo", "Hệ thống giải trí 12.3''", "Cruise Control thích ứng", "Cửa sổ trời toàn cảnh"]
