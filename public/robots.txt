@@ -10,7 +10,7 @@ Allow: /promotions
 Allow: /news
 
 # Sitemap location
-Sitemap: https://geely-khanhhoa.lovable.app/sitemap.xml
+Sitemap: https://geelyninhthuan.vn/sitemap.xml
 
 # Crawl delay for politeness
 Crawl-delay: 1

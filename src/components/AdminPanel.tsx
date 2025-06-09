@@ -9,6 +9,7 @@ import PromotionsManagement from "./admin/PromotionsManagement";
 import NewsManagement from "./admin/NewsManagement";
 import CarDetailsManagement from "./admin/CarDetailsManagement";
 import HeroLogoManagement from "./admin/HeroLogoManagement";
+import SEOManagement from "./admin/SEOManagement";
 
 interface AdminPanelProps {
   isOpen: boolean;
@@ -27,13 +28,14 @@ const AdminPanel = ({ isOpen, onClose }: AdminPanelProps) => {
 
         <div className="p-6">
           <Tabs defaultValue="car-details" className="w-full">
-            <TabsList className="grid w-full grid-cols-6">
+            <TabsList className="grid w-full grid-cols-7">
               <TabsTrigger value="car-details">Chi Tiết Xe</TabsTrigger>
               <TabsTrigger value="hero-logos">Logo Hero</TabsTrigger>
               <TabsTrigger value="prices">Quản Lý Giá Xe</TabsTrigger>
               <TabsTrigger value="images">Quản Lý Hình Ảnh</TabsTrigger>
               <TabsTrigger value="promotions">Quản Lý Khuyến Mãi</TabsTrigger>
               <TabsTrigger value="news">Quản Lý Tin Tức</TabsTrigger>
+              <TabsTrigger value="seo">SEO & Meta</TabsTrigger>
             </TabsList>
 
             <TabsContent value="car-details" className="space-y-6">
@@ -58,6 +60,10 @@ const AdminPanel = ({ isOpen, onClose }: AdminPanelProps) => {
 
             <TabsContent value="news" className="space-y-6">
               <NewsManagement />
+            </TabsContent>
+
+            <TabsContent value="seo" className="space-y-6">
+              <SEOManagement />
             </TabsContent>
           </Tabs>
         </div>
