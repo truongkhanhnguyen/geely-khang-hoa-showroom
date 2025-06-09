@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -37,13 +36,12 @@ const HeroCarousel = ({
   const [isMobile, setIsMobile] = useState(false);
   const { t } = useLanguage();
 
-  // Car models mapping với thứ tự ưu tiên
+  // Car models mapping với thứ tự ưu tiên - REMOVED HARDCODED PRICES
   const carModelsMapping = {
     "coolray": {
       name: "Geely Coolray",
       tagline: "Urban. Dynamic. Smart.",
       description: "SUV compact thông minh với công nghệ hiện đại và thiết kế trẻ trung, phù hợp cho cuộc sống đô thị năng động.",
-      price: "Từ 538 triệu VNĐ",
       features: ["Động cơ 1.5L Turbo", "Hệ thống GKUI 19", "6 túi khí an toàn", "Phanh ABS + EBD"],
       priority: 1
     },
@@ -51,7 +49,6 @@ const HeroCarousel = ({
       name: "Geely Monjaro", 
       tagline: "Premium. Powerful. Refined.",
       description: "SUV 7 chỗ cao cấp với không gian rộng rãi và trang bị công nghệ tiên tiến, hoàn hảo cho gia đình hiện đại.",
-      price: "Từ 1.469 triệu VNĐ",
       features: ["Động cơ 2.0L Turbo", "Hệ thống giải trí 12.3''", "Cruise Control thích ứng", "Cửa sổ trời toàn cảnh"],
       priority: 2
     },
@@ -59,7 +56,6 @@ const HeroCarousel = ({
       name: "Geely EX5",
       tagline: "Electric. Efficient. Future.", 
       description: "SUV điện thông minh với công nghệ pin tiên tiến và khả năng vận hành êm ái, dẫn đầu xu hướng xanh.",
-      price: "Từ 769 triệu VNĐ",
       features: ["100% động cơ điện", "Phạm vi 400km", "Sạc nhanh 30 phút", "Hệ thống tự lái L2"],
       priority: 3
     }
@@ -106,10 +102,10 @@ const HeroCarousel = ({
         throw imagesError;
       }
 
-      // Fetch price availability for all cars
+      // Fetch prices from database instead of using hardcoded values
       const { data: pricesData, error: pricesError } = await supabase
         .from('car_prices')
-        .select('car_model, price_available')
+        .select('car_model, base_price, promotion, price_available')
         .order('car_model');
 
       console.log('📊 Prices Query Result:', { error: pricesError, data: pricesData });
@@ -118,30 +114,44 @@ const HeroCarousel = ({
         console.error('❌ Prices database error:', pricesError);
       }
 
-      // Create price availability map
-      const priceAvailabilityMap: { [key: string]: boolean } = {};
+      // Create price map with actual database prices
+      const priceMap: { [key: string]: { price: string, available: boolean } } = {};
       if (pricesData) {
         pricesData.forEach(price => {
-          if (!priceAvailabilityMap[price.car_model]) {
-            priceAvailabilityMap[price.car_model] = price.price_available;
+          const finalPrice = price.base_price - (price.promotion || 0);
+          const formattedPrice = `Từ ${(finalPrice / 1000000).toFixed(0)} triệu VNĐ`;
+          
+          if (!priceMap[price.car_model]) {
+            priceMap[price.car_model] = {
+              price: formattedPrice,
+              available: price.price_available
+            };
           } else {
             // If any variant has price available, show price for the car
-            priceAvailabilityMap[price.car_model] = priceAvailabilityMap[price.car_model] || price.price_available;
+            if (price.price_available && !priceMap[price.car_model].available) {
+              priceMap[price.car_model] = {
+                price: formattedPrice,
+                available: true
+              };
+            }
           }
         });
       }
 
-      console.log('💰 Price Availability Map:', priceAvailabilityMap);
+      console.log('💰 Price Map from Database:', priceMap);
 
       if (!imagesData || imagesData.length === 0) {
-        console.log('⚠️ NO HERO IMAGES FOUND - Using defaults with price availability check');
+        console.log('⚠️ NO HERO IMAGES FOUND - Using defaults with database prices');
         const defaultCars = Object.values(carModelsMapping).map(car => {
-          const isPriceAvailable = priceAvailabilityMap[car.name] ?? true;
+          const priceInfo = priceMap[car.name];
+          const isPriceAvailable = priceInfo?.available ?? false;
+          const displayPrice = isPriceAvailable ? priceInfo.price : "Coming Soon";
+          
           return {
             ...car,
+            price: displayPrice,
             image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop",
-            price_available: isPriceAvailable,
-            price: isPriceAvailable ? car.price : "Coming Soon"
+            price_available: isPriceAvailable
           };
         });
         setCars(defaultCars);
@@ -200,15 +210,17 @@ const HeroCarousel = ({
           console.log('❌ NO CAR MODEL MATCH');
         }
 
-        // Check price availability
-        const isPriceAvailable = carInfo ? (priceAvailabilityMap[carInfo.name] ?? true) : true;
+        // Get price from database instead of hardcoded values
+        const priceInfo = carInfo ? priceMap[carInfo.name] : null;
+        const isPriceAvailable = priceInfo?.available ?? false;
+        const displayPrice = isPriceAvailable ? priceInfo.price : "Coming Soon";
         
         // Create car object
         const carObject = carInfo ? {
           name: carInfo.name,
           tagline: carInfo.tagline,
           description: carInfo.description,
-          price: isPriceAvailable ? carInfo.price : "Coming Soon",
+          price: displayPrice,
           image: image.url,
           mobile_image: image.mobile_url,
           features: carInfo.features,
@@ -223,7 +235,7 @@ const HeroCarousel = ({
           mobile_image: image.mobile_url,
           features: ["Công nghệ hiện đại", "Thiết kế sang trọng", "An toàn cao cấp", "Tiết kiệm nhiên liệu"],
           priority: 999,
-          price_available: true
+          price_available: false
         };
 
         console.log('✅ Created car object:', carObject);
@@ -245,8 +257,9 @@ const HeroCarousel = ({
       console.log('🔄 Using fallback defaults due to error');
       const defaultCars = Object.values(carModelsMapping).map(car => ({
         ...car,
+        price: "Liên hệ để biết giá",
         image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop",
-        price_available: true
+        price_available: false
       }));
       setCars(defaultCars);
     }
