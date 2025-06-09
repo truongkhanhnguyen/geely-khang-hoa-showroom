@@ -1,112 +1,129 @@
 
-import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
-interface CarSpecification {
+export interface CarSpecification {
   icon: string;
   label: string;
   value: string;
 }
 
-interface CarDetailedFeature {
+export interface CarDetailedFeature {
   id: string;
   title: string;
   description: string;
   image: string;
 }
 
-interface CarCTASection {
+export interface CarCTASection {
   title: string;
   description: string;
   accent_color: string;
 }
 
-interface CarDetails {
+export interface CarDetailsData {
   id: string;
   car_model: string;
   name: string;
   tagline: string;
   description: string;
   features: string[];
-  specifications: any;
-  detailed_features: any[];
   gallery_images: string[];
+  hero_image_url?: string;
+  hero_mobile_image_url?: string;
   specifications_data: CarSpecification[];
   detailed_features_data: CarDetailedFeature[];
   cta_section: CarCTASection;
-  hero_image_url: string | null;
-  hero_mobile_image_url: string | null;
-  priority: number;
-  is_active: boolean;
+  priority?: number;
+  is_active?: boolean;
 }
 
-export const useCarDetails = (carModel: string) => {
-  const [carDetails, setCarDetails] = useState<CarDetails | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+// Helper functions for type-safe JSON parsing
+const parseArrayOrDefault = <T>(data: any, defaultValue: T[]): T[] => {
+  if (Array.isArray(data)) {
+    return data as T[];
+  }
+  return defaultValue;
+};
 
-  useEffect(() => {
-    const fetchCarDetails = async () => {
-      try {
-        console.log('Fetching car details for model:', carModel);
-        
-        const { data, error } = await supabase
-          .from('car_details')
-          .select('*')
-          .eq('car_model', carModel)
-          .eq('is_active', true)
-          .maybeSingle();
+const parseObjectOrDefault = <T>(data: any, defaultValue: T): T => {
+  if (data && typeof data === 'object' && !Array.isArray(data)) {
+    return data as T;
+  }
+  return defaultValue;
+};
 
-        if (error) {
-          console.error('Error fetching car details:', error);
-          setError(error.message);
-          return;
-        }
+export const useCarDetails = (carModel?: string) => {
+  return useQuery({
+    queryKey: ['car-details', carModel],
+    queryFn: async () => {
+      console.log('Fetching car details for:', carModel);
+      
+      let query = supabase
+        .from('car_details')
+        .select('*')
+        .eq('is_active', true);
 
-        if (!data) {
-          console.log('No car details found for model:', carModel);
-          setCarDetails(null);
-          return;
-        }
-
-        // Transform and ensure data structure
-        const transformedData: CarDetails = {
-          id: data.id,
-          car_model: data.car_model,
-          name: data.name,
-          tagline: data.tagline,
-          description: data.description,
-          features: data.features || [],
-          specifications: data.specifications || {},
-          detailed_features: data.detailed_features || [],
-          gallery_images: data.gallery_images || [],
-          specifications_data: data.specifications_data || [],
-          detailed_features_data: data.detailed_features_data || [],
-          cta_section: data.cta_section || {
-            title: "Sẵn sàng trải nghiệm?",
-            description: "Đặt lịch lái thử ngay hôm nay để cảm nhận sự khác biệt",
-            accent_color: "blue-600"
-          },
-          hero_image_url: data.hero_image_url,
-          hero_mobile_image_url: data.hero_mobile_image_url,
-          priority: data.priority || 1,
-          is_active: data.is_active ?? true
-        };
-
-        console.log('Car details loaded:', transformedData);
-        setCarDetails(transformedData);
-      } catch (err) {
-        console.error('Unexpected error:', err);
-        setError('Không thể tải thông tin xe');
-      } finally {
-        setIsLoading(false);
+      if (carModel) {
+        query = query.eq('car_model', carModel);
       }
-    };
 
-    if (carModel) {
-      fetchCarDetails();
-    }
-  }, [carModel]);
+      const { data, error } = await query.order('priority', { ascending: true });
 
-  return { carDetails, isLoading, error };
+      if (error) {
+        console.error('Error fetching car details:', error);
+        throw error;
+      }
+
+      console.log('Raw car details data:', data);
+
+      if (!data || data.length === 0) {
+        console.log('No car details found');
+        return carModel ? null : [];
+      }
+
+      const processedData = data.map(item => {
+        // Safely parse JSON fields with type checking
+        const galleryImages = parseArrayOrDefault(item.gallery_images, []);
+        const features = parseArrayOrDefault(item.features, []);
+        const specificationsData = parseArrayOrDefault<CarSpecification>(item.specifications_data, []);
+        const detailedFeaturesData = parseArrayOrDefault<CarDetailedFeature>(item.detailed_features_data, []);
+        const ctaSection = parseObjectOrDefault<CarCTASection>(item.cta_section, {
+          title: "Sẵn sàng trải nghiệm?",
+          description: "Đặt lịch lái thử ngay hôm nay để cảm nhận sự khác biệt",
+          accent_color: "blue-600"
+        });
+
+        return {
+          id: item.id,
+          car_model: item.car_model,
+          name: item.name,
+          tagline: item.tagline,
+          description: item.description,
+          features: features,
+          gallery_images: galleryImages,
+          hero_image_url: item.hero_image_url,
+          hero_mobile_image_url: item.hero_mobile_image_url,
+          specifications_data: specificationsData,
+          detailed_features_data: detailedFeaturesData,
+          cta_section: ctaSection,
+          priority: item.priority,
+          is_active: item.is_active,
+        } as CarDetailsData;
+      });
+
+      console.log('Processed car details:', processedData);
+
+      return carModel ? processedData[0] || null : processedData;
+    },
+    enabled: true,
+  });
+};
+
+export const useAllCarDetails = () => {
+  return useCarDetails();
+};
+
+export const useSingleCarDetails = (carModel: string) => {
+  return useCarDetails(carModel);
 };
