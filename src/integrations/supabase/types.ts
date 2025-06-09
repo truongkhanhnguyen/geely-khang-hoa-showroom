@@ -15,6 +15,7 @@ export type Database = {
           car_model: string
           created_at: string
           id: string
+          price_available: boolean
           promotion: number
           updated_at: string
           variant: string
@@ -24,6 +25,7 @@ export type Database = {
           car_model: string
           created_at?: string
           id?: string
+          price_available?: boolean
           promotion?: number
           updated_at?: string
           variant: string
@@ -33,6 +35,7 @@ export type Database = {
           car_model?: string
           created_at?: string
           id?: string
+          price_available?: boolean
           promotion?: number
           updated_at?: string
           variant?: string

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,6 +18,7 @@ interface CarPrice {
   variant: string;
   base_price: number;
   promotion: number;
+  price_available: boolean;
 }
 
 interface RegistrationFees {
@@ -110,6 +112,40 @@ const PriceManagement = () => {
       toast({
         title: "Lỗi",
         description: "Không thể cập nhật giá. Vui lòng thử lại.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handlePriceAvailabilityToggle = async (available: boolean) => {
+    const currentPrice = getCurrentPrice();
+    
+    if (!currentPrice) return;
+
+    try {
+      const { error } = await supabase
+        .from('car_prices')
+        .update({ price_available: available, updated_at: new Date().toISOString() })
+        .eq('id', currentPrice.id);
+
+      if (error) throw error;
+
+      // Update local state
+      setCarPrices(prev => prev.map(price => 
+        price.id === currentPrice.id 
+          ? { ...price, price_available: available }
+          : price
+      ));
+
+      toast({
+        title: "Thành công",
+        description: available ? "Đã bật hiển thị giá!" : "Đã tắt hiển thị giá!",
+      });
+    } catch (error) {
+      console.error('Error updating price availability:', error);
+      toast({
+        title: "Lỗi",
+        description: "Không thể cập nhật trạng thái hiển thị giá. Vui lòng thử lại.",
         variant: "destructive",
       });
     }
@@ -220,6 +256,21 @@ const PriceManagement = () => {
 
           {currentPrice && (
             <>
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div>
+                  <Label className="text-base font-semibold">Hiển thị giá</Label>
+                  <p className="text-sm text-gray-600">
+                    {currentPrice.price_available 
+                      ? "Giá xe hiện đang được hiển thị trên website" 
+                      : "Giá xe hiện không được hiển thị (Coming Soon)"}
+                  </p>
+                </div>
+                <Switch
+                  checked={currentPrice.price_available}
+                  onCheckedChange={handlePriceAvailabilityToggle}
+                />
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Giá niêm yết (VNĐ)</Label>
@@ -228,6 +279,7 @@ const PriceManagement = () => {
                     value={currentPrice.base_price}
                     onChange={(e) => handlePriceUpdate("base_price", e.target.value)}
                     placeholder="Nhập giá niêm yết"
+                    disabled={!currentPrice.price_available}
                   />
                   <p className="text-sm text-gray-500 mt-1">
                     {formatPrice(currentPrice.base_price)} VNĐ
@@ -241,6 +293,7 @@ const PriceManagement = () => {
                     value={currentPrice.promotion}
                     onChange={(e) => handlePriceUpdate("promotion", e.target.value)}
                     placeholder="Nhập số tiền khuyến mãi"
+                    disabled={!currentPrice.price_available}
                   />
                   <p className="text-sm text-gray-500 mt-1">
                     {formatPrice(currentPrice.promotion)} VNĐ
@@ -248,11 +301,21 @@ const PriceManagement = () => {
                 </div>
               </div>
 
-              <div className="p-4 bg-blue-50 rounded-lg">
-                <p className="font-semibold text-blue-800">
-                  Giá sau khuyến mãi: {formatPrice(currentPrice.base_price - currentPrice.promotion)} VNĐ
-                </p>
-              </div>
+              {currentPrice.price_available && (
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <p className="font-semibold text-blue-800">
+                    Giá sau khuyến mãi: {formatPrice(currentPrice.base_price - currentPrice.promotion)} VNĐ
+                  </p>
+                </div>
+              )}
+
+              {!currentPrice.price_available && (
+                <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
+                  <p className="font-semibold text-orange-800">
+                    Giá xe hiện không được hiển thị trên website. Khách hàng sẽ thấy "Coming Soon"
+                  </p>
+                </div>
+              )}
             </>
           )}
         </CardContent>
