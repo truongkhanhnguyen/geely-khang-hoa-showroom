@@ -31,39 +31,21 @@ const PromotionsSection = () => {
     try {
       console.log('🎁 Fetching promotions from database...');
       
-      // Note: Assuming there might be a promotions table, but handling gracefully if not
-      // For now, we'll use static promotions but prepare for database integration
-      const staticPromotions: Promotion[] = [
-        {
-          id: '1',
-          title: 'Ưu đãi đặc biệt tháng 12',
-          description: 'Giảm ngay 50 triệu cho xe Geely Coolray. Hỗ trợ vay 80% không lãi suất 6 tháng đầu.',
-          valid_until: '2024-12-31',
-          discount_amount: 50000000,
-          created_at: '2024-12-01'
-        },
-        {
-          id: '2', 
-          title: 'Khuyến mãi Geely Monjaro',
-          description: 'Tặng gói phụ kiện cao cấp trị giá 30 triệu + bảo hiểm thân vỏ 1 năm miễn phí.',
-          valid_until: '2024-12-25',
-          discount_amount: 30000000,
-          created_at: '2024-11-15'
-        },
-        {
-          id: '3',
-          title: 'EX5 Electric - Tương lai xanh',
-          description: 'Ưu đãi 40 triệu + tặng bộ sạc nhanh tại nhà cho khách hàng đặt xe sớm.',
-          valid_until: '2025-01-15', 
-          discount_amount: 40000000,
-          created_at: '2024-11-20'
-        }
-      ];
+      const { data, error } = await supabase
+        .from('promotions')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(3); // Chỉ lấy 3 khuyến mãi mới nhất cho trang chủ
 
-      setPromotions(staticPromotions);
-      console.log('✅ Promotions loaded:', staticPromotions.length);
+      if (error) {
+        console.error('❌ Error fetching promotions:', error);
+        return;
+      }
+
+      console.log('✅ Promotions loaded from database:', data?.length || 0);
+      setPromotions(data || []);
     } catch (error) {
-      console.error('❌ Error fetching promotions:', error);
+      console.error('❌ Error in fetchPromotions:', error);
     }
   };
 
@@ -74,7 +56,7 @@ const PromotionsSection = () => {
       const { data, error } = await supabase
         .from('website_images')
         .select('*')
-        .eq('category', 'promotion')
+        .eq('category', 'promotions')
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -109,12 +91,18 @@ const PromotionsSection = () => {
     });
   };
 
-  const getPromotionImage = (index: number) => {
+  const getPromotionImage = (promotion: Promotion, index: number) => {
+    // Ưu tiên sử dụng image_url từ khuyến mãi
+    if (promotion.image_url) {
+      return promotion.image_url;
+    }
+    
+    // Nếu không có, sử dụng từ gallery promotion images
     if (promotionImages.length > 0) {
       return promotionImages[index % promotionImages.length];
     }
     
-    // Fallback images
+    // Fallback images cuối cùng
     const fallbackImages = [
       "https://images.unsplash.com/photo-1549924231-f129b911e442?w=800&h=400&fit=crop",
       "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&h=400&fit=crop", 
@@ -136,6 +124,11 @@ const PromotionsSection = () => {
     );
   }
 
+  // Không hiển thị section nếu không có khuyến mãi
+  if (promotions.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -153,7 +146,7 @@ const PromotionsSection = () => {
             <Card key={promotion.id} className="group hover:shadow-xl transition-all duration-300 overflow-hidden">
               <div className="relative h-48 overflow-hidden">
                 <img
-                  src={getPromotionImage(index)}
+                  src={getPromotionImage(promotion, index)}
                   alt={promotion.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />

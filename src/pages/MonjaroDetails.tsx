@@ -1,62 +1,37 @@
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { ArrowLeft, Calendar, Calculator, Fuel, Gauge, Shield, Cog, Eye, Zap } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import TestDriveModal from "@/components/TestDriveModal";
-import PriceQuoteModal from "@/components/PriceQuoteModal";
-import LanguageToggle from "@/components/LanguageToggle";
-import CarImageCarousel from "@/components/CarImageCarousel";
-import FeatureSlider from "@/components/FeatureSlider";
-import FloatingButtons from "@/components/FloatingButtons";
-import ContactFooter from "@/components/ContactFooter";
+import { Calendar, DollarSign } from "lucide-react";
+import CarImageCarousel from '@/components/CarImageCarousel';
+import ContactFooter from '@/components/ContactFooter';
+import FloatingButtons from '@/components/FloatingButtons';
+import LanguageToggle from '@/components/LanguageToggle';
+import PriceQuoteModal from '@/components/PriceQuoteModal';
+import TestDriveModal from '@/components/TestDriveModal';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+interface CarSpec {
+  label: string;
+  value: string;
+}
 
 const MonjaroDetails = () => {
-  const navigate = useNavigate();
-  const [showTestDrive, setShowTestDrive] = useState(false);
-  const [showPriceQuote, setShowPriceQuote] = useState(false);
+  const { t } = useLanguage();
+  const [showTestDriveModal, setShowTestDriveModal] = useState(false);
+  const [showPriceQuoteModal, setShowPriceQuoteModal] = useState(false);
 
   const carImages = [
     "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=1920&h=1080&fit=crop",
-    "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=1920&h=1080&fit=crop",
-    "https://images.unsplash.com/photo-1621135802920-133df287f89c?w=1920&h=1080&fit=crop",
-    "https://images.unsplash.com/photo-1619976215542-c8162db1a640?w=1920&h=1080&fit=crop"
+    "https://images.unsplash.com/photo-1593941707882-a5bac6861d75?w=1920&h=1080&fit=crop",
+    "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop"
   ];
 
-  const specifications = [
-    { icon: Gauge, label: "Động cơ", value: "2.0L Turbo" },
-    { icon: Zap, label: "Công suất", value: "238 HP" },
-    { icon: Fuel, label: "Tiêu thụ nhiên liệu", value: "7.2L/100km" },
-    { icon: Shield, label: "An toàn", value: "7 túi khí" },
-    { icon: Cog, label: "Hộp số", value: "8AT" },
-    { icon: Eye, label: "Camera", value: "360° + DMS" }
-  ];
-
-  const detailedFeatures = [
-    {
-      id: "luxury",
-      title: "Nội thất cao cấp",
-      description: "Hệ thống giải trí 12.3 inch với GKUI Pro, ghế da cao cấp điều chỉnh điện, cửa sổ trời toàn cảnh Panorama và hệ thống âm thanh Sony 12 loa chất lượng Hi-Fi.",
-      image: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&h=600&fit=crop"
-    },
-    {
-      id: "performance",
-      title: "Hiệu suất mạnh mẽ",
-      description: "Động cơ 2.0L Turbo 238 HP mạnh mẽ, hộp số tự động 8 cấp mượt mà, tiêu thụ nhiên liệu chỉ 7.2L/100km. Hệ thống treo độc lập 4 bánh mang lại cảm giác lái thoải mái.",
-      image: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&h=600&fit=crop"
-    },
-    {
-      id: "safety",
-      title: "An toàn tối đa",
-      description: "7 túi khí bảo vệ toàn diện, cruise control thích ứng ACC, camera 360° + DMS, hệ thống cảnh báo điểm mù và phanh khẩn cấp tự động để đảm bảo an toàn cho cả gia đình.",
-      image: "https://images.unsplash.com/photo-1621135802920-133df287f89c?w=800&h=600&fit=crop"
-    },
-    {
-      id: "convenience",
-      title: "Tiện nghi hiện đại",
-      description: "Đèn LED Matrix thông minh, khởi động từ xa qua ứng dụng, sạc không dây cho điện thoại, hệ thống điều hòa tự động và khoang hành lý rộng rãi 1800L.",
-      image: "https://images.unsplash.com/photo-1619976215542-c8162db1a640?w=800&h=600&fit=crop"
-    }
+  const carSpecs: CarSpec[] = [
+    { label: "Động cơ", value: "2.0L Turbo" },
+    { label: "Công suất cực đại", value: "235 mã lực" },
+    { label: "Hộp số", value: "Tự động 8 cấp" },
+    { label: "Dẫn động", value: "4 bánh toàn thời gian" },
+    { label: "Số chỗ", value: "7" },
+    { label: "Tiêu thụ nhiên liệu", value: "8.5L/100km" },
   ];
 
   return (
@@ -65,161 +40,230 @@ const MonjaroDetails = () => {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/')}
-                className="flex items-center space-x-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span>Quay lại</span>
-              </Button>
-              <div className="flex items-center space-x-3">
-                <img 
-                  src="/lovable-uploads/fcdb7433-edf5-46e0-a645-63687828d441.png" 
-                  alt="Geely Logo" 
+            <div className="flex items-center space-x-3">
+              <a href="/" className="hover:opacity-75 transition-opacity">
+                <img
+                  src="/lovable-uploads/53460547-efd5-41cc-9b2d-92f168c32983.png"
+                  alt="Geely Logo"
                   className="h-8 w-auto"
                 />
-                <span className="text-xl font-semibold text-gray-900">Geely Monjaro</span>
-              </div>
+              </a>
+              <span className="text-xl font-semibold text-gray-900">Monjaro</span>
             </div>
             <LanguageToggle />
           </div>
         </div>
       </header>
 
-      {/* Hero Section - Removed gradient overlay */}
-      <section className="relative pt-16">
-        <div className="relative h-[70vh] md:h-screen">
-          <CarImageCarousel images={carImages} carModel="Monjaro" />
-          
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-              <div className="text-center text-white">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light mb-4 leading-tight drop-shadow-lg">
-                  Geely Monjaro
+      {/* Hero Section with Gallery */}
+      <section className="pt-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-start">
+            {/* Left: Car Gallery */}
+            <div className="relative">
+              <CarImageCarousel 
+                carModel="Monjaro"
+                images={carImages}
+              />
+              
+              {/* Action Buttons - Positioned at bottom right of gallery */}
+              <div className="absolute bottom-4 right-4 flex flex-col gap-3 z-10">
+                <Button
+                  onClick={() => setShowTestDriveModal(true)}
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                >
+                  <Calendar className="mr-2 h-4 w-4" />
+                  Đặt lịch lái thử
+                </Button>
+                
+                <Button
+                  onClick={() => setShowPriceQuoteModal(true)}
+                  variant="outline"
+                  className="bg-white/90 backdrop-blur-sm border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-medium px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                >
+                  <DollarSign className="mr-2 h-4 w-4" />
+                  Xem báo giá
+                </Button>
+              </div>
+            </div>
+
+            {/* Right: Car Info */}
+            <div className="space-y-8">
+              <div>
+                <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
+                  Geely <span className="text-blue-600 font-medium">Monjaro</span>
                 </h1>
-                <p className="text-lg md:text-2xl font-medium text-blue-300 mb-6 drop-shadow-lg">
-                  Premium. Powerful. Refined.
+                <p className="text-xl text-gray-600 leading-relaxed">
+                  SUV 7 chỗ cao cấp với thiết kế sang trọng và công nghệ tiên tiến, 
+                  mang đến trải nghiệm lái xe đẳng cấp cho gia đình hiện đại.
                 </p>
-                <p className="text-base md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto leading-relaxed drop-shadow-lg">
-                  SUV 7 chỗ cao cấp với không gian rộng rãi và trang bị công nghệ tiên tiến, hoàn hảo cho gia đình hiện đại.
-                </p>
+              </div>
+
+              {/* Price Section - Coming Soon */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8">
+                <div className="text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                    <Clock className="h-8 w-8 text-blue-600" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-2">COMING SOON</h3>
+                  <p className="text-gray-600 mb-4">
+                    Mẫu xe này sắp được ra mắt tại thị trường Việt Nam
+                  </p>
+                  <div className="text-sm text-blue-600 bg-blue-100 rounded-full px-4 py-2 inline-block">
+                    Liên hệ để được thông báo khi có sẵn
+                  </div>
+                </div>
+              </div>
+
+              {/* Key Features */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="flex items-center space-x-3">
+                  <img
+                    src="https://geely.com/wp-content/uploads/2023/07/icon_01.svg"
+                    alt="Feature 1"
+                    className="h-10 w-10"
+                  />
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Thiết kế sang trọng</h4>
+                    <p className="text-gray-600 text-sm">Ngoại thất lịch lãm, nội thất tinh tế</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <img
+                    src="https://geely.com/wp-content/uploads/2023/07/icon_02.svg"
+                    alt="Feature 2"
+                    className="h-10 w-10"
+                  />
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Công nghệ tiên tiến</h4>
+                    <p className="text-gray-600 text-sm">Hệ thống lái xe thông minh, an toàn</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <img
+                    src="https://geely.com/wp-content/uploads/2023/07/icon_03.svg"
+                    alt="Feature 3"
+                    className="h-10 w-10"
+                  />
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Động cơ mạnh mẽ</h4>
+                    <p className="text-gray-600 text-sm">Vận hành êm ái, tiết kiệm nhiên liệu</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <img
+                    src="https://geely.com/wp-content/uploads/2023/07/icon_04.svg"
+                    alt="Feature 4"
+                    className="h-10 w-10"
+                  />
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Không gian rộng rãi</h4>
+                    <p className="text-gray-600 text-sm">7 chỗ ngồi thoải mái cho cả gia đình</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Action Buttons - Positioned at bottom right of gallery */}
-        <div className="absolute bottom-6 right-6 z-10">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button 
-              size="lg"
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-full shadow-lg backdrop-blur-sm"
-              onClick={() => setShowTestDrive(true)}
-            >
-              <Calendar className="mr-2 h-5 w-5" />
-              Đặt lịch lái thử
-            </Button>
-            
-            <Button 
-              variant="outline"
-              size="lg"
-              className="border-white/80 bg-white/10 backdrop-blur-sm text-white hover:bg-white hover:text-gray-900 px-6 py-3 rounded-full shadow-lg"
-              onClick={() => setShowPriceQuote(true)}
-            >
-              <Calculator className="mr-2 h-5 w-5" />
-              Xem báo giá
-            </Button>
-          </div>
-        </div>
       </section>
 
-      {/* Specifications Section */}
-      <section className="py-16 md:py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-4">Thông số kỹ thuật</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Khám phá những thông số ấn tượng của Geely Monjaro
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
-            {specifications.map((spec, index) => (
-              <Card key={index} className="p-4 md:p-6 text-center hover:shadow-lg transition-all duration-300 hover:scale-105">
-                <spec.icon className="h-8 w-8 md:h-12 md:w-12 text-blue-600 mx-auto mb-3 md:mb-4" />
-                <h3 className="font-semibold text-gray-900 mb-1 md:mb-2 text-sm md:text-base">{spec.label}</h3>
-                <p className="text-gray-600 text-xs md:text-base font-medium">{spec.value}</p>
-              </Card>
+      {/* Specifications */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-light text-gray-900 mb-8 text-center">
+            Thông số <span className="text-blue-600 font-medium">kỹ thuật</span>
+          </h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            {carSpecs.map((spec, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-lg shadow-md p-5 hover:shadow-xl transition-shadow duration-300"
+              >
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{spec.label}</h3>
+                <p className="text-gray-600">{spec.value}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 md:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-4">Tính năng nổi bật</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Trải nghiệm những công nghệ tiên tiến nhất trong phân khúc
-            </p>
-          </div>
-          
-          <FeatureSlider features={detailedFeatures} accentColor="blue-600" />
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 md:py-20 bg-gradient-to-r from-blue-600 to-indigo-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-light text-white mb-6 md:mb-8">Sẵn sàng trải nghiệm?</h2>
-          <p className="text-lg md:text-xl text-blue-100 mb-8 md:mb-12 leading-relaxed">
-            Đặt lịch lái thử ngay hôm nay để cảm nhận sự khác biệt của Geely Monjaro
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg"
-              className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-full font-medium"
-              onClick={() => setShowTestDrive(true)}
-            >
-              <Calendar className="mr-2 h-5 w-5" />
-              Đặt lịch lái thử
-            </Button>
-            
-            <Button 
-              variant="outline"
-              size="lg"
-              className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-3 rounded-full font-medium"
-              onClick={() => setShowPriceQuote(true)}
-            >
-              <Calculator className="mr-2 h-5 w-5" />
-              Xem báo giá
-            </Button>
-          </div>
+      {/* Safety Features */}
+      <section className="py-16 bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-light text-gray-900 mb-8 text-center">
+            Tính năng <span className="text-blue-600 font-medium">an toàn</span>
+          </h2>
+          <ul className="grid md:grid-cols-2 gap-4">
+            <li className="flex items-center space-x-3 bg-gray-50 rounded-lg p-4">
+              <img
+                src="https://geely.com/wp-content/uploads/2023/07/safe_01.svg"
+                alt="ABS"
+                className="h-8 w-8"
+              />
+              <span className="text-gray-700">Hệ thống chống bó cứng phanh ABS</span>
+            </li>
+            <li className="flex items-center space-x-3 bg-gray-50 rounded-lg p-4">
+              <img
+                src="https://geely.com/wp-content/uploads/2023/07/safe_02.svg"
+                alt="EBD"
+                className="h-8 w-8"
+              />
+              <span className="text-gray-700">Hệ thống phân phối lực phanh điện tử EBD</span>
+            </li>
+            <li className="flex items-center space-x-3 bg-gray-50 rounded-lg p-4">
+              <img
+                src="https://geely.com/wp-content/uploads/2023/07/safe_03.svg"
+                alt="BA"
+                className="h-8 w-8"
+              />
+              <span className="text-gray-700">Hệ thống hỗ trợ phanh khẩn cấp BA</span>
+            </li>
+            <li className="flex items-center space-x-3 bg-gray-50 rounded-lg p-4">
+              <img
+                src="https://geely.com/wp-content/uploads/2023/07/safe_04.svg"
+                alt="ESP"
+                className="h-8 w-8"
+              />
+              <span className="text-gray-700">Hệ thống cân bằng điện tử ESP</span>
+            </li>
+            <li className="flex items-center space-x-3 bg-gray-50 rounded-lg p-4">
+              <img
+                src="https://geely.com/wp-content/uploads/2023/07/safe_05.svg"
+                alt="TCS"
+                className="h-8 w-8"
+              />
+              <span className="text-gray-700">Hệ thống kiểm soát lực kéo TCS</span>
+            </li>
+            <li className="flex items-center space-x-3 bg-gray-50 rounded-lg p-4">
+              <img
+                src="https://geely.com/wp-content/uploads/2023/07/safe_06.svg"
+                alt="HHC"
+                className="h-8 w-8"
+              />
+              <span className="text-gray-700">Hệ thống hỗ trợ khởi hành ngang dốc HHC</span>
+            </li>
+          </ul>
         </div>
       </section>
 
       {/* Contact Footer */}
       <ContactFooter />
 
+      {/* Modals */}
+      <TestDriveModal
+        isOpen={showTestDriveModal}
+        onClose={() => setShowTestDriveModal(false)}
+        carModel="Geely Monjaro"
+      />
+
+      <PriceQuoteModal
+        isOpen={showPriceQuoteModal}
+        onClose={() => setShowPriceQuoteModal(false)}
+        carModel="Geely Monjaro"
+      />
+
       {/* Floating Buttons */}
       <FloatingButtons />
-
-      {/* Modals */}
-      <TestDriveModal 
-        isOpen={showTestDrive} 
-        onClose={() => setShowTestDrive(false)}
-        selectedCar="Geely Monjaro"
-      />
-      <PriceQuoteModal 
-        isOpen={showPriceQuote} 
-        onClose={() => setShowPriceQuote(false)}
-        selectedCar="Geely Monjaro"
-      />
     </div>
   );
 };

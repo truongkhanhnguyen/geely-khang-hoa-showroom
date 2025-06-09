@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,8 +37,8 @@ const IMAGE_CATEGORIES = [
     value: "car-gallery", 
     label: "🚗 Thư Viện Xe", 
     description: "Hình ảnh chi tiết của xe",
-    location: "Trang chi tiết xe - Galley hình ảnh",
-    usage: "Hiển thị trong carousel hình ảnh chi tiết của từng dòng xe",
+    location: "Trang chi tiết xe - Gallery hình ảnh",
+    usage: "Hiển thị trong carousel hình ảnh chi tiết của từng dòng xe (không có overlay)",
     icon: "🚗"
   },
   { 
@@ -109,14 +108,14 @@ const CAR_MODELS = [
 ];
 
 const RECOMMENDED_SIZES = {
-  "hero-banner": "1920×1080px (Desktop), 768×1024px (Mobile)",
-  "car-gallery": "1200×800px (Desktop), 600×400px (Mobile)", 
-  "promotions": "800×600px",
-  "news": "600×400px",
-  "features": "400×300px",
-  "showroom": "1200×800px",
+  "hero-banner": "1920×1080px (Desktop), 768×1024px (Mobile) - Tỉ lệ 16:9 cho desktop",
+  "car-gallery": "1200×675px (Desktop), 800×450px (Mobile) - Tỉ lệ 16:9, không có overlay", 
+  "promotions": "800×450px - Tỉ lệ 16:9",
+  "news": "800×450px - Tỉ lệ 16:9",
+  "features": "600×338px - Tỉ lệ 16:9",
+  "showroom": "1200×675px - Tỉ lệ 16:9",
   "logo": "200×100px (PNG với nền trong suốt)",
-  "background": "1920×1080px",
+  "background": "1920×1080px - Tỉ lệ 16:9",
   "other": "Tùy theo mục đích sử dụng"
 };
 
