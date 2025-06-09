@@ -7,6 +7,10 @@ import { Save, RefreshCw } from "lucide-react";
 import BasicInformationSection from "./seo/BasicInformationSection";
 import RobotsSection from "./seo/RobotsSection";
 import OpenGraphSection from "./seo/OpenGraphSection";
+import TwitterSection from "./seo/TwitterSection";
+import SchemaSection from "./seo/SchemaSection";
+import TechnicalSEOSection from "./seo/TechnicalSEOSection";
+import LocalSEOSection from "./seo/LocalSEOSection";
 
 interface SEOSettings {
   id?: string;
@@ -91,7 +95,11 @@ const SEOManagement = () => {
       "streetAddress": "Ninh Thuận",
       "addressLocality": "Phan Rang-Tháp Chàm",
       "addressRegion": "Ninh Thuận",
-      "addressCountry": "VN"
+      "addressCountry": "VN",
+      "postalCode": "59000",
+      "telephone": "+84",
+      "openingHours": "Mo-Fr 08:00-17:00, Sa 08:00-12:00",
+      "priceRange": "$$ (699tr - 1.5 tỷ VND)"
     },
     schema_offers: [],
     schema_services: [],
@@ -126,7 +134,17 @@ const SEOManagement = () => {
         setSeoSettings({
           ...data,
           hreflang_tags: Array.isArray(data.hreflang_tags) ? data.hreflang_tags : [],
-          schema_address: typeof data.schema_address === 'object' && data.schema_address !== null ? data.schema_address : {},
+          schema_address: typeof data.schema_address === 'object' && data.schema_address !== null ? data.schema_address : {
+            "@type": "PostalAddress",
+            "streetAddress": "Ninh Thuận",
+            "addressLocality": "Phan Rang-Tháp Chàm",
+            "addressRegion": "Ninh Thuận",
+            "addressCountry": "VN",
+            "postalCode": "59000",
+            "telephone": "+84",
+            "openingHours": "Mo-Fr 08:00-17:00, Sa 08:00-12:00",
+            "priceRange": "$$ (699tr - 1.5 tỷ VND)"
+          },
           schema_offers: Array.isArray(data.schema_offers) ? data.schema_offers : [],
           schema_services: Array.isArray(data.schema_services) ? data.schema_services : [],
           custom_meta_tags: Array.isArray(data.custom_meta_tags) ? data.custom_meta_tags : []
@@ -194,8 +212,8 @@ const SEOManagement = () => {
       {/* Header với nút lưu */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-blue-600">Quản Lý SEO & Meta Tags</h2>
-          <p className="text-gray-600">Tối ưu hóa SEO cho website của bạn</p>
+          <h2 className="text-2xl font-bold text-blue-600">Quản Lý SEO & Meta Tags Nâng Cao</h2>
+          <p className="text-gray-600">Tối ưu hóa SEO toàn diện cho website của bạn</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleReset}>
@@ -209,7 +227,7 @@ const SEOManagement = () => {
         </div>
       </div>
 
-      {/* Sections */}
+      {/* All SEO Sections */}
       <BasicInformationSection 
         seoSettings={seoSettings} 
         handleInputChange={handleInputChange} 
@@ -221,6 +239,26 @@ const SEOManagement = () => {
       />
       
       <OpenGraphSection 
+        seoSettings={seoSettings} 
+        handleInputChange={handleInputChange} 
+      />
+
+      <TwitterSection 
+        seoSettings={seoSettings} 
+        handleInputChange={handleInputChange} 
+      />
+
+      <LocalSEOSection 
+        seoSettings={seoSettings} 
+        handleInputChange={handleInputChange} 
+      />
+
+      <SchemaSection 
+        seoSettings={seoSettings} 
+        handleInputChange={handleInputChange} 
+      />
+
+      <TechnicalSEOSection 
         seoSettings={seoSettings} 
         handleInputChange={handleInputChange} 
       />

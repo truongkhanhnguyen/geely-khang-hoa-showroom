@@ -37,6 +37,8 @@ interface SEOSettings {
   schema_address: any;
   schema_offers: any[];
   schema_services: any[];
+  hreflang_tags: any[];
+  custom_meta_tags: any[];
 }
 
 const SEOHead = () => {
@@ -62,7 +64,9 @@ const SEOHead = () => {
           ...data,
           schema_address: typeof data.schema_address === 'object' && data.schema_address !== null ? data.schema_address : {},
           schema_offers: Array.isArray(data.schema_offers) ? data.schema_offers : [],
-          schema_services: Array.isArray(data.schema_services) ? data.schema_services : []
+          schema_services: Array.isArray(data.schema_services) ? data.schema_services : [],
+          hreflang_tags: Array.isArray(data.hreflang_tags) ? data.hreflang_tags : [],
+          custom_meta_tags: Array.isArray(data.custom_meta_tags) ? data.custom_meta_tags : []
         });
       }
     } catch (error) {
@@ -89,7 +93,7 @@ const SEOHead = () => {
   const generateStructuredData = () => {
     if (!seoSettings) return null;
     
-    return {
+    const structuredData = {
       "@context": "https://schema.org",
       "@type": seoSettings.schema_type,
       "name": seoSettings.schema_name,
@@ -100,6 +104,23 @@ const SEOHead = () => {
       "offers": seoSettings.schema_offers,
       "makesOffer": seoSettings.schema_services
     };
+
+    // Add opening hours if available
+    if (seoSettings.schema_address?.openingHours) {
+      structuredData.openingHours = seoSettings.schema_address.openingHours;
+    }
+
+    // Add price range if available
+    if (seoSettings.schema_address?.priceRange) {
+      structuredData.priceRange = seoSettings.schema_address.priceRange;
+    }
+
+    // Add telephone if available
+    if (seoSettings.schema_address?.telephone) {
+      structuredData.telephone = seoSettings.schema_address.telephone;
+    }
+
+    return structuredData;
   };
 
   useEffect(() => {
@@ -110,6 +131,7 @@ const SEOHead = () => {
 
     // Update meta tags
     const updateMetaTag = (name: string, content: string) => {
+      if (!content) return;
       let meta = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement;
       if (!meta) {
         meta = document.createElement('meta');
@@ -120,6 +142,7 @@ const SEOHead = () => {
     };
 
     const updatePropertyTag = (property: string, content: string) => {
+      if (!content) return;
       let meta = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement;
       if (!meta) {
         meta = document.createElement('meta');
@@ -179,6 +202,43 @@ const SEOHead = () => {
       document.head.appendChild(canonical);
     }
     canonical.href = seoSettings.canonical_url;
+
+    // Update hreflang tags
+    // Remove existing hreflang tags
+    document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(link => link.remove());
+    
+    // Add new hreflang tags
+    seoSettings.hreflang_tags?.forEach((tag: any) => {
+      if (tag.hreflang && tag.href) {
+        const hreflangLink = document.createElement('link');
+        hreflangLink.rel = 'alternate';
+        hreflangLink.hreflang = tag.hreflang;
+        hreflangLink.href = tag.href;
+        document.head.appendChild(hreflangLink);
+      }
+    });
+
+    // Update custom meta tags
+    // Remove existing custom tags (with data-custom attribute)
+    document.querySelectorAll('meta[data-custom="true"]').forEach(meta => meta.remove());
+    
+    // Add new custom meta tags
+    seoSettings.custom_meta_tags?.forEach((tag: any) => {
+      if ((tag.name || tag.property) && tag.content) {
+        const meta = document.createElement('meta');
+        meta.setAttribute('data-custom', 'true');
+        
+        if (tag.name) {
+          meta.name = tag.name;
+        }
+        if (tag.property) {
+          meta.setAttribute('property', tag.property);
+        }
+        meta.content = tag.content;
+        
+        document.head.appendChild(meta);
+      }
+    });
 
     // Update structured data
     const structuredData = generateStructuredData();
