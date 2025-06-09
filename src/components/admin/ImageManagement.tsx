@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Upload, Trash2, Edit, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,6 +24,38 @@ interface WebsiteImage {
   file_size: number | null;
 }
 
+const IMAGE_CATEGORIES = [
+  { value: "hero-banner", label: "Banner Chính (Hero)", description: "Hình ảnh banner chính trang chủ" },
+  { value: "car-gallery", label: "Thư Viện Xe", description: "Hình ảnh chi tiết của xe" },
+  { value: "promotions", label: "Khuyến Mãi", description: "Hình ảnh cho các chương trình khuyến mãi" },
+  { value: "news", label: "Tin Tức", description: "Hình ảnh cho bài viết tin tức" },
+  { value: "features", label: "Tính Năng", description: "Hình ảnh minh họa tính năng xe" },
+  { value: "showroom", label: "Showroom", description: "Hình ảnh showroom và cơ sở vật chất" },
+  { value: "logo", label: "Logo", description: "Logo và biểu tượng thương hiệu" },
+  { value: "background", label: "Hình Nền", description: "Hình nền cho các section" },
+  { value: "other", label: "Khác", description: "Hình ảnh khác" }
+];
+
+const CAR_MODELS = [
+  { value: "all", label: "Tất Cả Dòng Xe" },
+  { value: "coolray", label: "Geely Coolray" },
+  { value: "monjaro", label: "Geely Monjaro" },
+  { value: "ex5", label: "Geely EX5" },
+  { value: "future-models", label: "Dòng Xe Tương Lai" }
+];
+
+const RECOMMENDED_SIZES = {
+  "hero-banner": "1920x1080px (Desktop), 768x1024px (Mobile)",
+  "car-gallery": "1200x800px (Desktop), 600x400px (Mobile)", 
+  "promotions": "800x600px",
+  "news": "600x400px",
+  "features": "400x300px",
+  "showroom": "1200x800px",
+  "logo": "200x100px (PNG với nền trong suốt)",
+  "background": "1920x1080px",
+  "other": "Tùy theo mục đích sử dụng"
+};
+
 const ImageManagement = () => {
   const [images, setImages] = useState<WebsiteImage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,6 +68,7 @@ const ImageManagement = () => {
   // Form states
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
+  const [carModel, setCarModel] = useState("all");
   const [recommendedSize, setRecommendedSize] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -44,6 +77,13 @@ const ImageManagement = () => {
   useEffect(() => {
     fetchImages();
   }, []);
+
+  useEffect(() => {
+    // Auto-fill recommended size when category changes
+    if (category && RECOMMENDED_SIZES[category as keyof typeof RECOMMENDED_SIZES]) {
+      setRecommendedSize(RECOMMENDED_SIZES[category as keyof typeof RECOMMENDED_SIZES]);
+    }
+  }, [category]);
 
   const fetchImages = async () => {
     try {
@@ -110,6 +150,17 @@ const ImageManagement = () => {
     }
   };
 
+  const generateImageName = () => {
+    const categoryLabel = IMAGE_CATEGORIES.find(cat => cat.value === category)?.label || category;
+    const modelLabel = CAR_MODELS.find(model => model.value === carModel)?.label || carModel;
+    
+    if (carModel === "all") {
+      return `${categoryLabel} - ${Date.now()}`;
+    } else {
+      return `${categoryLabel} - ${modelLabel} - ${Date.now()}`;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -126,6 +177,15 @@ const ImageManagement = () => {
       toast({
         title: "Lỗi",
         description: "Vui lòng chọn file hình ảnh",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!category) {
+      toast({
+        title: "Lỗi",
+        description: "Vui lòng chọn danh mục hình ảnh",
         variant: "destructive",
       });
       return;
@@ -151,11 +211,14 @@ const ImageManagement = () => {
         mobileUrl = await uploadFileToStorage(mobileFile, false);
       }
 
+      const finalName = name || generateImageName();
+      const categoryWithModel = carModel !== "all" ? `${category}-${carModel}` : category;
+
       const imageData = {
-        name,
+        name: finalName,
         url: desktopUrl,
         mobile_url: mobileUrl,
-        category,
+        category: categoryWithModel,
         recommended_size: recommendedSize,
         description: description || null,
         file_name: fileName,
@@ -182,14 +245,7 @@ const ImageManagement = () => {
       });
 
       // Reset form
-      setName("");
-      setCategory("");
-      setRecommendedSize("");
-      setDescription("");
-      setFile(null);
-      setMobileFile(null);
-      setEditingImage(null);
-      
+      resetForm();
       fetchImages();
     } catch (error) {
       console.error('Error saving image:', error);
@@ -206,7 +262,17 @@ const ImageManagement = () => {
   const handleEdit = (image: WebsiteImage) => {
     setEditingImage(image);
     setName(image.name);
-    setCategory(image.category);
+    
+    // Parse category and car model from existing category
+    const categoryParts = image.category.split('-');
+    if (categoryParts.length > 1 && CAR_MODELS.some(model => model.value === categoryParts[categoryParts.length - 1])) {
+      setCarModel(categoryParts[categoryParts.length - 1]);
+      setCategory(categoryParts.slice(0, -1).join('-'));
+    } else {
+      setCategory(image.category);
+      setCarModel("all");
+    }
+    
     setRecommendedSize(image.recommended_size);
     setDescription(image.description || "");
   };
@@ -251,6 +317,7 @@ const ImageManagement = () => {
     setEditingImage(null);
     setName("");
     setCategory("");
+    setCarModel("all");
     setRecommendedSize("");
     setDescription("");
     setFile(null);
@@ -295,26 +362,54 @@ const ImageManagement = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="name">Tên hình ảnh</Label>
-                <Input
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="VD: Hero Banner Desktop"
-                  required
-                />
+                <Label htmlFor="category">Danh mục hình ảnh *</Label>
+                <Select value={category} onValueChange={setCategory} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Chọn danh mục hình ảnh" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {IMAGE_CATEGORIES.map((cat) => (
+                      <SelectItem key={cat.value} value={cat.value}>
+                        <div>
+                          <div className="font-medium">{cat.label}</div>
+                          <div className="text-xs text-gray-500">{cat.description}</div>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              
+
               <div>
-                <Label htmlFor="category">Danh mục</Label>
-                <Input
-                  id="category"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  placeholder="VD: hero, car-images, promotions"
-                  required
-                />
+                <Label htmlFor="carModel">Dòng xe *</Label>
+                <Select value={carModel} onValueChange={setCarModel} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Chọn dòng xe" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CAR_MODELS.map((model) => (
+                      <SelectItem key={model.value} value={model.value}>
+                        {model.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
+            </div>
+
+            <div>
+              <Label htmlFor="name">Tên hình ảnh (tùy chọn)</Label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Để trống để tự động tạo tên dựa trên danh mục và dòng xe"
+              />
+              {!name && category && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Tên sẽ được tạo tự động: {generateImageName()}
+                </p>
+              )}
             </div>
 
             <div>
@@ -323,7 +418,7 @@ const ImageManagement = () => {
                 id="recommendedSize"
                 value={recommendedSize}
                 onChange={(e) => setRecommendedSize(e.target.value)}
-                placeholder="VD: 1920x1080px"
+                placeholder="Kích thước sẽ được tự động điền theo danh mục"
                 required
               />
             </div>
@@ -334,7 +429,7 @@ const ImageManagement = () => {
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Mô tả chi tiết về hình ảnh này..."
+                placeholder="Mô tả chi tiết về hình ảnh này, cách sử dụng..."
                 rows={3}
               />
             </div>
@@ -401,7 +496,7 @@ const ImageManagement = () => {
               <div key={image.id} className="border rounded-lg p-4 space-y-3">
                 <div className="relative">
                   <img
-                    src={showPreview === image.id ? image.url : image.url}
+                    src={image.url}
                     alt={image.name}
                     className="w-full h-40 object-cover rounded cursor-pointer"
                     onClick={() => setShowPreview(showPreview === image.id ? null : image.id)}
@@ -415,7 +510,14 @@ const ImageManagement = () => {
                 
                 <div>
                   <h4 className="font-medium truncate">{image.name}</h4>
-                  <p className="text-sm text-gray-500">{image.category}</p>
+                  <p className="text-sm text-gray-500">
+                    {IMAGE_CATEGORIES.find(cat => image.category.includes(cat.value))?.label || image.category}
+                  </p>
+                  {image.category.includes('-') && (
+                    <p className="text-xs text-blue-600">
+                      {CAR_MODELS.find(model => image.category.includes(model.value))?.label || 'Dòng xe cụ thể'}
+                    </p>
+                  )}
                   <p className="text-xs text-gray-400">{image.recommended_size}</p>
                   {image.file_size && (
                     <p className="text-xs text-gray-400">
