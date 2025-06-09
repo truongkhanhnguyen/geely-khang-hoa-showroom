@@ -61,28 +61,28 @@ const EX5Details = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
+      {/* Header - Mobile Optimized */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex justify-between items-center h-14 md:h-16">
+            <div className="flex items-center space-x-2 md:space-x-4">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/')}
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-1 md:space-x-2 p-2"
               >
                 <ArrowLeft className="h-4 w-4" />
-                <span>Quay lại</span>
+                <span className="hidden sm:inline">Quay lại</span>
               </Button>
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2 md:space-x-3">
                 <img 
                   src="/lovable-uploads/53460547-efd5-41cc-9b2d-92f168c32983.png" 
                   alt="Geely Logo" 
-                  className="h-8 w-auto cursor-pointer hover:opacity-80 transition-opacity"
+                  className="h-6 md:h-8 w-auto cursor-pointer hover:opacity-80 transition-opacity"
                   onClick={() => navigate('/')}
                 />
-                <span className="text-xl font-semibold text-gray-900">Geely EX5</span>
+                <span className="text-lg md:text-xl font-semibold text-gray-900">EX5</span>
               </div>
             </div>
             <LanguageToggle />
@@ -90,114 +90,133 @@ const EX5Details = () => {
         </div>
       </header>
 
-      {/* Hero Section - Removed gradient overlay */}
-      <section className="relative pt-16">
-        <div className="relative h-[70vh] md:h-screen">
+      {/* Hero Section - Mobile Optimized */}
+      <section className="relative pt-14 md:pt-16">
+        <div className="relative h-[60vh] md:h-[70vh] lg:h-screen">
           <CarImageCarousel images={carImages} carModel="EX5" />
           
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-              <div className="text-center text-white">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light mb-4 leading-tight drop-shadow-lg">
-                  Geely EX5
-                </h1>
-                <p className="text-lg md:text-2xl font-medium text-green-300 mb-6 drop-shadow-lg">
-                  Electric. Efficient. Future.
-                </p>
-                <p className="text-base md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto leading-relaxed drop-shadow-lg">
-                  SUV điện thông minh với công nghệ pin tiên tiến và khả năng vận hành êm ái, dẫn đầu xu hướng xanh.
-                </p>
+          {/* Hero Text Overlay - Mobile Optimized */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent">
+            <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8">
+              <div className="max-w-7xl mx-auto">
+                <div className="text-white">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light mb-2 md:mb-4 leading-tight">
+                    Geely EX5
+                  </h1>
+                  <p className="text-sm sm:text-base md:text-lg font-medium text-green-300 mb-2 md:mb-4">
+                    Electric. Efficient. Future.
+                  </p>
+                  <p className="text-xs sm:text-sm md:text-base text-gray-200 mb-4 md:mb-6 leading-relaxed">
+                    SUV điện thông minh với công nghệ pin tiên tiến và khả năng vận hành êm ái, dẫn đầu xu hướng xanh.
+                  </p>
+                  
+                  {/* Action Buttons - Mobile Optimized */}
+                  <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
+                    <Button 
+                      size="sm"
+                      className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white px-4 py-2 md:px-6 md:py-3 rounded-full shadow-lg text-sm md:text-base"
+                      onClick={() => setShowTestDrive(true)}
+                    >
+                      <Calendar className="mr-1 md:mr-2 h-4 w-4" />
+                      Đặt lịch lái thử
+                    </Button>
+                    
+                    <Button 
+                      variant="outline"
+                      size="sm"
+                      className="border-white/80 bg-white/10 backdrop-blur-sm text-white hover:bg-white hover:text-gray-900 px-4 py-2 md:px-6 md:py-3 rounded-full shadow-lg text-sm md:text-base"
+                      onClick={() => setShowPriceQuote(true)}
+                    >
+                      <Calculator className="mr-1 md:mr-2 h-4 w-4" />
+                      Xem báo giá
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Action Buttons - Positioned at bottom right of gallery */}
-        <div className="absolute bottom-6 right-6 z-10">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button 
-              size="lg"
-              className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white px-6 py-3 rounded-full shadow-lg backdrop-blur-sm"
-              onClick={() => setShowTestDrive(true)}
-            >
-              <Calendar className="mr-2 h-5 w-5" />
-              Đặt lịch lái thử
-            </Button>
-            
-            <Button 
-              variant="outline"
-              size="lg"
-              className="border-white/80 bg-white/10 backdrop-blur-sm text-white hover:bg-white hover:text-gray-900 px-6 py-3 rounded-full shadow-lg"
-              onClick={() => setShowPriceQuote(true)}
-            >
-              <Calculator className="mr-2 h-5 w-5" />
-              Xem báo giá
-            </Button>
-          </div>
-        </div>
       </section>
 
-      {/* Specifications Section */}
-      <section className="py-16 md:py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-4">Thông số kỹ thuật</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+      {/* Specifications Section - Mobile Optimized */}
+      <section className="py-8 md:py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-6 md:mb-12">
+            <h2 className="text-xl md:text-3xl font-light text-gray-900 mb-2 md:mb-4">Thông số kỹ thuật</h2>
+            <p className="text-sm md:text-lg text-gray-600 max-w-2xl mx-auto">
               Khám phá những thông số ấn tượng của Geely EX5
             </p>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-6">
             {specifications.map((spec, index) => (
-              <Card key={index} className="p-4 md:p-6 text-center hover:shadow-lg transition-all duration-300 hover:scale-105">
-                <spec.icon className="h-8 w-8 md:h-12 md:w-12 text-green-600 mx-auto mb-3 md:mb-4" />
-                <h3 className="font-semibold text-gray-900 mb-1 md:mb-2 text-sm md:text-base">{spec.label}</h3>
-                <p className="text-gray-600 text-xs md:text-base font-medium">{spec.value}</p>
+              <Card key={index} className="p-3 md:p-6 text-center hover:shadow-lg transition-all duration-300 border border-gray-100">
+                <spec.icon className="h-6 w-6 md:h-10 md:w-10 text-green-600 mx-auto mb-2 md:mb-3" />
+                <h3 className="font-medium text-gray-900 mb-1 text-xs md:text-base">{spec.label}</h3>
+                <p className="text-gray-600 text-xs md:text-sm font-medium">{spec.value}</p>
               </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 md:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-4">Tính năng nổi bật</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+      {/* Features Section - Mobile Optimized */}
+      <section className="py-8 md:py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-6 md:mb-12">
+            <h2 className="text-xl md:text-3xl font-light text-gray-900 mb-2 md:mb-4">Tính năng nổi bật</h2>
+            <p className="text-sm md:text-lg text-gray-600 max-w-2xl mx-auto">
               Trải nghiệm những công nghệ tiên tiến nhất trong phân khúc
             </p>
           </div>
           
-          <FeatureSlider features={detailedFeatures} accentColor="green-600" />
+          {/* Mobile: Simple card layout instead of slider */}
+          <div className="block md:hidden space-y-4">
+            {detailedFeatures.map((feature, index) => (
+              <Card key={index} className="p-4 border border-gray-200">
+                <img 
+                  src={feature.image} 
+                  alt={feature.title}
+                  className="w-full h-40 object-cover rounded-lg mb-3"
+                />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">{feature.description}</p>
+              </Card>
+            ))}
+          </div>
+          
+          {/* Desktop: Keep the slider */}
+          <div className="hidden md:block">
+            <FeatureSlider features={detailedFeatures} accentColor="green-600" />
+          </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 md:py-20 bg-gradient-to-r from-green-600 to-teal-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-light text-white mb-6 md:mb-8">Sẵn sàng trải nghiệm?</h2>
-          <p className="text-lg md:text-xl text-green-100 mb-8 md:mb-12 leading-relaxed">
+      {/* CTA Section - Mobile Optimized */}
+      <section className="py-8 md:py-16 bg-gradient-to-r from-green-600 to-teal-600">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <h2 className="text-xl md:text-3xl font-light text-white mb-4 md:mb-8">Sẵn sàng trải nghiệm?</h2>
+          <p className="text-sm md:text-lg text-green-100 mb-6 md:mb-12 leading-relaxed">
             Đặt lịch lái thử ngay hôm nay để cảm nhận sự khác biệt của Geely EX5
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
             <Button 
-              size="lg"
-              className="bg-white text-green-600 hover:bg-gray-100 px-8 py-3 rounded-full font-medium"
+              size="sm"
+              className="bg-white text-green-600 hover:bg-gray-100 px-6 py-2 md:px-8 md:py-3 rounded-full font-medium text-sm md:text-base"
               onClick={() => setShowTestDrive(true)}
             >
-              <Calendar className="mr-2 h-5 w-5" />
+              <Calendar className="mr-1 md:mr-2 h-4 w-4" />
               Đặt lịch lái thử
             </Button>
             
             <Button 
               variant="outline"
-              size="lg"
-              className="border-white text-white hover:bg-white hover:text-green-600 px-8 py-3 rounded-full font-medium"
+              size="sm"
+              className="border-white text-white hover:bg-white hover:text-green-600 px-6 py-2 md:px-8 md:py-3 rounded-full font-medium text-sm md:text-base"
               onClick={() => setShowPriceQuote(true)}
             >
-              <Calculator className="mr-2 h-5 w-5" />
+              <Calculator className="mr-1 md:mr-2 h-4 w-4" />
               Xem báo giá
             </Button>
           </div>
