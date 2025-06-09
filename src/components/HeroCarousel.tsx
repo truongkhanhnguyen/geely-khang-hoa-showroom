@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -133,13 +134,16 @@ const HeroCarousel = ({
       console.log('💰 Price Availability Map:', priceAvailabilityMap);
 
       if (!imagesData || imagesData.length === 0) {
-        console.log('⚠️ NO HERO IMAGES FOUND - Using defaults');
-        const defaultCars = Object.values(carModelsMapping).map(car => ({
-          ...car,
-          image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop",
-          price_available: priceAvailabilityMap[car.name] ?? true,
-          price: priceAvailabilityMap[car.name] === false ? "Coming Soon" : car.price
-        }));
+        console.log('⚠️ NO HERO IMAGES FOUND - Using defaults with price availability check');
+        const defaultCars = Object.values(carModelsMapping).map(car => {
+          const isPriceAvailable = priceAvailabilityMap[car.name] ?? true;
+          return {
+            ...car,
+            image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop",
+            price_available: isPriceAvailable,
+            price: isPriceAvailable ? car.price : "Coming Soon"
+          };
+        });
         setCars(defaultCars);
         return;
       }

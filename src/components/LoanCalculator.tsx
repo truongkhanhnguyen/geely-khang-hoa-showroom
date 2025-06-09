@@ -40,14 +40,15 @@ const LoanCalculator = ({ carPrice = 0 }: LoanCalculatorProps) => {
       const { data, error } = await supabase
         .from('car_prices')
         .select('price_available')
-        .eq('car_model', selectedCar)
-        .limit(1);
+        .eq('car_model', selectedCar);
 
       if (error) throw error;
 
       // If any variant has price available, show the calculator
       const hasAvailablePrice = data?.some(item => item.price_available) ?? true;
       setIsPriceAvailable(hasAvailablePrice);
+      
+      console.log(`Price availability for ${selectedCar}:`, hasAvailablePrice);
     } catch (error) {
       console.error('Error checking price availability:', error);
       // Default to showing calculator if there's an error
