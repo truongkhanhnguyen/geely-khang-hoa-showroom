@@ -89,16 +89,13 @@ const CoolrayDetails = () => {
         </div>
       </header>
 
-      {/* Hero Section với carousel và thông tin */}
+      {/* Hero Section */}
       <section className="relative pt-16">
-        {/* Car Image Carousel */}
         <div className="relative h-[70vh] md:h-screen">
           <CarImageCarousel images={carImages} carModel="Coolray" />
           
-          {/* Gradient overlay để text rõ hơn */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent"></div>
           
-          {/* Content overlay */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
               <div className="text-center text-white">
@@ -111,29 +108,32 @@ const CoolrayDetails = () => {
                 <p className="text-base md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto leading-relaxed">
                   SUV compact thông minh với công nghệ hiện đại và thiết kế trẻ trung, phù hợp cho cuộc sống đô thị năng động.
                 </p>
-                
-                <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-                  <Button 
-                    size="lg"
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-full"
-                    onClick={() => setShowTestDrive(true)}
-                  >
-                    <Calendar className="mr-2 h-5 w-5" />
-                    Đặt lịch lái thử
-                  </Button>
-                  
-                  <Button 
-                    variant="outline"
-                    size="lg"
-                    className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 rounded-full"
-                    onClick={() => setShowPriceQuote(true)}
-                  >
-                    <Calculator className="mr-2 h-5 w-5" />
-                    Xem báo giá
-                  </Button>
-                </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Action Buttons - Positioned at bottom right of gallery */}
+        <div className="absolute bottom-6 right-6 z-10">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button 
+              size="lg"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-full shadow-lg backdrop-blur-sm"
+              onClick={() => setShowTestDrive(true)}
+            >
+              <Calendar className="mr-2 h-5 w-5" />
+              Đặt lịch lái thử
+            </Button>
+            
+            <Button 
+              variant="outline"
+              size="lg"
+              className="border-white/80 bg-white/10 backdrop-blur-sm text-white hover:bg-white hover:text-gray-900 px-6 py-3 rounded-full shadow-lg"
+              onClick={() => setShowPriceQuote(true)}
+            >
+              <Calculator className="mr-2 h-5 w-5" />
+              Xem báo giá
+            </Button>
           </div>
         </div>
       </section>
