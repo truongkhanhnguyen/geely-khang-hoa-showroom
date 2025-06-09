@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -130,11 +129,11 @@ const SEOManagement = () => {
       if (data) {
         setSeoSettings({
           ...data,
-          hreflang_tags: data.hreflang_tags || [],
-          schema_address: data.schema_address || {},
-          schema_offers: data.schema_offers || [],
-          schema_services: data.schema_services || [],
-          custom_meta_tags: data.custom_meta_tags || []
+          hreflang_tags: Array.isArray(data.hreflang_tags) ? data.hreflang_tags : [],
+          schema_address: typeof data.schema_address === 'object' && data.schema_address !== null ? data.schema_address : {},
+          schema_offers: Array.isArray(data.schema_offers) ? data.schema_offers : [],
+          schema_services: Array.isArray(data.schema_services) ? data.schema_services : [],
+          custom_meta_tags: Array.isArray(data.custom_meta_tags) ? data.custom_meta_tags : []
         });
       }
     } catch (error) {
