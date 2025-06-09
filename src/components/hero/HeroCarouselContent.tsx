@@ -19,11 +19,47 @@ export const HeroCarouselContent = ({
 }: HeroCarouselContentProps) => {
   const { t } = useLanguage();
 
+  // Function to get logo URL based on car name
+  const getCarLogo = (carName: string) => {
+    if (carName.toLowerCase().includes('coolray')) {
+      return '/lovable-uploads/coolray-logo.png';
+    } else if (carName.toLowerCase().includes('monjaro')) {
+      return '/lovable-uploads/monjaro-logo.png';
+    } else if (carName.toLowerCase().includes('ex5')) {
+      return '/lovable-uploads/ex5-logo.png';
+    }
+    // Fallback to text if no logo found
+    return null;
+  };
+
+  const logoUrl = getCarLogo(car.name);
+
   return (
     <div className="lg:col-span-5 text-white">
-      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light mb-2 md:mb-4 animate-fade-in leading-tight">
-        {car.name}
-      </h1>
+      {/* Car Logo or Name */}
+      {logoUrl ? (
+        <div className="mb-2 md:mb-4 animate-fade-in">
+          <img 
+            src={logoUrl} 
+            alt={car.name}
+            className="h-16 sm:h-20 md:h-24 lg:h-28 xl:h-32 w-auto object-contain"
+            onError={(e) => {
+              // Fallback to text if image fails to load
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              target.nextElementSibling?.classList.remove('hidden');
+            }}
+          />
+          <h1 className="hidden text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light leading-tight">
+            {car.name}
+          </h1>
+        </div>
+      ) : (
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light mb-2 md:mb-4 animate-fade-in leading-tight">
+          {car.name}
+        </h1>
+      )}
+      
       <p className="text-lg sm:text-xl md:text-2xl font-medium text-blue-300 mb-4 md:mb-6 animate-fade-in">
         {car.tagline}
       </p>
