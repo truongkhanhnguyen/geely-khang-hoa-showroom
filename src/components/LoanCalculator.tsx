@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calculator } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { supabase } from "@/integrations/supabase/client";
 
 interface LoanCalculatorProps {
   carPrice?: number;
@@ -27,35 +26,6 @@ const LoanCalculator = ({ carPrice = 0 }: LoanCalculatorProps) => {
   const [loanTerm, setLoanTerm] = useState(60); // months
   const [interestRate, setInterestRate] = useState(8.5); // %
   const [loanInsurance, setLoanInsurance] = useState(0); // %
-  const [isPriceAvailable, setIsPriceAvailable] = useState(true);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    checkPriceAvailability();
-  }, [selectedCar]);
-
-  const checkPriceAvailability = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('car_prices')
-        .select('price_available')
-        .eq('car_model', selectedCar)
-        .limit(1);
-
-      if (error) throw error;
-
-      // If any variant has price available, show the calculator
-      const hasAvailablePrice = data?.some(item => item.price_available) ?? true;
-      setIsPriceAvailable(hasAvailablePrice);
-    } catch (error) {
-      console.error('Error checking price availability:', error);
-      // Default to showing calculator if there's an error
-      setIsPriceAvailable(true);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleCarChange = (carName: string) => {
     setSelectedCar(carName);
@@ -82,57 +52,6 @@ const LoanCalculator = ({ carPrice = 0 }: LoanCalculatorProps) => {
   const formatPrice = (price: number) => {
     return price.toLocaleString('vi-VN') + ' VNĐ';
   };
-
-  if (loading) {
-    return (
-      <Card className="p-6 bg-gradient-to-br from-green-50 to-teal-50 border-green-200">
-        <div className="flex items-center justify-center p-8">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Đang tải thông tin...</p>
-          </div>
-        </div>
-      </Card>
-    );
-  }
-
-  if (!isPriceAvailable) {
-    return (
-      <Card className="p-6 bg-gradient-to-br from-orange-50 to-red-50 border-orange-200">
-        <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-          <Calculator className="w-6 h-6 mr-2 text-orange-600" />
-          {t('loanCalculator')}
-        </h3>
-        
-        <div className="text-center py-8">
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-orange-200">
-            <h4 className="text-lg font-semibold text-orange-800 mb-4">
-              Thông tin tính toán vay sẽ sớm được cập nhật
-            </h4>
-            <p className="text-gray-600 mb-4">
-              Hiện tại thông tin giá xe {selectedCar} chưa được công bố. 
-              Chúng tôi sẽ cập nhật công cụ tính toán vay trả góp ngay khi có thông tin chính thức.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button 
-                className="bg-orange-600 hover:bg-orange-700 text-white"
-                onClick={() => window.location.href = 'tel:0123456789'}
-              >
-                Liên hệ tư vấn
-              </Button>
-              <Button 
-                variant="outline"
-                className="border-orange-600 text-orange-600 hover:bg-orange-50"
-                onClick={() => window.location.href = 'mailto:contact@geelyninhthuan.com'}
-              >
-                Gửi email
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Card>
-    );
-  }
 
   return (
     <Card className="p-6 bg-gradient-to-br from-green-50 to-teal-50 border-green-200">

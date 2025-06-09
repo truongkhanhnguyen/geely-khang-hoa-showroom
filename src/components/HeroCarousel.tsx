@@ -14,7 +14,6 @@ interface Car {
   mobile_image?: string;
   features: string[];
   priority?: number;
-  price_available?: boolean;
 }
 
 interface HeroCarouselProps {
@@ -91,54 +90,28 @@ const HeroCarousel = ({
     try {
       console.log('\n==== FETCHING HERO IMAGES FROM DATABASE ====');
       
-      // Fetch hero images
-      const { data: imagesData, error: imagesError } = await supabase
+      // Updated query to match the new category structure
+      const { data, error } = await supabase
         .from('website_images')
         .select('*')
         .or('category.eq.hero-banner,category.like.hero-banner-%')
         .order('created_at', { ascending: false });
 
-      console.log('📊 Images Query Result:', { error: imagesError, count: imagesData?.length });
+      console.log('📊 Database Query Result:');
+      console.log('- Error:', error);
+      console.log('- Data count:', data?.length || 0);
+      console.log('- Raw data:', data);
 
-      if (imagesError) {
-        console.error('❌ Images database error:', imagesError);
-        throw imagesError;
+      if (error) {
+        console.error('❌ Database error:', error);
+        throw error;
       }
 
-      // Fetch price availability for all cars
-      const { data: pricesData, error: pricesError } = await supabase
-        .from('car_prices')
-        .select('car_model, price_available')
-        .order('car_model');
-
-      console.log('📊 Prices Query Result:', { error: pricesError, data: pricesData });
-
-      if (pricesError) {
-        console.error('❌ Prices database error:', pricesError);
-      }
-
-      // Create price availability map
-      const priceAvailabilityMap: { [key: string]: boolean } = {};
-      if (pricesData) {
-        pricesData.forEach(price => {
-          if (!priceAvailabilityMap[price.car_model]) {
-            priceAvailabilityMap[price.car_model] = price.price_available;
-          } else {
-            // If any variant has price available, show price for the car
-            priceAvailabilityMap[price.car_model] = priceAvailabilityMap[price.car_model] || price.price_available;
-          }
-        });
-      }
-
-      console.log('💰 Price Availability Map:', priceAvailabilityMap);
-
-      if (!imagesData || imagesData.length === 0) {
+      if (!data || data.length === 0) {
         console.log('⚠️ NO HERO IMAGES FOUND - Using defaults');
         const defaultCars = Object.values(carModelsMapping).map(car => ({
           ...car,
-          image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop",
-          price_available: priceAvailabilityMap[car.name] ?? true,
-          price: priceAvailabilityMap[car.name] === false ? "Coming Soon" : car.price
+          image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop"
         }));
         setCars(defaultCars);
         return;
@@ -146,8 +119,17 @@ const HeroCarousel = ({
 
       console.log('\n🔍 PROCESSING IMAGES FROM DATABASE:');
       
-      const heroImages = imagesData.map((image: any, index: number) => {
+      const heroImages = data.map((image: any, index: number) => {
         console.log(`\n--- IMAGE ${index + 1}: ${image.name} ---`);
+        console.log('Full image data:', {
+          id: image.id,
+          name: image.name,
+          description: image.description,
+          category: image.category,
+          url: image.url,
+          mobile_url: image.mobile_url,
+          created_at: image.created_at
+        });
         
         // More flexible matching - check name, description, category and file_name
         const searchTerms = [
@@ -162,7 +144,7 @@ const HeroCarousel = ({
         let carModel = null;
         let carInfo = null;
 
-        // Check for car model in category first
+        // Check for car model in category first (e.g., "hero-banner-monjaro")
         if (image.category?.includes('monjaro')) {
           carModel = 'monjaro';
           carInfo = carModelsMapping.monjaro;
@@ -196,20 +178,16 @@ const HeroCarousel = ({
           console.log('❌ NO CAR MODEL MATCH');
         }
 
-        // Check price availability
-        const isPriceAvailable = carInfo ? (priceAvailabilityMap[carInfo.name] ?? true) : true;
-        
         // Create car object
         const carObject = carInfo ? {
           name: carInfo.name,
           tagline: carInfo.tagline,
           description: carInfo.description,
-          price: isPriceAvailable ? carInfo.price : "Coming Soon",
+          price: carInfo.price,
           image: image.url,
           mobile_image: image.mobile_url,
           features: carInfo.features,
-          priority: carInfo.priority || 999,
-          price_available: isPriceAvailable
+          priority: carInfo.priority || 999
         } : {
           name: image.name,
           tagline: "Geely Ninh Thuận",
@@ -218,16 +196,16 @@ const HeroCarousel = ({
           image: image.url,
           mobile_image: image.mobile_url,
           features: ["Công nghệ hiện đại", "Thiết kế sang trọng", "An toàn cao cấp", "Tiết kiệm nhiên liệu"],
-          priority: 999,
-          price_available: true
+          priority: 999
         };
 
         console.log('✅ Created car object:', carObject);
+        console.log('🖼️ Final image URL:', carObject.image);
         
         return carObject;
       });
 
-      // Sắp xếp theo thứ tự ưu tiên
+      // Sắp xếp theo thứ tự ưu tiên (priority thấp hơn = hiển thị trước)
       const sortedCars = heroImages.sort((a, b) => (a.priority || 999) - (b.priority || 999));
 
       console.log('\n🎯 FINAL PROCESSING RESULT:');
@@ -241,8 +219,7 @@ const HeroCarousel = ({
       console.log('🔄 Using fallback defaults due to error');
       const defaultCars = Object.values(carModelsMapping).map(car => ({
         ...car,
-        image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop",
-        price_available: true
+        image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop"
       }));
       setCars(defaultCars);
     }
@@ -256,7 +233,7 @@ const HeroCarousel = ({
         setCurrentIndex(prevIndex => (prevIndex + 1) % cars.length);
         setIsTransitioning(false);
       }, 300);
-    }, 12000);
+    }, 12000); // Tăng thời gian để xem rõ hơn
     return () => clearInterval(interval);
   }, [cars.length]);
 
@@ -297,9 +274,8 @@ const HeroCarousel = ({
 
   console.log('\n🎭 DISPLAYING CAR:');
   console.log('Car name:', currentCar.name);
-  console.log('Price available:', currentCar.price_available);
-  console.log('Displayed price:', currentCar.price);
   console.log('Image URL:', currentImage);
+  console.log('Mobile image available:', !!currentCar.mobile_image);
 
   return (
     <section className="relative h-screen overflow-hidden">
@@ -332,22 +308,9 @@ const HeroCarousel = ({
               <p className="text-sm sm:text-base md:text-lg text-gray-200 mb-4 md:mb-6 leading-relaxed animate-fade-in max-w-lg">
                 {currentCar.description}
               </p>
-              
-              {/* Price section with availability check */}
-              {currentCar.price_available ? (
-                <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6 animate-fade-in">
-                  {currentCar.price}
-                </p>
-              ) : (
-                <div className="mb-4 md:mb-6 animate-fade-in">
-                  <p className="text-xl sm:text-2xl md:text-3xl font-bold text-orange-400 mb-2">
-                    Coming Soon
-                  </p>
-                  <p className="text-sm md:text-base text-gray-300">
-                    Giá sẽ được cập nhật sớm
-                  </p>
-                </div>
-              )}
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6 animate-fade-in">
+                {currentCar.price}
+              </p>
 
               <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
                 <h4 className="text-sm md:text-lg font-semibold text-white">{t('features')}</h4>
@@ -362,7 +325,7 @@ const HeroCarousel = ({
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3 md:gap-4 animate-fade-in">
-                {/* Khám phá - First button */}
+                {/* Khám phá - First button without icon */}
                 <Button 
                   size="lg" 
                   variant="outline"
@@ -372,14 +335,14 @@ const HeroCarousel = ({
                   KHÁM PHÁ
                 </Button>
 
-                {/* Báo giá - Second button */}
+                {/* Báo giá - Second button without icon */}
                 <Button 
                   size="lg" 
                   variant="outline"
                   className="bg-white/90 hover:bg-white border-2 border-gray-300 text-gray-800 hover:text-gray-900 px-4 md:px-6 py-2 md:py-3 rounded-lg text-sm md:text-base font-medium uppercase tracking-wide"
                   onClick={() => onPriceQuote(currentCar.name)}
                 >
-                  {currentCar.price_available ? "BÁO GIÁ" : "ĐĂNG KÝ NHẬN GIÁ"}
+                  BÁO GIÁ
                 </Button>
 
                 {/* Đăng ký lái thử - Dark button with arrow */}
