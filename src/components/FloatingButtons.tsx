@@ -73,7 +73,7 @@ const FloatingButtons = () => {
         </Button>
       </div>
 
-      {/* Admin/Auth Button - Bottom left */}
+      {/* Admin/Auth Button - Bottom left - Made smaller and more transparent */}
       <div className="fixed bottom-6 left-6 z-50 flex flex-col space-y-2">
         {user ? (
           <>
@@ -81,22 +81,22 @@ const FloatingButtons = () => {
               <Button
                 onClick={() => setShowAdminPanel(true)}
                 size="sm"
-                className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
+                className="bg-blue-600/60 hover:bg-blue-700/80 text-white shadow-lg text-xs px-2 py-1 h-7 opacity-70 hover:opacity-90 transition-opacity"
                 title="Admin Panel"
               >
-                <Settings className="h-4 w-4 mr-2" />
-                Admin Panel
+                <Settings className="h-3 w-3 mr-1" />
+                Admin
               </Button>
             )}
             <Button
               onClick={handleSignOut}
               size="sm"
               variant="outline"
-              className="bg-white/90 hover:bg-white text-gray-600 hover:text-gray-900 shadow-lg"
+              className="bg-white/50 hover:bg-white/70 text-gray-600 hover:text-gray-900 shadow-lg text-xs px-2 py-1 h-7 opacity-60 hover:opacity-80 transition-opacity"
               title="Đăng xuất"
             >
-              <LogOut className="h-4 w-4 mr-2" />
-              Đăng xuất
+              <LogOut className="h-3 w-3 mr-1" />
+              Thoát
             </Button>
           </>
         ) : (
@@ -104,10 +104,10 @@ const FloatingButtons = () => {
             onClick={() => setShowAuthModal(true)}
             size="sm"
             variant="outline"
-            className="bg-white/90 hover:bg-white text-gray-600 hover:text-gray-900 shadow-lg"
+            className="bg-white/50 hover:bg-white/70 text-gray-600 hover:text-gray-900 shadow-lg text-xs px-2 py-1 h-7 opacity-60 hover:opacity-80 transition-opacity"
             title="Đăng nhập"
           >
-            <Settings className="h-4 w-4 mr-2" />
+            <Settings className="h-3 w-3 mr-1" />
             Đăng nhập
           </Button>
         )}

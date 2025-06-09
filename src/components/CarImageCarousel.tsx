@@ -7,9 +7,10 @@ import { supabase } from '@/integrations/supabase/client';
 interface CarImageCarouselProps {
   carModel: string;
   images?: string[];
+  hideNavigation?: boolean;
 }
 
-const CarImageCarousel = ({ carModel, images: propImages }: CarImageCarouselProps) => {
+const CarImageCarousel = ({ carModel, images: propImages, hideNavigation = false }: CarImageCarouselProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [images, setImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -99,7 +100,7 @@ const CarImageCarousel = ({ carModel, images: propImages }: CarImageCarouselProp
         className="w-full h-full object-cover transition-all duration-500"
       />
 
-      {images.length > 1 && (
+      {images.length > 1 && !hideNavigation && (
         <>
           {/* Navigation arrows */}
           <Button

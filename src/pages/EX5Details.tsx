@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, Calendar, Calculator, Battery, Gauge, Shield, Cog, Eye, Zap } from "lucide-react";
@@ -10,6 +9,7 @@ import LanguageToggle from "@/components/LanguageToggle";
 import CarImageCarousel from "@/components/CarImageCarousel";
 import FeatureSlider from "@/components/FeatureSlider";
 import FloatingButtons from "@/components/FloatingButtons";
+import ContactFooter from "@/components/ContactFooter";
 
 const EX5Details = () => {
   const navigate = useNavigate();
@@ -90,23 +90,21 @@ const EX5Details = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
+      {/* Hero Section - Removed gradient overlay */}
       <section className="relative pt-16">
         <div className="relative h-[70vh] md:h-screen">
           <CarImageCarousel images={carImages} carModel="EX5" />
           
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent"></div>
-          
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
               <div className="text-center text-white">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light mb-4 leading-tight">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light mb-4 leading-tight drop-shadow-lg">
                   Geely EX5
                 </h1>
-                <p className="text-lg md:text-2xl font-medium text-green-300 mb-6">
+                <p className="text-lg md:text-2xl font-medium text-green-300 mb-6 drop-shadow-lg">
                   Electric. Efficient. Future.
                 </p>
-                <p className="text-base md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto leading-relaxed">
+                <p className="text-base md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto leading-relaxed drop-shadow-lg">
                   SUV điện thông minh với công nghệ pin tiên tiến và khả năng vận hành êm ái, dẫn đầu xu hướng xanh.
                 </p>
               </div>
@@ -205,6 +203,9 @@ const EX5Details = () => {
           </div>
         </div>
       </section>
+
+      {/* Contact Footer */}
+      <ContactFooter />
 
       {/* Floating Buttons */}
       <FloatingButtons />

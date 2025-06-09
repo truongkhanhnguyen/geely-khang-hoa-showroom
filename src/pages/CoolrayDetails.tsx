@@ -9,10 +9,13 @@ import LanguageToggle from "@/components/LanguageToggle";
 import CarImageCarousel from "@/components/CarImageCarousel";
 import FeatureSlider from "@/components/FeatureSlider";
 import FloatingButtons from "@/components/FloatingButtons";
+import ContactFooter from "@/components/ContactFooter";
+
 const CoolrayDetails = () => {
   const navigate = useNavigate();
   const [showTestDrive, setShowTestDrive] = useState(false);
   const [showPriceQuote, setShowPriceQuote] = useState(false);
+
   const carImages = ["https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop", "https://images.unsplash.com/photo-1502877338535-766e1452684a?w=1920&h=1080&fit=crop", "https://images.unsplash.com/photo-1600712242805-5f78671b24da?w=1920&h=1080&fit=crop", "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?w=1920&h=1080&fit=crop"];
   const specifications = [{
     icon: Gauge,
@@ -60,7 +63,9 @@ const CoolrayDetails = () => {
     description: "Động cơ 1.5L Turbo mạnh mẽ 177 HP, hộp số CVT mượt mà, tiêu thụ nhiên liệu chỉ 6.8L/100km, mang lại trải nghiệm lái xe năng động và tiết kiệm.",
     image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?w=800&h=600&fit=crop"
   }];
-  return <div className="min-h-screen bg-white">
+
+  return (
+    <div className="min-h-screen bg-white">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -80,23 +85,21 @@ const CoolrayDetails = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
+      {/* Hero Section - Removed gradient overlay */}
       <section className="relative pt-16">
         <div className="relative h-[70vh] md:h-screen">
           <CarImageCarousel images={carImages} carModel="Coolray" />
           
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent"></div>
-          
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
               <div className="text-center text-white">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light mb-4 leading-tight">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light mb-4 leading-tight drop-shadow-lg">
                   Geely Coolray
                 </h1>
-                <p className="text-lg md:text-2xl font-medium text-blue-300 mb-6">
+                <p className="text-lg md:text-2xl font-medium text-blue-300 mb-6 drop-shadow-lg">
                   Urban. Dynamic. Smart.
                 </p>
-                <p className="text-base md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto leading-relaxed">
+                <p className="text-base md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto leading-relaxed drop-shadow-lg">
                   SUV compact thông minh với công nghệ hiện đại và thiết kế trẻ trung, phù hợp cho cuộc sống đô thị năng động.
                 </p>
               </div>
@@ -131,11 +134,13 @@ const CoolrayDetails = () => {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
-            {specifications.map((spec, index) => <Card key={index} className="p-4 md:p-6 text-center hover:shadow-lg transition-all duration-300 hover:scale-105">
+            {specifications.map((spec, index) => (
+              <Card key={index} className="p-4 md:p-6 text-center hover:shadow-lg transition-all duration-300 hover:scale-105">
                 <spec.icon className="h-8 w-8 md:h-12 md:w-12 text-blue-600 mx-auto mb-3 md:mb-4" />
                 <h3 className="font-semibold text-gray-900 mb-1 md:mb-2 text-sm md:text-base">{spec.label}</h3>
                 <p className="text-gray-600 text-xs md:text-base font-medium">{spec.value}</p>
-              </Card>)}
+              </Card>
+            ))}
           </div>
         </div>
       </section>
@@ -176,12 +181,17 @@ const CoolrayDetails = () => {
         </div>
       </section>
 
+      {/* Contact Footer */}
+      <ContactFooter />
+
       {/* Floating Buttons */}
       <FloatingButtons />
 
       {/* Modals */}
       <TestDriveModal isOpen={showTestDrive} onClose={() => setShowTestDrive(false)} selectedCar="Geely Coolray" />
       <PriceQuoteModal isOpen={showPriceQuote} onClose={() => setShowPriceQuote(false)} selectedCar="Geely Coolray" />
-    </div>;
+    </div>
+  );
 };
+
 export default CoolrayDetails;
