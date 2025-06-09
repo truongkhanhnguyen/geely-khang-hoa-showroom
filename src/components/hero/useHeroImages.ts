@@ -42,7 +42,33 @@ export const useHeroImages = (propsCars?: Car[]) => {
       if (carDetailsData && carDetailsData.length > 0) {
         console.log('✅ Found car details in database:', carDetailsData.length);
         
-        const heroImages = carDetailsData.map((carDetail: any) => {
+        // Check if any car is missing hero images and try to sync from website_images
+        const carsWithImages = await Promise.all(carDetailsData.map(async (carDetail: any) => {
+          let heroImage = carDetail.hero_image_url;
+          let heroMobileImage = carDetail.hero_mobile_image_url;
+          
+          // If hero images are missing, try to fetch from website_images
+          if (!heroImage || !heroMobileImage) {
+            console.log(`🔄 Syncing images for ${carDetail.name} from website_images...`);
+            
+            const { data: websiteImages } = await supabase
+              .from('website_images')
+              .select('*')
+              .or('category.eq.hero-banner,category.like.hero-banner-%')
+              .ilike('name', `%${carDetail.name.toLowerCase().split(' ').pop()}%`);
+
+            if (websiteImages && websiteImages.length > 0) {
+              const matchingImage = websiteImages[0];
+              heroImage = heroImage || matchingImage.url;
+              heroMobileImage = heroMobileImage || matchingImage.mobile_url;
+              
+              console.log(`✅ Found matching images for ${carDetail.name}:`, {
+                desktop: heroImage,
+                mobile: heroMobileImage
+              });
+            }
+          }
+          
           // Get cheapest variant price for this car model
           const priceInfo = getCheapestVariantForModel(carDetail.name);
           const isPriceAvailable = priceInfo?.price_available ?? false;
@@ -68,16 +94,16 @@ export const useHeroImages = (propsCars?: Car[]) => {
             tagline: carDetail.tagline,
             description: carDetail.description,
             price: displayPrice,
-            image: carDetail.hero_image_url || "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop",
-            mobile_image: carDetail.hero_mobile_image_url,
+            image: heroImage || "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop",
+            mobile_image: heroMobileImage,
             features: carDetail.features || [],
             priority: carDetail.priority || 999,
             price_available: isPriceAvailable
           };
-        });
+        }));
 
-        console.log('\n🎯 FINAL RESULT FROM CAR DETAILS:', heroImages);
-        setCars(heroImages);
+        console.log('\n🎯 FINAL RESULT FROM CAR DETAILS:', carsWithImages);
+        setCars(carsWithImages);
         setIsLoading(false);
         return;
       }
