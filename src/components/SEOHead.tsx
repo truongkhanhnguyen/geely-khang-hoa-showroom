@@ -93,7 +93,8 @@ const SEOHead = () => {
   const generateStructuredData = () => {
     if (!seoSettings) return null;
     
-    const structuredData = {
+    // Use a more flexible type that allows dynamic properties
+    const structuredData: Record<string, any> = {
       "@context": "https://schema.org",
       "@type": seoSettings.schema_type,
       "name": seoSettings.schema_name,
