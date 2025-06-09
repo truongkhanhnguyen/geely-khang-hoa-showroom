@@ -60,8 +60,7 @@ export const convertToWebP = async (file: File, quality: number = 0.85): Promise
   });
 };
 
-export const shouldConvertToWebP = (file: File | null): boolean => {
-  if (!file) return false;
+export const shouldConvertToWebP = (file: File): boolean => {
   const supportedFormats = ['image/png', 'image/jpeg', 'image/jpg'];
   return supportedFormats.includes(file.type.toLowerCase());
 };
