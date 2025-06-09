@@ -10,14 +10,11 @@ import CarImageCarousel from "@/components/CarImageCarousel";
 import FeatureSlider from "@/components/FeatureSlider";
 import FloatingButtons from "@/components/FloatingButtons";
 import ContactFooter from "@/components/ContactFooter";
-
 const CoolrayDetails = () => {
   const navigate = useNavigate();
   const [showTestDrive, setShowTestDrive] = useState(false);
   const [showPriceQuote, setShowPriceQuote] = useState(false);
-
   const carImages = ["https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop", "https://images.unsplash.com/photo-1502877338535-766e1452684a?w=1920&h=1080&fit=crop", "https://images.unsplash.com/photo-1600712242805-5f78671b24da?w=1920&h=1080&fit=crop", "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?w=1920&h=1080&fit=crop"];
-  
   const specifications = [{
     icon: Gauge,
     label: "Động cơ",
@@ -43,7 +40,6 @@ const CoolrayDetails = () => {
     label: "Camera",
     value: "360°"
   }];
-
   const detailedFeatures = [{
     id: "interior",
     title: "Nội thất thông minh",
@@ -65,9 +61,7 @@ const CoolrayDetails = () => {
     description: "Động cơ 1.5L Turbo mạnh mẽ 177 HP, hộp số CVT mượt mà, tiêu thụ nhiên liệu chỉ 6.8L/100km, mang lại trải nghiệm lái xe năng động và tiết kiệm.",
     image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?w=800&h=600&fit=crop"
   }];
-
-  return (
-    <div className="min-h-screen bg-white">
+  return <div className="min-h-screen bg-white">
       {/* Header - Mobile Optimized */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50">
         <div className="max-w-7xl mx-auto px-4">
@@ -97,29 +91,17 @@ const CoolrayDetails = () => {
             <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8">
               <div className="max-w-7xl mx-auto">
                 <div className="text-white">
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light mb-2 md:mb-4 leading-tight">
-                    Geely Coolray
-                  </h1>
-                  <p className="text-sm sm:text-base md:text-lg font-medium text-blue-300 mb-2 md:mb-4">
-                    Urban. Dynamic. Smart.
-                  </p>
-                  <p className="text-xs sm:text-sm md:text-base text-gray-200 mb-4 md:mb-6 leading-relaxed">
-                    SUV compact thông minh với công nghệ hiện đại và thiết kế trẻ trung, phù hợp cho cuộc sống đô thị năng động.
-                  </p>
+                  
+                  
+                  
                   
                   {/* Action Buttons - Updated Design */}
                   <div className="flex flex-col gap-3 max-w-sm">
-                    <Button 
-                      className="w-full h-12 bg-gray-200/90 hover:bg-gray-100 text-gray-800 font-medium text-sm rounded-lg border-0 shadow-sm transition-all"
-                      onClick={() => setShowPriceQuote(true)}
-                    >
+                    <Button className="w-full h-12 bg-gray-200/90 hover:bg-gray-100 text-gray-800 font-medium text-sm rounded-lg border-0 shadow-sm transition-all" onClick={() => setShowPriceQuote(true)}>
                       BÁO GIÁ
                     </Button>
                     
-                    <Button 
-                      className="w-full h-12 bg-gray-800/90 hover:bg-gray-700 text-white font-medium text-sm rounded-lg border-0 shadow-sm transition-all flex items-center justify-center gap-2"
-                      onClick={() => setShowTestDrive(true)}
-                    >
+                    <Button className="w-full h-12 bg-gray-800/90 hover:bg-gray-700 text-white font-medium text-sm rounded-lg border-0 shadow-sm transition-all flex items-center justify-center gap-2" onClick={() => setShowTestDrive(true)}>
                       ĐĂNG KÝ LÁI THỬ
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -144,13 +126,11 @@ const CoolrayDetails = () => {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-6">
-            {specifications.map((spec, index) => (
-              <Card key={index} className="p-3 md:p-6 text-center hover:shadow-lg transition-all duration-300 border border-gray-100">
+            {specifications.map((spec, index) => <Card key={index} className="p-3 md:p-6 text-center hover:shadow-lg transition-all duration-300 border border-gray-100">
                 <spec.icon className="h-6 w-6 md:h-10 md:w-10 text-blue-600 mx-auto mb-2 md:mb-3" />
                 <h3 className="font-medium text-gray-900 mb-1 text-xs md:text-base">{spec.label}</h3>
                 <p className="text-gray-600 text-xs md:text-sm font-medium">{spec.value}</p>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -167,17 +147,11 @@ const CoolrayDetails = () => {
           
           {/* Mobile: Simple card layout instead of slider */}
           <div className="block md:hidden space-y-4">
-            {detailedFeatures.map((feature, index) => (
-              <Card key={index} className="p-4 border border-gray-200">
-                <img 
-                  src={feature.image} 
-                  alt={feature.title}
-                  className="w-full h-40 object-cover rounded-lg mb-3"
-                />
+            {detailedFeatures.map((feature, index) => <Card key={index} className="p-4 border border-gray-200">
+                <img src={feature.image} alt={feature.title} className="w-full h-40 object-cover rounded-lg mb-3" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">{feature.description}</p>
-              </Card>
-            ))}
+              </Card>)}
           </div>
           
           {/* Desktop: Keep the slider */}
@@ -196,17 +170,11 @@ const CoolrayDetails = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center max-w-md mx-auto">
-            <Button 
-              className="flex-1 h-12 bg-white/90 hover:bg-white text-gray-800 font-medium text-sm rounded-lg border-0 shadow-sm transition-all"
-              onClick={() => setShowPriceQuote(true)}
-            >
+            <Button className="flex-1 h-12 bg-white/90 hover:bg-white text-gray-800 font-medium text-sm rounded-lg border-0 shadow-sm transition-all" onClick={() => setShowPriceQuote(true)}>
               BÁO GIÁ
             </Button>
             
-            <Button 
-              className="flex-1 h-12 bg-gray-800/90 hover:bg-gray-700 text-white font-medium text-sm rounded-lg border-0 shadow-sm transition-all flex items-center justify-center gap-2"
-              onClick={() => setShowTestDrive(true)}
-            >
+            <Button className="flex-1 h-12 bg-gray-800/90 hover:bg-gray-700 text-white font-medium text-sm rounded-lg border-0 shadow-sm transition-all flex items-center justify-center gap-2" onClick={() => setShowTestDrive(true)}>
               ĐĂNG KÝ LÁI THỬ
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -225,8 +193,6 @@ const CoolrayDetails = () => {
       {/* Modals */}
       <TestDriveModal isOpen={showTestDrive} onClose={() => setShowTestDrive(false)} selectedCar="Geely Coolray" />
       <PriceQuoteModal isOpen={showPriceQuote} onClose={() => setShowPriceQuote(false)} selectedCar="Geely Coolray" />
-    </div>
-  );
+    </div>;
 };
-
 export default CoolrayDetails;
