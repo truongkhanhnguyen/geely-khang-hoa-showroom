@@ -4,11 +4,11 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CarImageCarousel } from '@/components/CarImageCarousel';
-import { TestDriveModal } from '@/components/TestDriveModal';
-import { PriceQuoteModal } from '@/components/PriceQuoteModal';
-import { ContactModal } from '@/components/ContactModal';
-import { ContactFooter } from '@/components/ContactFooter';
+import CarImageCarousel from '@/components/CarImageCarousel';
+import TestDriveModal from '@/components/TestDriveModal';
+import PriceQuoteModal from '@/components/PriceQuoteModal';
+import ContactModal from '@/components/ContactModal';
+import ContactFooter from '@/components/ContactFooter';
 import { ArrowLeft, Calendar, Clock, DollarSign, Phone, MessageCircle, Calculator, Zap, Battery } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
