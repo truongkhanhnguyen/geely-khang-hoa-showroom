@@ -351,7 +351,7 @@ const ImageManagement = () => {
                   onChange={(e) => setFile(e.target.files?.[0] || null)}
                   required={!editingImage}
                 />
-                {shouldConvertToWebP(file!) && (
+                {file && shouldConvertToWebP(file) && (
                   <p className="text-xs text-green-600 mt-1">
                     ✓ File này sẽ được tự động chuyển đổi sang WebP để tối ưu dung lượng
                   </p>
@@ -366,7 +366,7 @@ const ImageManagement = () => {
                   accept="image/*"
                   onChange={(e) => setMobileFile(e.target.files?.[0] || null)}
                 />
-                {shouldConvertToWebP(mobileFile!) && (
+                {mobileFile && shouldConvertToWebP(mobileFile) && (
                   <p className="text-xs text-green-600 mt-1">
                     ✓ File này sẽ được tự động chuyển đổi sang WebP để tối ưu dung lượng
                   </p>
