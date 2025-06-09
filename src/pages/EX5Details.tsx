@@ -96,7 +96,7 @@ const EX5Details = () => {
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Image Gallery */}
           <div>
-            <CarImageCarousel images={ex5Images} />
+            <CarImageCarousel carModel="Geely EX5" images={ex5Images} />
           </div>
 
           {/* Car Info */}

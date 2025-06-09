@@ -95,7 +95,7 @@ const MonjaroDetails = () => {
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Image Gallery */}
           <div>
-            <CarImageCarousel images={monjaroImages} />
+            <CarImageCarousel carModel="Geely Monjaro" images={monjaroImages} />
           </div>
 
           {/* Car Info */}
