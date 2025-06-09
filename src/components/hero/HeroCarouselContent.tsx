@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Car } from './types';
+import { useState, useEffect } from 'react';
+import { supabase } from "@/integrations/supabase/client";
 
 interface HeroCarouselContentProps {
   car: Car;
@@ -18,21 +20,40 @@ export const HeroCarouselContent = ({
   onExplore
 }: HeroCarouselContentProps) => {
   const { t } = useLanguage();
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
-  // Function to get logo URL based on car name
-  const getCarLogo = (carName: string) => {
-    if (carName.toLowerCase().includes('coolray')) {
-      return '/lovable-uploads/coolray-logo.png';
-    } else if (carName.toLowerCase().includes('monjaro')) {
-      return '/lovable-uploads/monjaro-logo.png';
-    } else if (carName.toLowerCase().includes('ex5')) {
-      return '/lovable-uploads/ex5-logo.png';
+  useEffect(() => {
+    fetchCarLogo();
+  }, [car.name]);
+
+  const fetchCarLogo = async () => {
+    try {
+      // Extract car model key from car name
+      let carModelKey = '';
+      if (car.name.toLowerCase().includes('coolray')) {
+        carModelKey = 'coolray';
+      } else if (car.name.toLowerCase().includes('monjaro')) {
+        carModelKey = 'monjaro';
+      } else if (car.name.toLowerCase().includes('ex5')) {
+        carModelKey = 'ex5';
+      }
+
+      if (carModelKey) {
+        const { data, error } = await supabase
+          .from('website_images')
+          .select('url')
+          .eq('category', 'hero-logo')
+          .eq('description', carModelKey)
+          .single();
+
+        if (!error && data) {
+          setLogoUrl(data.url);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching car logo:', error);
     }
-    // Fallback to text if no logo found
-    return null;
   };
-
-  const logoUrl = getCarLogo(car.name);
 
   return (
     <div className="lg:col-span-5 text-white">
