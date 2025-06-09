@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, Calendar, Calculator, Battery, Gauge, Shield, Cog, Eye, Zap } from "lucide-react";
@@ -89,78 +90,103 @@ const EX5Details = () => {
         </div>
       </header>
 
-      {/* Hero Carousel Section */}
-      <section className="pt-16">
-        <CarImageCarousel images={carImages} carModel="EX5" />
-        
-        {/* Overlay Content */}
-        <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-10 text-center">
-          <p className="text-2xl md:text-3xl font-medium text-green-300 mb-8">Electric. Efficient. Future.</p>
-          <p className="text-xl text-gray-200 mb-12 max-w-3xl mx-auto">
-            SUV điện thông minh với công nghệ pin tiên tiến và khả năng vận hành êm ái, dẫn đầu xu hướng xanh.
-          </p>
+      {/* Hero Section với carousel và thông tin */}
+      <section className="relative pt-16">
+        {/* Car Image Carousel */}
+        <div className="relative h-[70vh] md:h-screen">
+          <CarImageCarousel images={carImages} carModel="EX5" />
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg"
-              className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white px-8 py-3 rounded-full"
-              onClick={() => setShowTestDrive(true)}
-            >
-              <Calendar className="mr-2 h-5 w-5" />
-              Đặt lịch lái thử
-            </Button>
-            
-            <Button 
-              variant="outline"
-              size="lg"
-              className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 rounded-full"
-              onClick={() => setShowPriceQuote(true)}
-            >
-              <Calculator className="mr-2 h-5 w-5" />
-              Xem báo giá
-            </Button>
+          {/* Gradient overlay để text rõ hơn */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent"></div>
+          
+          {/* Content overlay */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+              <div className="text-center text-white">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light mb-4 leading-tight">
+                  Geely EX5
+                </h1>
+                <p className="text-lg md:text-2xl font-medium text-green-300 mb-6">
+                  Electric. Efficient. Future.
+                </p>
+                <p className="text-base md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto leading-relaxed">
+                  SUV điện thông minh với công nghệ pin tiên tiến và khả năng vận hành êm ái, dẫn đầu xu hướng xanh.
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+                  <Button 
+                    size="lg"
+                    className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white px-8 py-3 rounded-full"
+                    onClick={() => setShowTestDrive(true)}
+                  >
+                    <Calendar className="mr-2 h-5 w-5" />
+                    Đặt lịch lái thử
+                  </Button>
+                  
+                  <Button 
+                    variant="outline"
+                    size="lg"
+                    className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 rounded-full"
+                    onClick={() => setShowPriceQuote(true)}
+                  >
+                    <Calculator className="mr-2 h-5 w-5" />
+                    Xem báo giá
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Specifications */}
-      <section className="py-20 bg-gray-50">
+      {/* Specifications Section */}
+      <section className="py-16 md:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-light text-center text-gray-900 mb-16">Thông số kỹ thuật</h2>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-4">Thông số kỹ thuật</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Khám phá những thông số ấn tượng của Geely EX5
+            </p>
+          </div>
           
-          <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
             {specifications.map((spec, index) => (
-              <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow">
-                <spec.icon className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                <h3 className="font-semibold text-gray-900 mb-2">{spec.label}</h3>
-                <p className="text-gray-600">{spec.value}</p>
+              <Card key={index} className="p-4 md:p-6 text-center hover:shadow-lg transition-all duration-300 hover:scale-105">
+                <spec.icon className="h-8 w-8 md:h-12 md:w-12 text-green-600 mx-auto mb-3 md:mb-4" />
+                <h3 className="font-semibold text-gray-900 mb-1 md:mb-2 text-sm md:text-base">{spec.label}</h3>
+                <p className="text-gray-600 text-xs md:text-base font-medium">{spec.value}</p>
               </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="py-20 bg-white">
+      {/* Features Section */}
+      <section className="py-16 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-light text-center text-gray-900 mb-16">Tính năng nổi bật</h2>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-4">Tính năng nổi bật</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Trải nghiệm những công nghệ tiên tiến nhất trong phân khúc
+            </p>
+          </div>
           
           <FeatureSlider features={detailedFeatures} accentColor="green-600" />
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-green-600 to-teal-600">
+      <section className="py-16 md:py-20 bg-gradient-to-r from-green-600 to-teal-600">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-light text-white mb-8">Sẵn sàng trải nghiệm?</h2>
-          <p className="text-xl text-green-100 mb-12">
+          <h2 className="text-3xl md:text-4xl font-light text-white mb-6 md:mb-8">Sẵn sàng trải nghiệm?</h2>
+          <p className="text-lg md:text-xl text-green-100 mb-8 md:mb-12 leading-relaxed">
             Đặt lịch lái thử ngay hôm nay để cảm nhận sự khác biệt của Geely EX5
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg"
-              className="bg-white text-green-600 hover:bg-gray-100 px-8 py-3 rounded-full"
+              className="bg-white text-green-600 hover:bg-gray-100 px-8 py-3 rounded-full font-medium"
               onClick={() => setShowTestDrive(true)}
             >
               <Calendar className="mr-2 h-5 w-5" />
@@ -170,7 +196,7 @@ const EX5Details = () => {
             <Button 
               variant="outline"
               size="lg"
-              className="border-white text-white hover:bg-white hover:text-green-600 px-8 py-3 rounded-full"
+              className="border-white text-white hover:bg-white hover:text-green-600 px-8 py-3 rounded-full font-medium"
               onClick={() => setShowPriceQuote(true)}
             >
               <Calculator className="mr-2 h-5 w-5" />
