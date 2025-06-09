@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -150,12 +151,18 @@ const ImageManagement = () => {
 
   const fetchImages = async () => {
     try {
+      console.log('🔍 Fetching images from database...');
       const { data, error } = await supabase
         .from('website_images')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Error fetching images:', error);
+        throw error;
+      }
+      
+      console.log('✅ Fetched images:', data);
       setImages(data || []);
     } catch (error) {
       console.error('Error fetching images:', error);
@@ -171,44 +178,66 @@ const ImageManagement = () => {
 
   const uploadFileToStorage = async (file: File, isDesktop: boolean = true): Promise<string | null> => {
     try {
+      console.log(`🚀 Starting file upload for ${isDesktop ? 'desktop' : 'mobile'}:`, {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type
+      });
+
       let fileToUpload = file;
       let conversionInfo = "";
 
       // Convert to WebP if possible
       if (shouldConvertToWebP(file)) {
+        console.log('🔄 Converting to WebP...');
         try {
           const conversion = await convertToWebP(file, 0.85);
           fileToUpload = conversion.convertedFile;
           conversionInfo = ` (Converted to WebP, saved ${conversion.compressionRatio}% - ${formatFileSize(conversion.originalSize)} → ${formatFileSize(conversion.convertedSize)})`;
           
+          console.log('✅ WebP conversion successful:', {
+            originalSize: conversion.originalSize,
+            convertedSize: conversion.convertedSize,
+            compressionRatio: conversion.compressionRatio
+          });
+
           toast({
             title: "Chuyển đổi thành công",
             description: `File đã được tối ưu${conversionInfo}`,
           });
         } catch (conversionError) {
-          console.warn('WebP conversion failed, using original file:', conversionError);
+          console.warn('⚠️ WebP conversion failed, using original file:', conversionError);
           toast({
             title: "Sử dụng file gốc",
             description: "Không thể chuyển đổi sang WebP, sử dụng file gốc",
           });
         }
+      } else {
+        console.log('ℹ️ File không cần chuyển đổi WebP:', file.type);
       }
 
       const fileName = `${Date.now()}-${isDesktop ? 'desktop' : 'mobile'}-${fileToUpload.name}`;
+      console.log('📁 Uploading to storage with filename:', fileName);
       
       const { data, error } = await supabase.storage
         .from('website-images')
         .upload(fileName, fileToUpload);
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Storage upload error:', error);
+        throw error;
+      }
+
+      console.log('✅ File uploaded successfully:', data);
 
       const { data: urlData } = supabase.storage
         .from('website-images')
         .getPublicUrl(data.path);
 
+      console.log('🔗 Generated public URL:', urlData.publicUrl);
       return urlData.publicUrl;
     } catch (error) {
-      console.error('Error uploading file:', error);
+      console.error('💥 Error uploading file:', error);
       throw error;
     }
   };
@@ -227,6 +256,15 @@ const ImageManagement = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    console.log('📝 Form submission started:', {
+      isAdmin,
+      hasFile: !!file,
+      isEditing: !!editingImage,
+      category,
+      carModel,
+      name
+    });
+
     if (!isAdmin) {
       toast({
         title: "Không có quyền",
@@ -264,6 +302,7 @@ const ImageManagement = () => {
 
       // Upload desktop image if new file selected
       if (file) {
+        console.log('📤 Uploading desktop image...');
         desktopUrl = await uploadFileToStorage(file, true) || "";
         fileName = file.name;
         fileSize = file.size;
@@ -271,6 +310,7 @@ const ImageManagement = () => {
 
       // Upload mobile image if provided
       if (mobileFile) {
+        console.log('📱 Uploading mobile image...');
         mobileUrl = await uploadFileToStorage(mobileFile, false);
       }
 
@@ -288,6 +328,8 @@ const ImageManagement = () => {
         file_size: fileSize,
       };
 
+      console.log('💾 Saving to database:', imageData);
+
       let result;
       if (editingImage) {
         result = await supabase
@@ -300,7 +342,12 @@ const ImageManagement = () => {
           .insert([imageData]);
       }
 
-      if (result.error) throw result.error;
+      if (result.error) {
+        console.error('❌ Database save error:', result.error);
+        throw result.error;
+      }
+
+      console.log('✅ Database save successful');
 
       toast({
         title: "Thành công",
@@ -311,7 +358,7 @@ const ImageManagement = () => {
       resetForm();
       fetchImages();
     } catch (error) {
-      console.error('Error saving image:', error);
+      console.error('💥 Error saving image:', error);
       toast({
         title: "Lỗi",
         description: "Không thể lưu hình ảnh",

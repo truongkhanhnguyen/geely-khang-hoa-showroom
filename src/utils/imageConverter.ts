@@ -8,11 +8,23 @@ export interface ConversionResult {
 
 export const convertToWebP = async (file: File, quality: number = 0.85): Promise<ConversionResult> => {
   return new Promise((resolve, reject) => {
+    console.log('🔄 Starting WebP conversion for file:', {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      quality
+    });
+
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     const img = new Image();
 
     img.onload = () => {
+      console.log('📐 Image loaded, dimensions:', {
+        width: img.width,
+        height: img.height
+      });
+
       // Set canvas dimensions to image dimensions
       canvas.width = img.width;
       canvas.height = img.height;
@@ -24,9 +36,16 @@ export const convertToWebP = async (file: File, quality: number = 0.85): Promise
       canvas.toBlob(
         (blob) => {
           if (!blob) {
+            console.error('❌ Failed to convert image to blob');
             reject(new Error('Failed to convert image'));
             return;
           }
+
+          console.log('✅ WebP conversion successful:', {
+            originalSize: file.size,
+            convertedSize: blob.size,
+            compressionRatio: Math.round(((file.size - blob.size) / file.size) * 100)
+          });
 
           // Create new file with WebP extension
           const fileName = file.name.replace(/\.[^/.]+$/, '.webp');
@@ -51,7 +70,8 @@ export const convertToWebP = async (file: File, quality: number = 0.85): Promise
       );
     };
 
-    img.onerror = () => {
+    img.onerror = (error) => {
+      console.error('❌ Failed to load image:', error);
       reject(new Error('Failed to load image'));
     };
 
@@ -61,9 +81,21 @@ export const convertToWebP = async (file: File, quality: number = 0.85): Promise
 };
 
 export const shouldConvertToWebP = (file: File | null): boolean => {
-  if (!file) return false;
+  if (!file) {
+    console.log('❌ No file provided for WebP check');
+    return false;
+  }
+  
   const supportedFormats = ['image/png', 'image/jpeg', 'image/jpg'];
-  return supportedFormats.includes(file.type.toLowerCase());
+  const shouldConvert = supportedFormats.includes(file.type.toLowerCase());
+  
+  console.log('🔍 WebP conversion check:', {
+    fileName: file.name,
+    fileType: file.type,
+    shouldConvert
+  });
+  
+  return shouldConvert;
 };
 
 export const formatFileSize = (bytes: number): string => {

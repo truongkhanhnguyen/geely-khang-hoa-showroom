@@ -90,10 +90,11 @@ const HeroCarousel = ({
     try {
       console.log('\n==== FETCHING HERO IMAGES FROM DATABASE ====');
       
+      // Updated query to match the new category structure
       const { data, error } = await supabase
         .from('website_images')
         .select('*')
-        .eq('category', 'hero')
+        .or('category.eq.hero-banner,category.like.hero-banner-%')
         .order('created_at', { ascending: false });
 
       console.log('📊 Database Query Result:');
@@ -130,10 +131,11 @@ const HeroCarousel = ({
           created_at: image.created_at
         });
         
-        // More flexible matching - check name, description, and even file_name
+        // More flexible matching - check name, description, category and file_name
         const searchTerms = [
           image.name?.toLowerCase() || '',
           image.description?.toLowerCase() || '',
+          image.category?.toLowerCase() || '',
           image.file_name?.toLowerCase() || ''
         ].join(' ');
         
@@ -142,23 +144,35 @@ const HeroCarousel = ({
         let carModel = null;
         let carInfo = null;
 
-        // Check for Coolray with more variations
-        if (searchTerms.includes('coolray') || searchTerms.includes('cool ray')) {
+        // Check for car model in category first (e.g., "hero-banner-monjaro")
+        if (image.category?.includes('monjaro')) {
+          carModel = 'monjaro';
+          carInfo = carModelsMapping.monjaro;
+          console.log('🎯 MATCHED MONJARO from category!');
+        } else if (image.category?.includes('coolray')) {
           carModel = 'coolray';
           carInfo = carModelsMapping.coolray;
-          console.log('🎯 MATCHED COOLRAY!');
+          console.log('🎯 MATCHED COOLRAY from category!');
+        } else if (image.category?.includes('ex5')) {
+          carModel = 'ex5';
+          carInfo = carModelsMapping.ex5;
+          console.log('🎯 MATCHED EX5 from category!');
+        }
+        // Fallback to name/description matching
+        else if (searchTerms.includes('coolray') || searchTerms.includes('cool ray')) {
+          carModel = 'coolray';
+          carInfo = carModelsMapping.coolray;
+          console.log('🎯 MATCHED COOLRAY from name/description!');
         } 
-        // Check for Monjaro
         else if (searchTerms.includes('monjaro')) {
           carModel = 'monjaro';
           carInfo = carModelsMapping.monjaro;
-          console.log('🎯 MATCHED MONJARO!');
+          console.log('🎯 MATCHED MONJARO from name/description!');
         } 
-        // Check for EX5
         else if (searchTerms.includes('ex5') || searchTerms.includes('ex-5')) {
           carModel = 'ex5';
           carInfo = carModelsMapping.ex5;
-          console.log('🎯 MATCHED EX5!');
+          console.log('🎯 MATCHED EX5 from name/description!');
         } 
         else {
           console.log('❌ NO CAR MODEL MATCH');
