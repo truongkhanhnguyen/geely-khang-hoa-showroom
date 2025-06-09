@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,8 +37,8 @@ const IMAGE_CATEGORIES = [
     value: "car-gallery", 
     label: "🚗 Thư Viện Xe", 
     description: "Hình ảnh chi tiết của xe",
-    location: "Trang chi tiết xe - Galley hình ảnh",
-    usage: "Hiển thị trong carousel hình ảnh chi tiết của từng dòng xe",
+    location: "Trang chi tiết xe - Gallery hình ảnh",
+    usage: "Hiển thị trong carousel hình ảnh chi tiết của từng dòng xe (tỷ lệ 4:3)",
     icon: "🚗"
   },
   { 
@@ -47,7 +46,7 @@ const IMAGE_CATEGORIES = [
     label: "🎁 Khuyến Mãi", 
     description: "Hình ảnh cho các chương trình khuyến mãi",
     location: "Trang chủ - Section khuyến mãi & Trang khuyến mãi",
-    usage: "Hiển thị làm hình nền cho các chương trình khuyến mãi",
+    usage: "Hiển thị làm hình nền cho các chương trình khuyến mãi (tỷ lệ 4:3)",
     icon: "🎁"
   },
   { 
@@ -55,7 +54,7 @@ const IMAGE_CATEGORIES = [
     label: "📰 Tin Tức", 
     description: "Hình ảnh cho bài viết tin tức",
     location: "Trang chủ - Section tin tức & Trang chi tiết tin tức",
-    usage: "Hình ảnh đại diện cho bài viết tin tức",
+    usage: "Hình ảnh đại diện cho bài viết tin tức (tỷ lệ 4:3)",
     icon: "📰"
   },
   { 
@@ -63,7 +62,7 @@ const IMAGE_CATEGORIES = [
     label: "⭐ Tính Năng", 
     description: "Hình ảnh minh họa tính năng xe",
     location: "Trang chi tiết xe - Section tính năng",
-    usage: "Minh họa các tính năng nổi bật của xe",
+    usage: "Minh họa các tính năng nổi bật của xe (tỷ lệ 16:9)",
     icon: "⭐"
   },
   { 
@@ -71,7 +70,7 @@ const IMAGE_CATEGORIES = [
     label: "🏢 Showroom", 
     description: "Hình ảnh showroom và cơ sở vật chất",
     location: "Trang chủ - Section về chúng tôi",
-    usage: "Hiển thị không gian showroom, cơ sở vật chất",
+    usage: "Hiển thị không gian showroom, cơ sở vật chất (tỷ lệ 16:9)",
     icon: "🏢"
   },
   { 
@@ -79,7 +78,7 @@ const IMAGE_CATEGORIES = [
     label: "🏷️ Logo", 
     description: "Logo và biểu tượng thương hiệu",
     location: "Header, Footer và toàn bộ website",
-    usage: "Logo thương hiệu, biểu tượng",
+    usage: "Logo thương hiệu, biểu tượng (nền trong suốt PNG)",
     icon: "🏷️"
   },
   { 
@@ -87,7 +86,7 @@ const IMAGE_CATEGORIES = [
     label: "🖼️ Hình Nền", 
     description: "Hình nền cho các section",
     location: "Background các section trên website",
-    usage: "Làm hình nền trang trí cho các phần của website",
+    usage: "Làm hình nền trang trí cho các phần của website (tỷ lệ 16:9)",
     icon: "🖼️"
   },
   { 
@@ -109,14 +108,14 @@ const CAR_MODELS = [
 ];
 
 const RECOMMENDED_SIZES = {
-  "hero-banner": "1920×1080px (Desktop), 768×1024px (Mobile)",
-  "car-gallery": "1200×800px (Desktop), 600×400px (Mobile)", 
-  "promotions": "800×600px",
-  "news": "600×400px",
-  "features": "400×300px",
-  "showroom": "1200×800px",
-  "logo": "200×100px (PNG với nền trong suốt)",
-  "background": "1920×1080px",
+  "hero-banner": "1920×1080px (Desktop), 768×1024px (Mobile) - Tỷ lệ 16:9",
+  "car-gallery": "1200×900px (Desktop), 600×450px (Mobile) - Tỷ lệ 4:3", 
+  "promotions": "800×600px - Tỷ lệ 4:3",
+  "news": "600×450px - Tỷ lệ 4:3",
+  "features": "1200×675px - Tỷ lệ 16:9",
+  "showroom": "1200×675px - Tỷ lệ 16:9",
+  "logo": "200×100px (PNG với nền trong suốt) - Tỷ lệ 2:1",
+  "background": "1920×1080px - Tỷ lệ 16:9",
   "other": "Tùy theo mục đích sử dụng"
 };
 
@@ -548,7 +547,7 @@ const ImageManagement = () => {
                           <span className="text-blue-600 mt-0.5">📏</span>
                           <div>
                             <span className="font-medium">Kích thước khuyến nghị:</span>
-                            <div className="text-blue-700">{RECOMMENDED_SIZES[category as keyof typeof RECOMMENDED_SIZES]}</div>
+                            <div className="text-blue-700 font-mono">{RECOMMENDED_SIZES[category as keyof typeof RECOMMENDED_SIZES]}</div>
                           </div>
                         </div>
                       </div>
@@ -612,7 +611,7 @@ const ImageManagement = () => {
                   className="h-11"
                 />
                 <p className="text-xs text-blue-600 mt-1">
-                  📱 Hiển thị trên máy tính, laptop, tablet ngang
+                  💻 Hiển thị trên máy tính, laptop, tablet ngang
                 </p>
                 {file && shouldConvertToWebP(file) && (
                   <p className="text-xs text-green-600 mt-1">
@@ -693,7 +692,7 @@ const ImageManagement = () => {
                       {CAR_MODELS.find(model => image.category.includes(model.value))?.label || 'Dòng xe cụ thể'}
                     </p>
                   )}
-                  <p className="text-xs text-gray-400">{image.recommended_size}</p>
+                  <p className="text-xs text-gray-400 font-mono">{image.recommended_size}</p>
                   {image.file_size && (
                     <p className="text-xs text-gray-400">
                       {formatFileSize(image.file_size)}

@@ -31,39 +31,23 @@ const PromotionsSection = () => {
     try {
       console.log('🎁 Fetching promotions from database...');
       
-      // Note: Assuming there might be a promotions table, but handling gracefully if not
-      // For now, we'll use static promotions but prepare for database integration
-      const staticPromotions: Promotion[] = [
-        {
-          id: '1',
-          title: 'Ưu đãi đặc biệt tháng 12',
-          description: 'Giảm ngay 50 triệu cho xe Geely Coolray. Hỗ trợ vay 80% không lãi suất 6 tháng đầu.',
-          valid_until: '2024-12-31',
-          discount_amount: 50000000,
-          created_at: '2024-12-01'
-        },
-        {
-          id: '2', 
-          title: 'Khuyến mãi Geely Monjaro',
-          description: 'Tặng gói phụ kiện cao cấp trị giá 30 triệu + bảo hiểm thân vỏ 1 năm miễn phí.',
-          valid_until: '2024-12-25',
-          discount_amount: 30000000,
-          created_at: '2024-11-15'
-        },
-        {
-          id: '3',
-          title: 'EX5 Electric - Tương lai xanh',
-          description: 'Ưu đãi 40 triệu + tặng bộ sạc nhanh tại nhà cho khách hàng đặt xe sớm.',
-          valid_until: '2025-01-15', 
-          discount_amount: 40000000,
-          created_at: '2024-11-20'
-        }
-      ];
+      const { data, error } = await supabase
+        .from('promotions')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(3);
 
-      setPromotions(staticPromotions);
-      console.log('✅ Promotions loaded:', staticPromotions.length);
+      if (error) {
+        console.error('❌ Error fetching promotions:', error);
+        throw error;
+      }
+
+      console.log('✅ Promotions loaded from database:', data?.length || 0);
+      setPromotions(data || []);
     } catch (error) {
       console.error('❌ Error fetching promotions:', error);
+      // Fallback to empty array if database fetch fails
+      setPromotions([]);
     }
   };
 
@@ -74,7 +58,7 @@ const PromotionsSection = () => {
       const { data, error } = await supabase
         .from('website_images')
         .select('*')
-        .eq('category', 'promotion')
+        .eq('category', 'promotions')
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -109,12 +93,18 @@ const PromotionsSection = () => {
     });
   };
 
-  const getPromotionImage = (index: number) => {
+  const getPromotionImage = (promotion: Promotion, index: number) => {
+    // Priority 1: Use image_url from the promotion if available
+    if (promotion.image_url) {
+      return promotion.image_url;
+    }
+    
+    // Priority 2: Use images from website_images table
     if (promotionImages.length > 0) {
       return promotionImages[index % promotionImages.length];
     }
     
-    // Fallback images
+    // Priority 3: Fallback images
     const fallbackImages = [
       "https://images.unsplash.com/photo-1549924231-f129b911e442?w=800&h=400&fit=crop",
       "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&h=400&fit=crop", 
@@ -136,6 +126,11 @@ const PromotionsSection = () => {
     );
   }
 
+  // Don't render the section if there are no promotions
+  if (promotions.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -153,7 +148,7 @@ const PromotionsSection = () => {
             <Card key={promotion.id} className="group hover:shadow-xl transition-all duration-300 overflow-hidden">
               <div className="relative h-48 overflow-hidden">
                 <img
-                  src={getPromotionImage(index)}
+                  src={getPromotionImage(promotion, index)}
                   alt={promotion.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
@@ -176,9 +171,12 @@ const PromotionsSection = () => {
                 <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
                   {promotion.title}
                 </h3>
-                <p className="text-gray-600 mb-4 leading-relaxed">
-                  {promotion.description}
-                </p>
+                
+                {promotion.description && (
+                  <p className="text-gray-600 mb-4 leading-relaxed">
+                    {promotion.description}
+                  </p>
+                )}
 
                 {promotion.valid_until && (
                   <div className="flex items-center text-sm text-red-600 mb-4">
