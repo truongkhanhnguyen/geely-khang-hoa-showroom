@@ -55,12 +55,6 @@ const HeroCarousel = ({
     }, 300);
   };
 
-  console.log('\n🎬 CURRENT RENDER STATE:');
-  console.log('Cars array:', cars);
-  console.log('Current index:', currentIndex);
-  console.log('Is loading:', isLoading);
-  console.log('Current car:', cars[currentIndex]);
-
   if (isLoading || cars.length === 0) {
     return (
       <section className="relative h-screen overflow-hidden bg-gray-900 flex items-center justify-center">
@@ -74,12 +68,6 @@ const HeroCarousel = ({
 
   const currentCar = cars[currentIndex];
   const currentImage = isMobile && currentCar.mobile_image ? currentCar.mobile_image : currentCar.image;
-
-  console.log('\n🎭 DISPLAYING CAR:');
-  console.log('Car name:', currentCar.name);
-  console.log('Price available:', currentCar.price_available);
-  console.log('Displayed price:', currentCar.price);
-  console.log('Image URL:', currentImage);
 
   return (
     <section className="relative h-screen overflow-hidden">
@@ -107,6 +95,7 @@ const HeroCarousel = ({
               onTestDrive={onTestDrive}
               onPriceQuote={onPriceQuote}
               onExplore={onExplore}
+              isMobile={isMobile}
             />
             <div className="hidden lg:block lg:col-span-7"></div>
           </div>
@@ -119,6 +108,7 @@ const HeroCarousel = ({
         onPrevious={goToPrevious}
         onNext={goToNext}
         onDotClick={setCurrentIndex}
+        isMobile={isMobile}
       />
     </section>
   );

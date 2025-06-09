@@ -7,6 +7,7 @@ interface HeroCarouselControlsProps {
   onPrevious: () => void;
   onNext: () => void;
   onDotClick: (index: number) => void;
+  isMobile?: boolean;
 }
 
 export const HeroCarouselControls = ({
@@ -14,26 +15,31 @@ export const HeroCarouselControls = ({
   totalCars,
   onPrevious,
   onNext,
-  onDotClick
+  onDotClick,
+  isMobile = false
 }: HeroCarouselControlsProps) => {
   if (totalCars <= 1) return null;
 
   return (
     <>
-      {/* Navigation Arrows */}
-      <button 
-        onClick={onPrevious} 
-        className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 text-white p-2 md:p-3 rounded-full backdrop-blur-sm transition-all"
-      >
-        <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
-      </button>
-      
-      <button 
-        onClick={onNext} 
-        className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 text-white p-2 md:p-3 rounded-full backdrop-blur-sm transition-all"
-      >
-        <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
-      </button>
+      {/* Navigation Arrows - Hidden on mobile */}
+      {!isMobile && (
+        <>
+          <button 
+            onClick={onPrevious} 
+            className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 text-white p-2 md:p-3 rounded-full backdrop-blur-sm transition-all"
+          >
+            <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
+          </button>
+          
+          <button 
+            onClick={onNext} 
+            className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/30 text-white p-2 md:p-3 rounded-full backdrop-blur-sm transition-all"
+          >
+            <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
+          </button>
+        </>
+      )}
 
       {/* Dots Indicator */}
       <div className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-20 flex space-x-2">
