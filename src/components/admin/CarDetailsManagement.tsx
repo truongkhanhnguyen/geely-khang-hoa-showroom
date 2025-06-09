@@ -18,8 +18,6 @@ interface CarDetail {
   features: string[];
   specifications: any;
   detailed_features: any[];
-  hero_image_url?: string;
-  hero_mobile_image_url?: string;
   gallery_images: string[];
   priority: number;
   is_active: boolean;
@@ -53,9 +51,11 @@ const CarDetailsManagement = () => {
         description: item.description,
         features: item.features || [],
         specifications: item.specifications || {},
-        detailed_features: Array.isArray(item.detailed_features) ? item.detailed_features : [],
-        hero_image_url: item.hero_image_url,
-        hero_mobile_image_url: item.hero_mobile_image_url,
+        detailed_features: Array.isArray(item.detailed_features) 
+          ? item.detailed_features 
+          : (typeof item.detailed_features === 'string' 
+              ? JSON.parse(item.detailed_features) 
+              : []),
         gallery_images: item.gallery_images || [],
         priority: item.priority || 1,
         is_active: item.is_active ?? true
@@ -85,8 +85,6 @@ const CarDetailsManagement = () => {
           features: car.features,
           specifications: car.specifications,
           detailed_features: car.detailed_features,
-          hero_image_url: car.hero_image_url,
-          hero_mobile_image_url: car.hero_mobile_image_url,
           gallery_images: car.gallery_images,
           priority: car.priority,
           is_active: car.is_active
@@ -156,7 +154,12 @@ const CarDetailsManagement = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Quản Lý Chi Tiết Xe</h2>
+        <div>
+          <h2 className="text-2xl font-bold">Quản Lý Chi Tiết Xe</h2>
+          <p className="text-sm text-gray-600 mt-1">
+            Chỉnh sửa thông tin xe. Ảnh Hero được quản lý trong tab "Quản Lý Hình Ảnh"
+          </p>
+        </div>
       </div>
 
       <div className="grid gap-6">
@@ -206,25 +209,6 @@ const CarDetailsManagement = () => {
                     onChange={(e) => handleInputChange('description', e.target.value)}
                     rows={3}
                   />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Ảnh Hero (Desktop)</label>
-                    <Input
-                      value={editingCar.hero_image_url || ''}
-                      onChange={(e) => handleInputChange('hero_image_url', e.target.value)}
-                      placeholder="URL ảnh desktop"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Ảnh Hero (Mobile)</label>
-                    <Input
-                      value={editingCar.hero_mobile_image_url || ''}
-                      onChange={(e) => handleInputChange('hero_mobile_image_url', e.target.value)}
-                      placeholder="URL ảnh mobile"
-                    />
-                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -305,6 +289,7 @@ const CarDetailsManagement = () => {
                   <p><strong>Mô tả:</strong> {car.description}</p>
                   <p><strong>Số tính năng:</strong> {car.features.length}</p>
                   <p><strong>Thứ tự:</strong> {car.priority}</p>
+                  <p className="text-blue-600"><strong>Ảnh Hero:</strong> Được quản lý qua tab "Quản Lý Hình Ảnh"</p>
                 </div>
               </CardContent>
             )}

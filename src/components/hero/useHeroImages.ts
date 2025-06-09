@@ -27,48 +27,57 @@ export const useHeroImages = (propsCars?: Car[]) => {
     try {
       console.log('\n==== FETCHING HERO IMAGES FROM DATABASE ====');
       
-      // First try to get data from car_details table
+      // First get car details for content
       const { data: carDetailsData, error: carDetailsError } = await supabase
         .from('car_details')
         .select('*')
         .eq('is_active', true)
         .order('priority');
 
+      // Always get images from website_images for consistency
+      const { data: imagesData, error: imagesError } = await supabase
+        .from('website_images')
+        .select('*')
+        .or('category.eq.hero-banner,category.like.hero-banner-%')
+        .order('created_at', { ascending: false });
+
       if (carDetailsError) {
         console.error('❌ Car details database error:', carDetailsError);
         throw carDetailsError;
       }
 
+      if (imagesError) {
+        console.error('❌ Images database error:', imagesError);
+        throw imagesError;
+      }
+
       if (carDetailsData && carDetailsData.length > 0) {
         console.log('✅ Found car details in database:', carDetailsData.length);
+        console.log('📊 Found website images:', imagesData?.length || 0);
         
-        // Check if any car is missing hero images and try to sync from website_images
-        const carsWithImages = await Promise.all(carDetailsData.map(async (carDetail: any) => {
-          let heroImage = carDetail.hero_image_url;
-          let heroMobileImage = carDetail.hero_mobile_image_url;
-          
-          // If hero images are missing, try to fetch from website_images
-          if (!heroImage || !heroMobileImage) {
-            console.log(`🔄 Syncing images for ${carDetail.name} from website_images...`);
-            
-            const { data: websiteImages } = await supabase
-              .from('website_images')
-              .select('*')
-              .or('category.eq.hero-banner,category.like.hero-banner-%')
-              .ilike('name', `%${carDetail.name.toLowerCase().split(' ').pop()}%`);
-
-            if (websiteImages && websiteImages.length > 0) {
-              const matchingImage = websiteImages[0];
-              heroImage = heroImage || matchingImage.url;
-              heroMobileImage = heroMobileImage || matchingImage.mobile_url;
+        // Combine car details with matching images from website_images
+        const carsWithImages = carDetailsData.map((carDetail: any) => {
+          // Find matching image from website_images
+          let matchingImage = null;
+          if (imagesData && imagesData.length > 0) {
+            const searchTerms = carDetail.name.toLowerCase();
+            matchingImage = imagesData.find((image: any) => {
+              const imageSearchTerms = [
+                image.name?.toLowerCase() || '',
+                image.description?.toLowerCase() || '',
+                image.category?.toLowerCase() || '',
+                image.file_name?.toLowerCase() || ''
+              ].join(' ');
               
-              console.log(`✅ Found matching images for ${carDetail.name}:`, {
-                desktop: heroImage,
-                mobile: heroMobileImage
-              });
-            }
+              // Check for car model name in image data
+              if (searchTerms.includes('coolray') && imageSearchTerms.includes('coolray')) return true;
+              if (searchTerms.includes('monjaro') && imageSearchTerms.includes('monjaro')) return true;
+              if (searchTerms.includes('ex5') && imageSearchTerms.includes('ex5')) return true;
+              
+              return false;
+            });
           }
-          
+
           // Get cheapest variant price for this car model
           const priceInfo = getCheapestVariantForModel(carDetail.name);
           const isPriceAvailable = priceInfo?.price_available ?? false;
@@ -88,42 +97,35 @@ export const useHeroImages = (propsCars?: Car[]) => {
             isPriceAvailable,
             displayPrice
           });
+
+          console.log('🖼️ Image matching for', carDetail.name, ':', {
+            found: !!matchingImage,
+            imageUrl: matchingImage?.url,
+            mobileUrl: matchingImage?.mobile_url
+          });
           
           return {
             name: carDetail.name,
             tagline: carDetail.tagline,
             description: carDetail.description,
             price: displayPrice,
-            image: heroImage || "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop",
-            mobile_image: heroMobileImage,
+            image: matchingImage?.url || "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop",
+            mobile_image: matchingImage?.mobile_url,
             features: carDetail.features || [],
             priority: carDetail.priority || 999,
             price_available: isPriceAvailable
           };
-        }));
+        });
 
-        console.log('\n🎯 FINAL RESULT FROM CAR DETAILS:', carsWithImages);
+        console.log('\n🎯 FINAL RESULT FROM CAR DETAILS + WEBSITE IMAGES:', carsWithImages);
         setCars(carsWithImages);
         setIsLoading(false);
         return;
       }
 
-      // Fallback to website_images if no car_details found
-      console.log('⚠️ No car details found, falling back to website_images...');
+      // Fallback to website_images only if no car_details found
+      console.log('⚠️ No car details found, falling back to website_images only...');
       
-      const { data: imagesData, error: imagesError } = await supabase
-        .from('website_images')
-        .select('*')
-        .or('category.eq.hero-banner,category.like.hero-banner-%')
-        .order('created_at', { ascending: false });
-
-      console.log('📊 Images Query Result:', { error: imagesError, count: imagesData?.length });
-
-      if (imagesError) {
-        console.error('❌ Images database error:', imagesError);
-        throw imagesError;
-      }
-
       if (!imagesData || imagesData.length === 0) {
         console.log('⚠️ NO HERO IMAGES FOUND - Using defaults');
         createDefaultCars();
