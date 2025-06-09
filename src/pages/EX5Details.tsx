@@ -110,25 +110,23 @@ const EX5Details = () => {
                     SUV điện thông minh với công nghệ pin tiên tiến và khả năng vận hành êm ái, dẫn đầu xu hướng xanh.
                   </p>
                   
-                  {/* Action Buttons - Mobile Optimized */}
-                  <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
+                  {/* Action Buttons - Updated Design */}
+                  <div className="flex flex-col gap-3 max-w-sm">
                     <Button 
-                      size="sm"
-                      className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white px-4 py-2 md:px-6 md:py-3 rounded-full shadow-lg text-sm md:text-base"
-                      onClick={() => setShowTestDrive(true)}
+                      className="w-full h-12 bg-gray-200/90 hover:bg-gray-100 text-gray-800 font-medium text-sm rounded-lg border-0 shadow-sm transition-all"
+                      onClick={() => setShowPriceQuote(true)}
                     >
-                      <Calendar className="mr-1 md:mr-2 h-4 w-4" />
-                      Đặt lịch lái thử
+                      BÁO GIÁ
                     </Button>
                     
                     <Button 
-                      variant="outline"
-                      size="sm"
-                      className="border-white/80 bg-white/10 backdrop-blur-sm text-white hover:bg-white hover:text-gray-900 px-4 py-2 md:px-6 md:py-3 rounded-full shadow-lg text-sm md:text-base"
-                      onClick={() => setShowPriceQuote(true)}
+                      className="w-full h-12 bg-gray-800/90 hover:bg-gray-700 text-white font-medium text-sm rounded-lg border-0 shadow-sm transition-all flex items-center justify-center gap-2"
+                      onClick={() => setShowTestDrive(true)}
                     >
-                      <Calculator className="mr-1 md:mr-2 h-4 w-4" />
-                      Xem báo giá
+                      ĐĂNG KÝ LÁI THỬ
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
                     </Button>
                   </div>
                 </div>
@@ -192,7 +190,7 @@ const EX5Details = () => {
         </div>
       </section>
 
-      {/* CTA Section - Mobile Optimized */}
+      {/* CTA Section - Updated Design */}
       <section className="py-8 md:py-16 bg-gradient-to-r from-green-600 to-teal-600">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-xl md:text-3xl font-light text-white mb-4 md:mb-8">Sẵn sàng trải nghiệm?</h2>
@@ -200,24 +198,22 @@ const EX5Details = () => {
             Đặt lịch lái thử ngay hôm nay để cảm nhận sự khác biệt của Geely EX5
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center max-w-md mx-auto">
             <Button 
-              size="sm"
-              className="bg-white text-green-600 hover:bg-gray-100 px-6 py-2 md:px-8 md:py-3 rounded-full font-medium text-sm md:text-base"
-              onClick={() => setShowTestDrive(true)}
+              className="flex-1 h-12 bg-white/90 hover:bg-white text-gray-800 font-medium text-sm rounded-lg border-0 shadow-sm transition-all"
+              onClick={() => setShowPriceQuote(true)}
             >
-              <Calendar className="mr-1 md:mr-2 h-4 w-4" />
-              Đặt lịch lái thử
+              BÁO GIÁ
             </Button>
             
             <Button 
-              variant="outline"
-              size="sm"
-              className="border-white text-white hover:bg-white hover:text-green-600 px-6 py-2 md:px-8 md:py-3 rounded-full font-medium text-sm md:text-base"
-              onClick={() => setShowPriceQuote(true)}
+              className="flex-1 h-12 bg-gray-800/90 hover:bg-gray-700 text-white font-medium text-sm rounded-lg border-0 shadow-sm transition-all flex items-center justify-center gap-2"
+              onClick={() => setShowTestDrive(true)}
             >
-              <Calculator className="mr-1 md:mr-2 h-4 w-4" />
-              Xem báo giá
+              ĐĂNG KÝ LÁI THỬ
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
             </Button>
           </div>
         </div>
