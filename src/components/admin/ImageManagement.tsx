@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Upload, Trash2, Edit, Eye, EyeOff } from "lucide-react";
+import { Upload, Trash2, Edit, Eye, EyeOff, Info, Image, MapPin, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { convertToWebP, shouldConvertToWebP, formatFileSize } from "@/utils/imageConverter";
@@ -25,34 +25,97 @@ interface WebsiteImage {
 }
 
 const IMAGE_CATEGORIES = [
-  { value: "hero-banner", label: "Banner Chính (Hero)", description: "Hình ảnh banner chính trang chủ" },
-  { value: "car-gallery", label: "Thư Viện Xe", description: "Hình ảnh chi tiết của xe" },
-  { value: "promotions", label: "Khuyến Mãi", description: "Hình ảnh cho các chương trình khuyến mãi" },
-  { value: "news", label: "Tin Tức", description: "Hình ảnh cho bài viết tin tức" },
-  { value: "features", label: "Tính Năng", description: "Hình ảnh minh họa tính năng xe" },
-  { value: "showroom", label: "Showroom", description: "Hình ảnh showroom và cơ sở vật chất" },
-  { value: "logo", label: "Logo", description: "Logo và biểu tượng thương hiệu" },
-  { value: "background", label: "Hình Nền", description: "Hình nền cho các section" },
-  { value: "other", label: "Khác", description: "Hình ảnh khác" }
+  { 
+    value: "hero-banner", 
+    label: "🎯 Hero Banner - Trang chủ", 
+    description: "Banner carousel chính tự động chuyển đổi",
+    location: "Trang chủ - Banner carousel chính (tự động chuyển đổi)",
+    usage: "Hiển thị làm hình nền chính, kèm thông tin xe và nút CTA",
+    icon: "🎯"
+  },
+  { 
+    value: "car-gallery", 
+    label: "🚗 Thư Viện Xe", 
+    description: "Hình ảnh chi tiết của xe",
+    location: "Trang chi tiết xe - Galley hình ảnh",
+    usage: "Hiển thị trong carousel hình ảnh chi tiết của từng dòng xe",
+    icon: "🚗"
+  },
+  { 
+    value: "promotions", 
+    label: "🎁 Khuyến Mãi", 
+    description: "Hình ảnh cho các chương trình khuyến mãi",
+    location: "Trang chủ - Section khuyến mãi & Trang khuyến mãi",
+    usage: "Hiển thị làm hình nền cho các chương trình khuyến mãi",
+    icon: "🎁"
+  },
+  { 
+    value: "news", 
+    label: "📰 Tin Tức", 
+    description: "Hình ảnh cho bài viết tin tức",
+    location: "Trang chủ - Section tin tức & Trang chi tiết tin tức",
+    usage: "Hình ảnh đại diện cho bài viết tin tức",
+    icon: "📰"
+  },
+  { 
+    value: "features", 
+    label: "⭐ Tính Năng", 
+    description: "Hình ảnh minh họa tính năng xe",
+    location: "Trang chi tiết xe - Section tính năng",
+    usage: "Minh họa các tính năng nổi bật của xe",
+    icon: "⭐"
+  },
+  { 
+    value: "showroom", 
+    label: "🏢 Showroom", 
+    description: "Hình ảnh showroom và cơ sở vật chất",
+    location: "Trang chủ - Section về chúng tôi",
+    usage: "Hiển thị không gian showroom, cơ sở vật chất",
+    icon: "🏢"
+  },
+  { 
+    value: "logo", 
+    label: "🏷️ Logo", 
+    description: "Logo và biểu tượng thương hiệu",
+    location: "Header, Footer và toàn bộ website",
+    usage: "Logo thương hiệu, biểu tượng",
+    icon: "🏷️"
+  },
+  { 
+    value: "background", 
+    label: "🖼️ Hình Nền", 
+    description: "Hình nền cho các section",
+    location: "Background các section trên website",
+    usage: "Làm hình nền trang trí cho các phần của website",
+    icon: "🖼️"
+  },
+  { 
+    value: "other", 
+    label: "📁 Khác", 
+    description: "Hình ảnh khác",
+    location: "Vị trí khác trên website",
+    usage: "Sử dụng cho mục đích khác",
+    icon: "📁"
+  }
 ];
 
 const CAR_MODELS = [
-  { value: "all", label: "Tất Cả Dòng Xe" },
-  { value: "coolray", label: "Geely Coolray" },
-  { value: "monjaro", label: "Geely Monjaro" },
-  { value: "ex5", label: "Geely EX5" },
-  { value: "future-models", label: "Dòng Xe Tương Lai" }
+  { value: "all", label: "🌟 Tất Cả Dòng Xe", description: "Áp dụng cho tất cả các dòng xe" },
+  { value: "coolray", label: "🚙 Geely Coolray", description: "SUV đô thị thông minh" },
+  { value: "monjaro", label: "🚗 Geely Monjaro", description: "SUV 7 chỗ cao cấp" },
+  { value: "ex5", label: "⚡ Geely EX5", description: "SUV điện thông minh" },
+  { value: "future-models", label: "🔮 Dòng Xe Tương Lai", description: "Các mẫu xe sắp ra mắt" }
 ];
 
 const RECOMMENDED_SIZES = {
-  "hero-banner": "1920x1080px (Desktop), 768x1024px (Mobile)",
-  "car-gallery": "1200x800px (Desktop), 600x400px (Mobile)", 
-  "promotions": "800x600px",
-  "news": "600x400px",
-  "features": "400x300px",
-  "showroom": "1200x800px",
-  "logo": "200x100px (PNG với nền trong suốt)",
-  "background": "1920x1080px",
+  "hero-banner": "1920×1080px (Desktop), 768×1024px (Mobile)",
+  "car-gallery": "1200×800px (Desktop), 600×400px (Mobile)", 
+  "promotions": "800×600px",
+  "news": "600×400px",
+  "features": "400×300px",
+  "showroom": "1200×800px",
+  "logo": "200×100px (PNG với nền trong suốt)",
+  "background": "1920×1080px",
   "other": "Tùy theo mục đích sử dụng"
 };
 
@@ -346,56 +409,107 @@ const ImageManagement = () => {
     );
   }
 
+  const selectedCategory = IMAGE_CATEGORIES.find(cat => cat.value === category);
+  const selectedCarModel = CAR_MODELS.find(model => model.value === carModel);
+
   return (
     <div className="space-y-6">
       {/* Upload Form */}
       <Card>
         <CardHeader>
-          <CardTitle>
-            {editingImage ? "Chỉnh sửa hình ảnh" : "Thêm hình ảnh mới"}
+          <CardTitle className="flex items-center gap-2">
+            <Upload className="h-5 w-5" />
+            {editingImage ? "Chỉnh sửa hình ảnh" : "Upload Hình Ảnh Mới"}
             <Badge variant="secondary" className="ml-2">
-              Auto WebP
+              ✅ Auto WebP
             </Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="category">Danh mục hình ảnh *</Label>
-                <Select value={category} onValueChange={setCategory} required>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Chọn danh mục hình ảnh" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {IMAGE_CATEGORIES.map((cat) => (
-                      <SelectItem key={cat.value} value={cat.value}>
-                        <div>
-                          <div className="font-medium">{cat.label}</div>
-                          <div className="text-xs text-gray-500">{cat.description}</div>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="carModel">Dòng xe *</Label>
-                <Select value={carModel} onValueChange={setCarModel} required>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Chọn dòng xe" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CAR_MODELS.map((model) => (
-                      <SelectItem key={model.value} value={model.value}>
-                        {model.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Category Selection */}
+            <div>
+              <Label htmlFor="category" className="text-base font-semibold flex items-center gap-2">
+                <Image className="h-4 w-4" />
+                Danh mục hình ảnh *
+              </Label>
+              <Select value={category} onValueChange={setCategory} required>
+                <SelectTrigger className="h-12">
+                  <SelectValue placeholder="Chọn danh mục hình ảnh" />
+                </SelectTrigger>
+                <SelectContent>
+                  {IMAGE_CATEGORIES.map((cat) => (
+                    <SelectItem key={cat.value} value={cat.value} className="p-3">
+                      <div className="w-full">
+                        <div className="font-medium text-left">{cat.label}</div>
+                        <div className="text-xs text-gray-500 mt-1">{cat.description}</div>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
+
+            {/* Car Model Selection */}
+            <div>
+              <Label htmlFor="carModel" className="text-base font-semibold flex items-center gap-2">
+                🚗 Dòng xe *
+              </Label>
+              <Select value={carModel} onValueChange={setCarModel} required>
+                <SelectTrigger className="h-12">
+                  <SelectValue placeholder="Chọn dòng xe" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CAR_MODELS.map((model) => (
+                    <SelectItem key={model.value} value={model.value} className="p-3">
+                      <div className="w-full">
+                        <div className="font-medium text-left">{model.label}</div>
+                        <div className="text-xs text-gray-500 mt-1">{model.description}</div>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Information Card */}
+            {selectedCategory && (
+              <Card className="bg-blue-50 border-blue-200">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-blue-900 flex items-center gap-2">
+                        {selectedCategory.icon} {selectedCategory.label}
+                      </h4>
+                      <div className="space-y-1 text-sm">
+                        <div className="flex items-start gap-2">
+                          <MapPin className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <span className="font-medium">Vị trí hiển thị:</span>
+                            <div className="text-blue-700">{selectedCategory.location}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <Sparkles className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <span className="font-medium">Cách sử dụng:</span>
+                            <div className="text-blue-700">{selectedCategory.usage}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <span className="text-blue-600 mt-0.5">📏</span>
+                          <div>
+                            <span className="font-medium">Kích thước khuyến nghị:</span>
+                            <div className="text-blue-700">{RECOMMENDED_SIZES[category as keyof typeof RECOMMENDED_SIZES]}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             <div>
               <Label htmlFor="name">Tên hình ảnh (tùy chọn)</Label>
@@ -404,6 +518,7 @@ const ImageManagement = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Để trống để tự động tạo tên dựa trên danh mục và dòng xe"
+                className="h-11"
               />
               {!name && category && (
                 <p className="text-xs text-gray-500 mt-1">
@@ -419,6 +534,7 @@ const ImageManagement = () => {
                 value={recommendedSize}
                 onChange={(e) => setRecommendedSize(e.target.value)}
                 placeholder="Kích thước sẽ được tự động điền theo danh mục"
+                className="h-11"
                 required
               />
             </div>
@@ -436,8 +552,9 @@ const ImageManagement = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="desktop-file">
-                  Hình ảnh Desktop {!editingImage && "*"}
+                <Label htmlFor="desktop-file" className="flex items-center gap-2">
+                  <span className="text-blue-600">💻</span>
+                  Hình ảnh PC/Desktop {!editingImage && "*"}
                 </Label>
                 <Input
                   id="desktop-file"
@@ -445,7 +562,11 @@ const ImageManagement = () => {
                   accept="image/*"
                   onChange={(e) => setFile(e.target.files?.[0] || null)}
                   required={!editingImage}
+                  className="h-11"
                 />
+                <p className="text-xs text-blue-600 mt-1">
+                  📱 Hiển thị trên máy tính, laptop, tablet ngang
+                </p>
                 {file && shouldConvertToWebP(file) && (
                   <p className="text-xs text-green-600 mt-1">
                     ✓ File này sẽ được tự động chuyển đổi sang WebP để tối ưu dung lượng
@@ -454,13 +575,20 @@ const ImageManagement = () => {
               </div>
               
               <div>
-                <Label htmlFor="mobile-file">Hình ảnh Mobile (tùy chọn)</Label>
+                <Label htmlFor="mobile-file" className="flex items-center gap-2">
+                  <span className="text-purple-600">📱</span>
+                  Hình ảnh Mobile (tùy chọn)
+                </Label>
                 <Input
                   id="mobile-file"
                   type="file"
                   accept="image/*"
                   onChange={(e) => setMobileFile(e.target.files?.[0] || null)}
+                  className="h-11"
                 />
+                <p className="text-xs text-purple-600 mt-1">
+                  📱 Hiển thị trên điện thoại, tablet dọc (nếu không có sẽ dùng ảnh PC)
+                </p>
                 {mobileFile && shouldConvertToWebP(mobileFile) && (
                   <p className="text-xs text-green-600 mt-1">
                     ✓ File này sẽ được tự động chuyển đổi sang WebP để tối ưu dung lượng
@@ -470,13 +598,13 @@ const ImageManagement = () => {
             </div>
 
             <div className="flex space-x-2">
-              <Button type="submit" disabled={uploading}>
+              <Button type="submit" disabled={uploading} className="h-11">
                 <Upload className="h-4 w-4 mr-2" />
                 {uploading ? "Đang xử lý..." : (editingImage ? "Cập nhật" : "Thêm hình ảnh")}
               </Button>
               
               {editingImage && (
-                <Button type="button" variant="outline" onClick={resetForm}>
+                <Button type="button" variant="outline" onClick={resetForm} className="h-11">
                   Hủy
                 </Button>
               )}
