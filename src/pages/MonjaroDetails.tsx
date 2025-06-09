@@ -10,77 +10,69 @@ import CarImageCarousel from "@/components/CarImageCarousel";
 import FeatureSlider from "@/components/FeatureSlider";
 import FloatingButtons from "@/components/FloatingButtons";
 import ContactFooter from "@/components/ContactFooter";
-
 const MonjaroDetails = () => {
   const navigate = useNavigate();
   const [showTestDrive, setShowTestDrive] = useState(false);
   const [showPriceQuote, setShowPriceQuote] = useState(false);
-
-  const carImages = [
-    "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=1920&h=1080&fit=crop",
-    "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=1920&h=1080&fit=crop",
-    "https://images.unsplash.com/photo-1621135802920-133df287f89c?w=1920&h=1080&fit=crop",
-    "https://images.unsplash.com/photo-1619976215542-c8162db1a640?w=1920&h=1080&fit=crop"
-  ];
-
-  const specifications = [
-    { icon: Gauge, label: "Động cơ", value: "2.0L Turbo" },
-    { icon: Zap, label: "Công suất", value: "238 HP" },
-    { icon: Fuel, label: "Tiêu thụ nhiên liệu", value: "7.2L/100km" },
-    { icon: Shield, label: "An toàn", value: "7 túi khí" },
-    { icon: Cog, label: "Hộp số", value: "8AT" },
-    { icon: Eye, label: "Camera", value: "360° + DMS" }
-  ];
-
-  const detailedFeatures = [
-    {
-      id: "luxury",
-      title: "Nội thất cao cấp",
-      description: "Hệ thống giải trí 12.3 inch với GKUI Pro, ghế da cao cấp điều chỉnh điện, cửa sổ trời toàn cảnh Panorama và hệ thống âm thanh Sony 12 loa chất lượng Hi-Fi.",
-      image: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&h=600&fit=crop"
-    },
-    {
-      id: "performance",
-      title: "Hiệu suất mạnh mẽ",
-      description: "Động cơ 2.0L Turbo 238 HP mạnh mẽ, hộp số tự động 8 cấp mượt mà, tiêu thụ nhiên liệu chỉ 7.2L/100km. Hệ thống treo độc lập 4 bánh mang lại cảm giác lái thoải mái.",
-      image: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&h=600&fit=crop"
-    },
-    {
-      id: "safety",
-      title: "An toàn tối đa",
-      description: "7 túi khí bảo vệ toàn diện, cruise control thích ứng ACC, camera 360° + DMS, hệ thống cảnh báo điểm mù và phanh khẩn cấp tự động để đảm bảo an toàn cho cả gia đình.",
-      image: "https://images.unsplash.com/photo-1621135802920-133df287f89c?w=800&h=600&fit=crop"
-    },
-    {
-      id: "convenience",
-      title: "Tiện nghi hiện đại",
-      description: "Đèn LED Matrix thông minh, khởi động từ xa qua ứng dụng, sạc không dây cho điện thoại, hệ thống điều hòa tự động và khoang hành lý rộng rãi 1800L.",
-      image: "https://images.unsplash.com/photo-1619976215542-c8162db1a640?w=800&h=600&fit=crop"
-    }
-  ];
-
-  return (
-    <div className="min-h-screen bg-white">
+  const carImages = ["https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=1920&h=1080&fit=crop", "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=1920&h=1080&fit=crop", "https://images.unsplash.com/photo-1621135802920-133df287f89c?w=1920&h=1080&fit=crop", "https://images.unsplash.com/photo-1619976215542-c8162db1a640?w=1920&h=1080&fit=crop"];
+  const specifications = [{
+    icon: Gauge,
+    label: "Động cơ",
+    value: "2.0L Turbo"
+  }, {
+    icon: Zap,
+    label: "Công suất",
+    value: "238 HP"
+  }, {
+    icon: Fuel,
+    label: "Tiêu thụ nhiên liệu",
+    value: "7.2L/100km"
+  }, {
+    icon: Shield,
+    label: "An toàn",
+    value: "7 túi khí"
+  }, {
+    icon: Cog,
+    label: "Hộp số",
+    value: "8AT"
+  }, {
+    icon: Eye,
+    label: "Camera",
+    value: "360° + DMS"
+  }];
+  const detailedFeatures = [{
+    id: "luxury",
+    title: "Nội thất cao cấp",
+    description: "Hệ thống giải trí 12.3 inch với GKUI Pro, ghế da cao cấp điều chỉnh điện, cửa sổ trời toàn cảnh Panorama và hệ thống âm thanh Sony 12 loa chất lượng Hi-Fi.",
+    image: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&h=600&fit=crop"
+  }, {
+    id: "performance",
+    title: "Hiệu suất mạnh mẽ",
+    description: "Động cơ 2.0L Turbo 238 HP mạnh mẽ, hộp số tự động 8 cấp mượt mà, tiêu thụ nhiên liệu chỉ 7.2L/100km. Hệ thống treo độc lập 4 bánh mang lại cảm giác lái thoải mái.",
+    image: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&h=600&fit=crop"
+  }, {
+    id: "safety",
+    title: "An toàn tối đa",
+    description: "7 túi khí bảo vệ toàn diện, cruise control thích ứng ACC, camera 360° + DMS, hệ thống cảnh báo điểm mù và phanh khẩn cấp tự động để đảm bảo an toàn cho cả gia đình.",
+    image: "https://images.unsplash.com/photo-1621135802920-133df287f89c?w=800&h=600&fit=crop"
+  }, {
+    id: "convenience",
+    title: "Tiện nghi hiện đại",
+    description: "Đèn LED Matrix thông minh, khởi động từ xa qua ứng dụng, sạc không dây cho điện thoại, hệ thống điều hòa tự động và khoang hành lý rộng rãi 1800L.",
+    image: "https://images.unsplash.com/photo-1619976215542-c8162db1a640?w=800&h=600&fit=crop"
+  }];
+  return <div className="min-h-screen bg-white">
       {/* Header - Mobile Optimized */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center h-14 md:h-16">
             <div className="flex items-center space-x-2 md:space-x-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/')}
-                className="flex items-center space-x-1 md:space-x-2 p-2"
-              >
+              <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="flex items-center space-x-1 md:space-x-2 p-2">
                 <ArrowLeft className="h-4 w-4" />
                 <span className="hidden sm:inline">Quay lại</span>
               </Button>
               <div className="flex items-center space-x-2 md:space-x-3">
-                <img 
-                  src="/lovable-uploads/fcdb7433-edf5-46e0-a645-63687828d441.png" 
-                  alt="Geely Logo" 
-                  className="h-6 md:h-8 w-auto"
-                />
+                <img src="/lovable-uploads/fcdb7433-edf5-46e0-a645-63687828d441.png" alt="Geely Logo" className="h-6 md:h-8 w-auto" />
                 <span className="text-lg md:text-xl font-semibold text-gray-900">Monjaro</span>
               </div>
             </div>
@@ -99,29 +91,17 @@ const MonjaroDetails = () => {
             <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8">
               <div className="max-w-7xl mx-auto">
                 <div className="text-white">
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light mb-2 md:mb-4 leading-tight">
-                    Geely Monjaro
-                  </h1>
-                  <p className="text-sm sm:text-base md:text-lg font-medium text-blue-300 mb-2 md:mb-4">
-                    Premium. Powerful. Refined.
-                  </p>
-                  <p className="text-xs sm:text-sm md:text-base text-gray-200 mb-4 md:mb-6 leading-relaxed">
-                    SUV 7 chỗ cao cấp với không gian rộng rãi và trang bị công nghệ tiên tiến, hoàn hảo cho gia đình hiện đại.
-                  </p>
+                  
+                  
+                  
                   
                   {/* Action Buttons - Updated Design */}
                   <div className="flex flex-col gap-3 max-w-sm">
-                    <Button 
-                      className="w-full h-12 bg-gray-200/90 hover:bg-gray-100 text-gray-800 font-medium text-sm rounded-lg border-0 shadow-sm transition-all"
-                      onClick={() => setShowPriceQuote(true)}
-                    >
+                    <Button className="w-full h-12 bg-gray-200/90 hover:bg-gray-100 text-gray-800 font-medium text-sm rounded-lg border-0 shadow-sm transition-all" onClick={() => setShowPriceQuote(true)}>
                       BÁO GIÁ
                     </Button>
                     
-                    <Button 
-                      className="w-full h-12 bg-gray-800/90 hover:bg-gray-700 text-white font-medium text-sm rounded-lg border-0 shadow-sm transition-all flex items-center justify-center gap-2"
-                      onClick={() => setShowTestDrive(true)}
-                    >
+                    <Button className="w-full h-12 bg-gray-800/90 hover:bg-gray-700 text-white font-medium text-sm rounded-lg border-0 shadow-sm transition-all flex items-center justify-center gap-2" onClick={() => setShowTestDrive(true)}>
                       ĐĂNG KÝ LÁI THỬ
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -146,13 +126,11 @@ const MonjaroDetails = () => {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-6">
-            {specifications.map((spec, index) => (
-              <Card key={index} className="p-3 md:p-6 text-center hover:shadow-lg transition-all duration-300 border border-gray-100">
+            {specifications.map((spec, index) => <Card key={index} className="p-3 md:p-6 text-center hover:shadow-lg transition-all duration-300 border border-gray-100">
                 <spec.icon className="h-6 w-6 md:h-10 md:w-10 text-blue-600 mx-auto mb-2 md:mb-3" />
                 <h3 className="font-medium text-gray-900 mb-1 text-xs md:text-base">{spec.label}</h3>
                 <p className="text-gray-600 text-xs md:text-sm font-medium">{spec.value}</p>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -169,17 +147,11 @@ const MonjaroDetails = () => {
           
           {/* Mobile: Simple card layout instead of slider */}
           <div className="block md:hidden space-y-4">
-            {detailedFeatures.map((feature, index) => (
-              <Card key={index} className="p-4 border border-gray-200">
-                <img 
-                  src={feature.image} 
-                  alt={feature.title}
-                  className="w-full h-40 object-cover rounded-lg mb-3"
-                />
+            {detailedFeatures.map((feature, index) => <Card key={index} className="p-4 border border-gray-200">
+                <img src={feature.image} alt={feature.title} className="w-full h-40 object-cover rounded-lg mb-3" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">{feature.description}</p>
-              </Card>
-            ))}
+              </Card>)}
           </div>
           
           {/* Desktop: Keep the slider */}
@@ -198,17 +170,11 @@ const MonjaroDetails = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center max-w-md mx-auto">
-            <Button 
-              className="flex-1 h-12 bg-white/90 hover:bg-white text-gray-800 font-medium text-sm rounded-lg border-0 shadow-sm transition-all"
-              onClick={() => setShowPriceQuote(true)}
-            >
+            <Button className="flex-1 h-12 bg-white/90 hover:bg-white text-gray-800 font-medium text-sm rounded-lg border-0 shadow-sm transition-all" onClick={() => setShowPriceQuote(true)}>
               BÁO GIÁ
             </Button>
             
-            <Button 
-              className="flex-1 h-12 bg-gray-800/90 hover:bg-gray-700 text-white font-medium text-sm rounded-lg border-0 shadow-sm transition-all flex items-center justify-center gap-2"
-              onClick={() => setShowTestDrive(true)}
-            >
+            <Button className="flex-1 h-12 bg-gray-800/90 hover:bg-gray-700 text-white font-medium text-sm rounded-lg border-0 shadow-sm transition-all flex items-center justify-center gap-2" onClick={() => setShowTestDrive(true)}>
               ĐĂNG KÝ LÁI THỬ
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -225,18 +191,8 @@ const MonjaroDetails = () => {
       <FloatingButtons />
 
       {/* Modals */}
-      <TestDriveModal 
-        isOpen={showTestDrive} 
-        onClose={() => setShowTestDrive(false)}
-        selectedCar="Geely Monjaro"
-      />
-      <PriceQuoteModal 
-        isOpen={showPriceQuote} 
-        onClose={() => setShowPriceQuote(false)}
-        selectedCar="Geely Monjaro"
-      />
-    </div>
-  );
+      <TestDriveModal isOpen={showTestDrive} onClose={() => setShowTestDrive(false)} selectedCar="Geely Monjaro" />
+      <PriceQuoteModal isOpen={showPriceQuote} onClose={() => setShowPriceQuote(false)} selectedCar="Geely Monjaro" />
+    </div>;
 };
-
 export default MonjaroDetails;
