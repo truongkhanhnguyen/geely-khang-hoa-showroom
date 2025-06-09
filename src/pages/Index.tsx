@@ -16,44 +16,23 @@ import NewsSection from "@/components/NewsSection";
 import ContactModal from "@/components/ContactModal";
 
 const Index = () => {
-  const {
-    t
-  } = useLanguage();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [showTestDrive, setShowTestDrive] = useState(false);
   const [showPriceQuote, setShowPriceQuote] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [selectedCar, setSelectedCar] = useState("");
-  const cars = [{
-    name: "Geely Coolray",
-    tagline: "Urban. Dynamic. Smart.",
-    description: "SUV compact thông minh với công nghệ hiện đại và thiết kế trẻ trung, phù hợp cho cuộc sống đô thị năng động.",
-    price: "Từ 538 triệu VNĐ",
-    image: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop",
-    features: ["Động cơ 1.5L Turbo", "Hệ thống GKUI 19", "6 túi khí an toàn", "Phanh ABS + EBD"]
-  }, {
-    name: "Geely Monjaro",
-    tagline: "Premium. Powerful. Refined.",
-    description: "SUV cao cấp với không gian rộng rãi, công nghệ tiên tiến, và thiết kế hiện đại.",
-    price: "Từ 1.469 triệu VNĐ",
-    image: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=1920&h=1080&fit=crop",
-    features: ["Động cơ 2.0L Turbo", "Hệ thống giải trí 12.3''", "Cruise Control thích ứng", "Cửa sổ trời toàn cảnh"]
-  }, {
-    name: "Geely EX5",
-    tagline: "Electric. Efficient. Future.",
-    description: "SUV điện thông minh với công nghệ pin tiên tiến và khả năng vận hành êm ái, dẫn đầu xu hướng xanh.",
-    price: "Từ 769 triệu VNĐ",
-    image: "https://images.unsplash.com/photo-1593941707882-a5bac6861d75?w=1920&h=1080&fit=crop",
-    features: ["100% động cơ điện", "Phạm vi 400km", "Sạc nhanh 30 phút", "Hệ thống tự lái L2"]
-  }];
+
   const handleTestDrive = (carName: string) => {
     setSelectedCar(carName);
     setShowTestDrive(true);
   };
+
   const handlePriceQuote = (carName: string) => {
     setSelectedCar(carName);
     setShowPriceQuote(true);
   };
+
   const handleExplore = (carName: string) => {
     switch (carName) {
       case "Geely Coolray":
@@ -69,7 +48,9 @@ const Index = () => {
         break;
     }
   };
-  return <div className="min-h-screen bg-white">
+
+  return (
+    <div className="min-h-screen bg-white">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -96,7 +77,7 @@ const Index = () => {
         </div>
       </header>
 
-      {/* SEO optimized Hero Carousel - Now fetches from database */}
+      {/* SEO optimized Hero Carousel - Now fetches from car_details database */}
       <HeroCarousel onTestDrive={handleTestDrive} onPriceQuote={handlePriceQuote} onExplore={handleExplore} />
 
       {/* SEO optimized Services Section */}
@@ -172,7 +153,8 @@ const Index = () => {
       <TestDriveModal isOpen={showTestDrive} onClose={() => setShowTestDrive(false)} selectedCar={selectedCar} />
       <PriceQuoteModal isOpen={showPriceQuote} onClose={() => setShowPriceQuote(false)} selectedCar={selectedCar} />
       <ContactModal isOpen={showContactModal} onClose={() => setShowContactModal(false)} />
-    </div>;
+    </div>
+  );
 };
 
 export default Index;

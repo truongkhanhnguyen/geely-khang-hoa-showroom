@@ -9,6 +9,60 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      car_details: {
+        Row: {
+          car_model: string
+          created_at: string
+          description: string
+          detailed_features: Json | null
+          features: string[]
+          gallery_images: string[] | null
+          hero_image_url: string | null
+          hero_mobile_image_url: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          priority: number | null
+          specifications: Json | null
+          tagline: string
+          updated_at: string
+        }
+        Insert: {
+          car_model: string
+          created_at?: string
+          description: string
+          detailed_features?: Json | null
+          features?: string[]
+          gallery_images?: string[] | null
+          hero_image_url?: string | null
+          hero_mobile_image_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          priority?: number | null
+          specifications?: Json | null
+          tagline: string
+          updated_at?: string
+        }
+        Update: {
+          car_model?: string
+          created_at?: string
+          description?: string
+          detailed_features?: Json | null
+          features?: string[]
+          gallery_images?: string[] | null
+          hero_image_url?: string | null
+          hero_mobile_image_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          priority?: number | null
+          specifications?: Json | null
+          tagline?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       car_prices: {
         Row: {
           base_price: number

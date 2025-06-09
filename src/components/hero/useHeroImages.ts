@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { Car } from './types';
-import { carModelsMapping } from './carModelsData';
 import { usePriceData } from './usePriceData';
 
 export const useHeroImages = (propsCars?: Car[]) => {
@@ -28,6 +27,64 @@ export const useHeroImages = (propsCars?: Car[]) => {
     try {
       console.log('\n==== FETCHING HERO IMAGES FROM DATABASE ====');
       
+      // First try to get data from car_details table
+      const { data: carDetailsData, error: carDetailsError } = await supabase
+        .from('car_details')
+        .select('*')
+        .eq('is_active', true)
+        .order('priority');
+
+      if (carDetailsError) {
+        console.error('❌ Car details database error:', carDetailsError);
+        throw carDetailsError;
+      }
+
+      if (carDetailsData && carDetailsData.length > 0) {
+        console.log('✅ Found car details in database:', carDetailsData.length);
+        
+        const heroImages = carDetailsData.map((carDetail: any) => {
+          // Get cheapest variant price for this car model
+          const priceInfo = getCheapestVariantForModel(carDetail.name);
+          const isPriceAvailable = priceInfo?.price_available ?? false;
+          
+          let displayPrice = "Liên hệ để biết giá";
+          if (priceInfo) {
+            if (isPriceAvailable) {
+              const finalPrice = priceInfo.base_price - (priceInfo.promotion || 0);
+              displayPrice = `Từ ${(finalPrice / 1000000).toFixed(0)} triệu VNĐ`;
+            } else {
+              displayPrice = "Coming Soon";
+            }
+          }
+          
+          console.log('💰 Price info for', carDetail.name, ':', {
+            priceInfo,
+            isPriceAvailable,
+            displayPrice
+          });
+          
+          return {
+            name: carDetail.name,
+            tagline: carDetail.tagline,
+            description: carDetail.description,
+            price: displayPrice,
+            image: carDetail.hero_image_url || "https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop",
+            mobile_image: carDetail.hero_mobile_image_url,
+            features: carDetail.features || [],
+            priority: carDetail.priority || 999,
+            price_available: isPriceAvailable
+          };
+        });
+
+        console.log('\n🎯 FINAL RESULT FROM CAR DETAILS:', heroImages);
+        setCars(heroImages);
+        setIsLoading(false);
+        return;
+      }
+
+      // Fallback to website_images if no car_details found
+      console.log('⚠️ No car details found, falling back to website_images...');
+      
       const { data: imagesData, error: imagesError } = await supabase
         .from('website_images')
         .select('*')
@@ -47,11 +104,8 @@ export const useHeroImages = (propsCars?: Car[]) => {
         return;
       }
 
-      console.log('\n🔍 PROCESSING IMAGES FROM DATABASE:');
-      
-      const heroImages = imagesData.map((image: any, index: number) => {
-        console.log(`\n--- IMAGE ${index + 1}: ${image.name} ---`);
-        
+      // Process website_images as fallback
+      const heroImages = imagesData.map((image: any) => {
         const searchTerms = [
           image.name?.toLowerCase() || '',
           image.description?.toLowerCase() || '',
@@ -59,78 +113,54 @@ export const useHeroImages = (propsCars?: Car[]) => {
           image.file_name?.toLowerCase() || ''
         ].join(' ');
         
-        console.log('🔍 Combined search terms:', searchTerms);
+        let carName = "Geely Vehicle";
+        let carTagline = "Premium Quality";
+        let carDescription = "Xe hơi hiện đại với công nghệ tiên tiến";
+        let carFeatures = ["Công nghệ hiện đại", "Thiết kế sang trọng", "An toàn cao cấp", "Tiết kiệm nhiên liệu"];
         
-        let carModel = null;
-        let carInfo = null;
-
-        // Match car model from category or search terms
-        if (image.category?.includes('monjaro')) {
-          carModel = 'monjaro';
-          carInfo = carModelsMapping.monjaro;
-        } else if (image.category?.includes('coolray')) {
-          carModel = 'coolray';
-          carInfo = carModelsMapping.coolray;
-        } else if (image.category?.includes('ex5')) {
-          carModel = 'ex5';
-          carInfo = carModelsMapping.ex5;
-        } else if (searchTerms.includes('coolray') || searchTerms.includes('cool ray')) {
-          carModel = 'coolray';
-          carInfo = carModelsMapping.coolray;
+        if (searchTerms.includes('coolray')) {
+          carName = "Geely Coolray";
+          carTagline = "Urban. Dynamic. Smart.";
+          carDescription = "SUV compact thông minh với công nghệ hiện đại và thiết kế trẻ trung, phù hợp cho cuộc sống đô thị năng động.";
+          carFeatures = ["Động cơ 1.5L Turbo", "Hệ thống GKUI 19", "6 túi khí an toàn", "Phanh ABS + EBD"];
         } else if (searchTerms.includes('monjaro')) {
-          carModel = 'monjaro';
-          carInfo = carModelsMapping.monjaro;
-        } else if (searchTerms.includes('ex5') || searchTerms.includes('ex-5')) {
-          carModel = 'ex5';
-          carInfo = carModelsMapping.ex5;
+          carName = "Geely Monjaro";
+          carTagline = "Premium. Powerful. Refined.";
+          carDescription = "SUV 7 chỗ cao cấp với không gian rộng rãi và trang bị công nghệ tiên tiến, hoàn hảo cho gia đình hiện đại.";
+          carFeatures = ["Động cơ 2.0L Turbo", "Hệ thống giải trí 12.3''", "Cruise Control thích ứng", "Cửa sổ trời toàn cảnh"];
+        } else if (searchTerms.includes('ex5')) {
+          carName = "Geely EX5";
+          carTagline = "Electric. Efficient. Future.";
+          carDescription = "SUV điện thông minh với công nghệ pin tiên tiến và khả năng vận hành êm ái, dẫn đầu xu hướng xanh.";
+          carFeatures = ["100% động cơ điện", "Phạm vi 400km", "Sạc nhanh 30 phút", "Hệ thống tự lái L2"];
         }
 
-        // Get cheapest variant price for this car model
-        const priceInfo = carInfo ? getCheapestVariantForModel(carInfo.name) : null;
+        const priceInfo = getCheapestVariantForModel(carName);
         const isPriceAvailable = priceInfo?.price_available ?? false;
         
         let displayPrice = "Liên hệ để biết giá";
-        if (priceInfo) {
-          if (isPriceAvailable) {
-            const finalPrice = priceInfo.base_price - (priceInfo.promotion || 0);
-            displayPrice = `Từ ${(finalPrice / 1000000).toFixed(0)} triệu VNĐ`;
-          } else {
-            displayPrice = "Coming Soon";
-          }
+        if (priceInfo && isPriceAvailable) {
+          const finalPrice = priceInfo.base_price - (priceInfo.promotion || 0);
+          displayPrice = `Từ ${(finalPrice / 1000000).toFixed(0)} triệu VNĐ`;
+        } else if (priceInfo && !isPriceAvailable) {
+          displayPrice = "Coming Soon";
         }
         
-        console.log('💰 Price info for', carInfo?.name, ':', {
-          priceInfo,
-          isPriceAvailable,
-          displayPrice
-        });
-        
-        return carInfo ? {
-          name: carInfo.name,
-          tagline: carInfo.tagline,
-          description: carInfo.description,
+        return {
+          name: carName,
+          tagline: carTagline,
+          description: carDescription,
           price: displayPrice,
           image: image.url,
           mobile_image: image.mobile_url,
-          features: carInfo.features,
-          priority: carInfo.priority || 999,
-          price_available: isPriceAvailable
-        } : {
-          name: image.name,
-          tagline: "Geely Ninh Thuận",
-          description: image.description || `Khám phá ${image.name} - Xe hơi hiện đại với công nghệ tiên tiến`,
-          price: displayPrice,
-          image: image.url,
-          mobile_image: image.mobile_url,
-          features: ["Công nghệ hiện đại", "Thiết kế sang trọng", "An toàn cao cấp", "Tiết kiệm nhiên liệu"],
+          features: carFeatures,
           priority: 999,
-          price_available: false
+          price_available: isPriceAvailable
         };
       });
 
-      const sortedCars = heroImages.sort((a, b) => (a.priority || 999) - (b.priority || 999));
-      console.log('\n🎯 FINAL RESULT:', sortedCars);
-      setCars(sortedCars);
+      console.log('\n🎯 FINAL RESULT FROM WEBSITE IMAGES:', heroImages);
+      setCars(heroImages);
 
     } catch (error) {
       console.error('💥 CRITICAL ERROR in fetchHeroImages:', error);
@@ -142,7 +172,31 @@ export const useHeroImages = (propsCars?: Car[]) => {
 
   const createDefaultCars = () => {
     console.log('🔄 Creating default cars');
-    const defaultCars = Object.values(carModelsMapping).map(car => {
+    const defaultCarsData = [
+      {
+        name: "Geely Coolray",
+        tagline: "Urban. Dynamic. Smart.",
+        description: "SUV compact thông minh với công nghệ hiện đại và thiết kế trẻ trung, phù hợp cho cuộc sống đô thị năng động.",
+        features: ["Động cơ 1.5L Turbo", "Hệ thống GKUI 19", "6 túi khí an toàn", "Phanh ABS + EBD"],
+        priority: 1
+      },
+      {
+        name: "Geely Monjaro",
+        tagline: "Premium. Powerful. Refined.",
+        description: "SUV 7 chỗ cao cấp với không gian rộng rãi và trang bị công nghệ tiên tiến, hoàn hảo cho gia đình hiện đại.",
+        features: ["Động cơ 2.0L Turbo", "Hệ thống giải trí 12.3''", "Cruise Control thích ứng", "Cửa sổ trời toàn cảnh"],
+        priority: 2
+      },
+      {
+        name: "Geely EX5",
+        tagline: "Electric. Efficient. Future.",
+        description: "SUV điện thông minh với công nghệ pin tiên tiến và khả năng vận hành êm ái, dẫn đầu xu hướng xanh.",
+        features: ["100% động cơ điện", "Phạm vi 400km", "Sạc nhanh 30 phút", "Hệ thống tự lái L2"],
+        priority: 3
+      }
+    ];
+
+    const defaultCars = defaultCarsData.map(car => {
       const priceInfo = getCheapestVariantForModel(car.name);
       const isPriceAvailable = priceInfo?.price_available ?? false;
       
