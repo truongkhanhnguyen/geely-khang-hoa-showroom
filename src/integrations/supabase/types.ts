@@ -39,42 +39,6 @@ export type Database = {
         }
         Relationships: []
       }
-      news: {
-        Row: {
-          category: string
-          content: string | null
-          created_at: string
-          date: string
-          excerpt: string | null
-          id: string
-          image_url: string | null
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          category?: string
-          content?: string | null
-          created_at?: string
-          date?: string
-          excerpt?: string | null
-          id?: string
-          image_url?: string | null
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          category?: string
-          content?: string | null
-          created_at?: string
-          date?: string
-          excerpt?: string | null
-          id?: string
-          image_url?: string | null
-          title?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           created_at: string
@@ -96,39 +60,6 @@ export type Database = {
           full_name?: string | null
           id?: string
           updated_at?: string
-        }
-        Relationships: []
-      }
-      promotions: {
-        Row: {
-          created_at: string
-          description: string | null
-          discount_amount: number | null
-          id: string
-          image_url: string | null
-          title: string
-          updated_at: string
-          valid_until: string | null
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          discount_amount?: number | null
-          id?: string
-          image_url?: string | null
-          title: string
-          updated_at?: string
-          valid_until?: string | null
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          discount_amount?: number | null
-          id?: string
-          image_url?: string | null
-          title?: string
-          updated_at?: string
-          valid_until?: string | null
         }
         Relationships: []
       }

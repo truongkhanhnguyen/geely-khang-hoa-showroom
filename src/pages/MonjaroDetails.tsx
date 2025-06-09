@@ -1,327 +1,224 @@
-
-import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import CarImageCarousel from '@/components/CarImageCarousel';
-import TestDriveModal from '@/components/TestDriveModal';
-import PriceQuoteModal from '@/components/PriceQuoteModal';
-import ContactModal from '@/components/ContactModal';
-import ContactFooter from '@/components/ContactFooter';
-import { ArrowLeft, Calendar, Clock, DollarSign, Phone, MessageCircle, Calculator } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { ArrowLeft, Calendar, Calculator, Fuel, Gauge, Shield, Cog, Eye, Zap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import TestDriveModal from "@/components/TestDriveModal";
+import PriceQuoteModal from "@/components/PriceQuoteModal";
+import LanguageToggle from "@/components/LanguageToggle";
+import CarImageCarousel from "@/components/CarImageCarousel";
+import FeatureSlider from "@/components/FeatureSlider";
+import FloatingButtons from "@/components/FloatingButtons";
+import ContactFooter from "@/components/ContactFooter";
 
 const MonjaroDetails = () => {
   const navigate = useNavigate();
-  const [showTestDriveModal, setShowTestDriveModal] = useState(false);
-  const [showPriceQuoteModal, setShowPriceQuoteModal] = useState(false);
-  const [showContactModal, setShowContactModal] = useState(false);
+  const [showTestDrive, setShowTestDrive] = useState(false);
+  const [showPriceQuote, setShowPriceQuote] = useState(false);
 
-  const monjaroImages = [
-    "https://images.unsplash.com/photo-1544829099-b9a0c5303bea?w=800&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1549399737-4e4285dd019c?w=800&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1563720223185-11003d516935?w=800&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop"
+  const carImages = [
+    "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=1920&h=1080&fit=crop",
+    "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=1920&h=1080&fit=crop",
+    "https://images.unsplash.com/photo-1621135802920-133df287f89c?w=1920&h=1080&fit=crop",
+    "https://images.unsplash.com/photo-1619976215542-c8162db1a640?w=1920&h=1080&fit=crop"
   ];
 
-  const specifications = {
-    engine: "1.5L Turbo DOHC",
-    power: "177 HP",
-    torque: "255 Nm",
-    transmission: "7-speed DCT",
-    fuelType: "Gasoline",
-    drivetrain: "FWD",
-    fuelEconomy: "6.8L/100km",
-    seating: "5 seats",
-    length: "4543mm",
-    width: "1834mm",
-    height: "1715mm",
-    wheelbase: "2658mm",
-    groundClearance: "190mm",
-    curbWeight: "1450kg"
-  };
-
-  const features = [
-    "12.3 inch LCD instrument cluster",
-    "12.3 inch touchscreen infotainment",
-    "360° surround view camera",
-    "Panoramic sunroof",
-    "Wireless charging pad",
-    "Automatic climate control",
-    "Leather seats with heating",
-    "ADAS safety features",
-    "LED headlights and taillights",
-    "Remote engine start",
-    "Keyless entry and start",
-    "Premium sound system"
+  const specifications = [
+    { icon: Gauge, label: "Động cơ", value: "2.0L Turbo" },
+    { icon: Zap, label: "Công suất", value: "238 HP" },
+    { icon: Fuel, label: "Tiêu thụ nhiên liệu", value: "7.2L/100km" },
+    { icon: Shield, label: "An toàn", value: "7 túi khí" },
+    { icon: Cog, label: "Hộp số", value: "8AT" },
+    { icon: Eye, label: "Camera", value: "360° + DMS" }
   ];
 
-  const safetyFeatures = [
-    "6 airbags",
-    "ABS with EBD",
-    "Electronic Stability Control",
-    "Traction Control System",
-    "Hill Start Assist",
-    "Blind Spot Monitoring",
-    "Forward Collision Warning",
-    "Automatic Emergency Braking",
-    "Lane Departure Warning",
-    "Tire Pressure Monitoring",
-    "Reversing radar",
-    "ISOFIX child seat anchors"
+  const detailedFeatures = [
+    {
+      id: "luxury",
+      title: "Nội thất cao cấp",
+      description: "Hệ thống giải trí 12.3 inch với GKUI Pro, ghế da cao cấp điều chỉnh điện, cửa sổ trời toàn cảnh Panorama và hệ thống âm thanh Sony 12 loa chất lượng Hi-Fi.",
+      image: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&h=600&fit=crop"
+    },
+    {
+      id: "performance",
+      title: "Hiệu suất mạnh mẽ",
+      description: "Động cơ 2.0L Turbo 238 HP mạnh mẽ, hộp số tự động 8 cấp mượt mà, tiêu thụ nhiên liệu chỉ 7.2L/100km. Hệ thống treo độc lập 4 bánh mang lại cảm giác lái thoải mái.",
+      image: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&h=600&fit=crop"
+    },
+    {
+      id: "safety",
+      title: "An toàn tối đa",
+      description: "7 túi khí bảo vệ toàn diện, cruise control thích ứng ACC, camera 360° + DMS, hệ thống cảnh báo điểm mù và phanh khẩn cấp tự động để đảm bảo an toàn cho cả gia đình.",
+      image: "https://images.unsplash.com/photo-1621135802920-133df287f89c?w=800&h=600&fit=crop"
+    },
+    {
+      id: "convenience",
+      title: "Tiện nghi hiện đại",
+      description: "Đèn LED Matrix thông minh, khởi động từ xa qua ứng dụng, sạc không dây cho điện thoại, hệ thống điều hòa tự động và khoang hành lý rộng rãi 1800L.",
+      image: "https://images.unsplash.com/photo-1619976215542-c8162db1a640?w=800&h=600&fit=crop"
+    }
   ];
 
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-900 to-gray-900 text-white py-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => navigate('/')}
-            className="text-white hover:text-blue-200 mr-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Quay lại
-          </Button>
-          <h1 className="text-2xl font-bold">Geely Monjaro</h1>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Image Gallery */}
-          <div>
-            <CarImageCarousel carModel="Geely Monjaro" images={monjaroImages} />
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/')}
+                className="flex items-center space-x-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span>Quay lại</span>
+              </Button>
+              <div className="flex items-center space-x-3">
+                <img 
+                  src="/lovable-uploads/fcdb7433-edf5-46e0-a645-63687828d441.png" 
+                  alt="Geely Logo" 
+                  className="h-8 w-auto"
+                />
+                <span className="text-xl font-semibold text-gray-900">Geely Monjaro</span>
+              </div>
+            </div>
+            <LanguageToggle />
           </div>
+        </div>
+      </header>
 
-          {/* Car Info */}
-          <div>
-            <div className="mb-6">
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">Geely Monjaro</h1>
-              <p className="text-xl text-gray-600 mb-4">SUV 7 chỗ cao cấp, thiết kế hiện đại</p>
-              
-              <div className="flex items-center gap-4 mb-6">
-                <Badge variant="secondary" className="flex items-center">
-                  <Calendar className="w-4 h-4 mr-1" />
-                  2024
-                </Badge>
-                <Badge variant="secondary" className="flex items-center">
-                  <Clock className="w-4 h-4 mr-1" />
-                  Mới ra mắt
-                </Badge>
+      {/* Hero Section - Removed gradient overlay */}
+      <section className="relative pt-16">
+        <div className="relative h-[70vh] md:h-screen">
+          <CarImageCarousel images={carImages} carModel="Monjaro" />
+          
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+              <div className="text-center text-white">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light mb-4 leading-tight drop-shadow-lg">
+                  Geely Monjaro
+                </h1>
+                <p className="text-lg md:text-2xl font-medium text-blue-300 mb-6 drop-shadow-lg">
+                  Premium. Powerful. Refined.
+                </p>
+                <p className="text-base md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto leading-relaxed drop-shadow-lg">
+                  SUV 7 chỗ cao cấp với không gian rộng rãi và trang bị công nghệ tiên tiến, hoàn hảo cho gia đình hiện đại.
+                </p>
               </div>
-
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg mb-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-3xl font-bold text-blue-600">COMING SOON</p>
-                    <p className="text-gray-600">Sắp ra mắt tại Ninh Thuận</p>
-                  </div>
-                  <DollarSign className="w-12 h-12 text-blue-600" />
-                </div>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              <Button 
-                size="lg" 
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-                onClick={() => setShowTestDriveModal(true)}
-              >
-                <Calendar className="w-5 h-5 mr-2" />
-                Đặt lịch lái thử
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-                onClick={() => setShowPriceQuoteModal(true)}
-              >
-                <Calculator className="w-5 h-5 mr-2" />
-                Báo giá
-              </Button>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <Button 
-                variant="outline"
-                className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
-                onClick={() => setShowContactModal(true)}
-              >
-                <Phone className="w-5 h-5 mr-2" />
-                Gọi ngay
-              </Button>
-              <Button 
-                variant="outline"
-                className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-                onClick={() => setShowContactModal(true)}
-              >
-                <MessageCircle className="w-5 h-5 mr-2" />
-                Nhắn tin
-              </Button>
             </div>
           </div>
         </div>
 
-        {/* Detailed Information */}
-        <div className="mt-16">
-          <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-8">
-              <TabsTrigger value="overview">Tổng quan</TabsTrigger>
-              <TabsTrigger value="specifications">Thông số</TabsTrigger>
-              <TabsTrigger value="features">Tính năng</TabsTrigger>
-              <TabsTrigger value="safety">An toàn</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="overview" className="space-y-6">
-              <Card className="p-6">
-                <h3 className="text-2xl font-semibold mb-4">Giới thiệu Geely Monjaro</h3>
-                <div className="prose max-w-none">
-                  <p className="text-gray-600 leading-relaxed mb-4">
-                    Geely Monjaro là mẫu SUV 7 chỗ cao cấp với thiết kế hiện đại và trang bị công nghệ tiên tiến. 
-                    Xe được phát triển trên nền tảng Compact Modular Architecture (CMA) của Geely, mang đến sự kết hợp 
-                    hoàn hảo giữa hiệu suất, tiện nghi và an toàn.
-                  </p>
-                  <p className="text-gray-600 leading-relaxed mb-4">
-                    Với động cơ 1.5L Turbo mạnh mẽ, hộp số DCT 7 cấp và hệ thống an toàn ADAS tiên tiến, 
-                    Monjaro hứa hẹn sẽ mang đến trải nghiệm lái xe đẳng cấp cho khách hàng Việt Nam.
-                  </p>
-                  <p className="text-gray-600 leading-relaxed">
-                    Ngoại thất của Monjaro thể hiện ngôn ngữ thiết kế "Expanding Cosmos" đặc trưng của Geely, 
-                    với những đường nét năng động và sang trọng. Nội thất rộng rãi với 7 chỗ ngồi tiện nghi, 
-                    trang bị màn hình cảm ứng 12.3 inch và hệ thống âm thanh cao cấp.
-                  </p>
-                </div>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="specifications" className="space-y-6">
-              <Card className="p-6">
-                <h3 className="text-2xl font-semibold mb-6">Thông số kỹ thuật</h3>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">Động cơ & Vận hành</h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Động cơ:</span>
-                        <span className="font-medium">{specifications.engine}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Công suất:</span>
-                        <span className="font-medium">{specifications.power}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Mô-men xoắn:</span>
-                        <span className="font-medium">{specifications.torque}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Hộp số:</span>
-                        <span className="font-medium">{specifications.transmission}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Nhiên liệu:</span>
-                        <span className="font-medium">{specifications.fuelType}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Dẫn động:</span>
-                        <span className="font-medium">{specifications.drivetrain}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Tiêu hao nhiên liệu:</span>
-                        <span className="font-medium">{specifications.fuelEconomy}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">Kích thước & Trọng lượng</h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Số chỗ ngồi:</span>
-                        <span className="font-medium">{specifications.seating}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Chiều dài:</span>
-                        <span className="font-medium">{specifications.length}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Chiều rộng:</span>
-                        <span className="font-medium">{specifications.width}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Chiều cao:</span>
-                        <span className="font-medium">{specifications.height}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Chiều dài cơ sở:</span>
-                        <span className="font-medium">{specifications.wheelbase}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Khoảng sáng gầm:</span>
-                        <span className="font-medium">{specifications.groundClearance}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Trọng lượng không tải:</span>
-                        <span className="font-medium">{specifications.curbWeight}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="features" className="space-y-6">
-              <Card className="p-6">
-                <h3 className="text-2xl font-semibold mb-6">Tính năng nổi bật</h3>
-                <div className="grid md:grid-cols-2 gap-4">
-                  {features.map((feature, index) => (
-                    <div key={index} className="flex items-center space-x-3">
-                      <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                      <span className="text-gray-700">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="safety" className="space-y-6">
-              <Card className="p-6">
-                <h3 className="text-2xl font-semibold mb-6">Tính năng an toàn</h3>
-                <div className="grid md:grid-cols-2 gap-4">
-                  {safetyFeatures.map((feature, index) => (
-                    <div key={index} className="flex items-center space-x-3">
-                      <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-                      <span className="text-gray-700">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            </TabsContent>
-          </Tabs>
+        {/* Action Buttons - Positioned at bottom right of gallery */}
+        <div className="absolute bottom-6 right-6 z-10">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button 
+              size="lg"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-full shadow-lg backdrop-blur-sm"
+              onClick={() => setShowTestDrive(true)}
+            >
+              <Calendar className="mr-2 h-5 w-5" />
+              Đặt lịch lái thử
+            </Button>
+            
+            <Button 
+              variant="outline"
+              size="lg"
+              className="border-white/80 bg-white/10 backdrop-blur-sm text-white hover:bg-white hover:text-gray-900 px-6 py-3 rounded-full shadow-lg"
+              onClick={() => setShowPriceQuote(true)}
+            >
+              <Calculator className="mr-2 h-5 w-5" />
+              Xem báo giá
+            </Button>
+          </div>
         </div>
-      </div>
+      </section>
+
+      {/* Specifications Section */}
+      <section className="py-16 md:py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-4">Thông số kỹ thuật</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Khám phá những thông số ấn tượng của Geely Monjaro
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
+            {specifications.map((spec, index) => (
+              <Card key={index} className="p-4 md:p-6 text-center hover:shadow-lg transition-all duration-300 hover:scale-105">
+                <spec.icon className="h-8 w-8 md:h-12 md:w-12 text-blue-600 mx-auto mb-3 md:mb-4" />
+                <h3 className="font-semibold text-gray-900 mb-1 md:mb-2 text-sm md:text-base">{spec.label}</h3>
+                <p className="text-gray-600 text-xs md:text-base font-medium">{spec.value}</p>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-16 md:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-4">Tính năng nổi bật</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Trải nghiệm những công nghệ tiên tiến nhất trong phân khúc
+            </p>
+          </div>
+          
+          <FeatureSlider features={detailedFeatures} accentColor="blue-600" />
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 md:py-20 bg-gradient-to-r from-blue-600 to-indigo-600">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-light text-white mb-6 md:mb-8">Sẵn sàng trải nghiệm?</h2>
+          <p className="text-lg md:text-xl text-blue-100 mb-8 md:mb-12 leading-relaxed">
+            Đặt lịch lái thử ngay hôm nay để cảm nhận sự khác biệt của Geely Monjaro
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button 
+              size="lg"
+              className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-full font-medium"
+              onClick={() => setShowTestDrive(true)}
+            >
+              <Calendar className="mr-2 h-5 w-5" />
+              Đặt lịch lái thử
+            </Button>
+            
+            <Button 
+              variant="outline"
+              size="lg"
+              className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-3 rounded-full font-medium"
+              onClick={() => setShowPriceQuote(true)}
+            >
+              <Calculator className="mr-2 h-5 w-5" />
+              Xem báo giá
+            </Button>
+          </div>
+        </div>
+      </section>
 
       {/* Contact Footer */}
       <ContactFooter />
 
+      {/* Floating Buttons */}
+      <FloatingButtons />
+
       {/* Modals */}
       <TestDriveModal 
-        isOpen={showTestDriveModal}
-        onClose={() => setShowTestDriveModal(false)}
+        isOpen={showTestDrive} 
+        onClose={() => setShowTestDrive(false)}
         selectedCar="Geely Monjaro"
       />
       <PriceQuoteModal 
-        isOpen={showPriceQuoteModal}
-        onClose={() => setShowPriceQuoteModal(false)}
+        isOpen={showPriceQuote} 
+        onClose={() => setShowPriceQuote(false)}
         selectedCar="Geely Monjaro"
-      />
-      <ContactModal 
-        isOpen={showContactModal}
-        onClose={() => setShowContactModal(false)}
       />
     </div>
   );
