@@ -43,7 +43,25 @@ const CarDetailsManagement = () => {
         .order('priority');
 
       if (error) throw error;
-      setCars(data || []);
+      
+      // Transform the data to match our interface
+      const transformedData = data?.map((item: any) => ({
+        id: item.id,
+        car_model: item.car_model,
+        name: item.name,
+        tagline: item.tagline,
+        description: item.description,
+        features: item.features || [],
+        specifications: item.specifications || {},
+        detailed_features: Array.isArray(item.detailed_features) ? item.detailed_features : [],
+        hero_image_url: item.hero_image_url,
+        hero_mobile_image_url: item.hero_mobile_image_url,
+        gallery_images: item.gallery_images || [],
+        priority: item.priority || 1,
+        is_active: item.is_active ?? true
+      })) || [];
+      
+      setCars(transformedData);
     } catch (error) {
       console.error('Error fetching cars:', error);
       toast({
