@@ -13,8 +13,10 @@ export type Database = {
         Row: {
           car_model: string
           created_at: string
+          cta_section: Json | null
           description: string
           detailed_features: Json | null
+          detailed_features_data: Json | null
           features: string[]
           gallery_images: string[] | null
           hero_image_url: string | null
@@ -24,14 +26,17 @@ export type Database = {
           name: string
           priority: number | null
           specifications: Json | null
+          specifications_data: Json | null
           tagline: string
           updated_at: string
         }
         Insert: {
           car_model: string
           created_at?: string
+          cta_section?: Json | null
           description: string
           detailed_features?: Json | null
+          detailed_features_data?: Json | null
           features?: string[]
           gallery_images?: string[] | null
           hero_image_url?: string | null
@@ -41,14 +46,17 @@ export type Database = {
           name: string
           priority?: number | null
           specifications?: Json | null
+          specifications_data?: Json | null
           tagline: string
           updated_at?: string
         }
         Update: {
           car_model?: string
           created_at?: string
+          cta_section?: Json | null
           description?: string
           detailed_features?: Json | null
+          detailed_features_data?: Json | null
           features?: string[]
           gallery_images?: string[] | null
           hero_image_url?: string | null
@@ -58,6 +66,7 @@ export type Database = {
           name?: string
           priority?: number | null
           specifications?: Json | null
+          specifications_data?: Json | null
           tagline?: string
           updated_at?: string
         }
