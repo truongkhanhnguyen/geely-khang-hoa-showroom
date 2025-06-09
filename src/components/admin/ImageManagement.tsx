@@ -6,9 +6,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Upload, Trash2, Eye, Monitor, Smartphone, Image, Info, Car } from "lucide-react";
+import { Upload, Trash2, Eye, Monitor, Smartphone, Image, Info, Car, Zap, FileImage } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { convertToWebP, shouldConvertToWebP, formatFileSize, ConversionResult } from "@/utils/imageConverter";
 
 interface WebsiteImage {
   id: string;
@@ -23,15 +24,22 @@ interface WebsiteImage {
   created_at: string;
 }
 
+interface ConversionStatus {
+  desktop?: ConversionResult;
+  mobile?: ConversionResult;
+  isConverting: boolean;
+}
+
 const ImageManagement = () => {
   const { toast } = useToast();
   const [images, setImages] = useState<WebsiteImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [conversionStatus, setConversionStatus] = useState<ConversionStatus>({ isConverting: false });
   const [uploadForm, setUploadForm] = useState({
     name: "",
     category: "general",
-    carModel: "", // New field for car model
+    carModel: "",
     description: "",
     desktopFile: null as File | null,
     mobileFile: null as File | null
@@ -126,6 +134,56 @@ const ImageManagement = () => {
     }
   };
 
+  const handleFileChange = async (file: File | null, type: 'desktop' | 'mobile') => {
+    if (!file) return;
+
+    if (shouldConvertToWebP(file)) {
+      setConversionStatus(prev => ({ ...prev, isConverting: true }));
+      
+      try {
+        const result = await convertToWebP(file);
+        
+        setConversionStatus(prev => ({ 
+          ...prev, 
+          [type]: result,
+          isConverting: false 
+        }));
+
+        // Update the form with converted file
+        setUploadForm(prev => ({ 
+          ...prev, 
+          [type === 'desktop' ? 'desktopFile' : 'mobileFile']: result.convertedFile 
+        }));
+
+        toast({
+          title: "✅ Chuyển đổi thành công!",
+          description: `${file.name} → WebP (tiết kiệm ${result.compressionRatio}% dung lượng)`,
+        });
+      } catch (error) {
+        console.error('Conversion error:', error);
+        setConversionStatus(prev => ({ ...prev, isConverting: false }));
+        
+        // Use original file if conversion fails
+        setUploadForm(prev => ({ 
+          ...prev, 
+          [type === 'desktop' ? 'desktopFile' : 'mobileFile']: file 
+        }));
+
+        toast({
+          title: "⚠️ Lưu ý",
+          description: "Không thể chuyển đổi sang WebP, sử dụng file gốc",
+          variant: "destructive"
+        });
+      }
+    } else {
+      // For non-convertible files, use as is
+      setUploadForm(prev => ({ 
+        ...prev, 
+        [type === 'desktop' ? 'desktopFile' : 'mobileFile']: file 
+      }));
+    }
+  };
+
   const uploadFileToStorage = async (file: File, fileName: string): Promise<string> => {
     const { data, error } = await supabase.storage
       .from('website-images')
@@ -209,7 +267,7 @@ const ImageManagement = () => {
         description: `Đã upload hình ảnh cho ${categoryInfo?.label}${carModelLabel ? ` - ${carModelLabel}` : ''}`
       });
 
-      // Reset form
+      // Reset form and conversion status
       setUploadForm({
         name: "",
         category: "general",
@@ -218,6 +276,7 @@ const ImageManagement = () => {
         desktopFile: null,
         mobileFile: null
       });
+      setConversionStatus({ isConverting: false });
 
       // Reset file inputs
       const desktopInput = document.getElementById('desktop-file') as HTMLInputElement;
@@ -296,13 +355,6 @@ const ImageManagement = () => {
     return colors[category] || colors.general;
   };
 
-  const formatFileSize = (bytes?: number) => {
-    if (!bytes) return 'N/A';
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
-  };
-
   const selectedCategory = imageCategories.find(cat => cat.value === uploadForm.category);
 
   if (loading) {
@@ -317,6 +369,10 @@ const ImageManagement = () => {
           <CardTitle className="flex items-center">
             <Upload className="w-5 h-5 mr-2" />
             Upload Hình Ảnh Mới
+            <Badge variant="outline" className="ml-2 text-xs bg-green-50 text-green-700">
+              <Zap className="w-3 h-3 mr-1" />
+              Auto WebP
+            </Badge>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -413,21 +469,38 @@ const ImageManagement = () => {
               <Label className="flex items-center">
                 <Monitor className="w-4 h-4 mr-1" />
                 Hình ảnh PC/Desktop *
+                {conversionStatus.isConverting && (
+                  <Badge variant="outline" className="ml-2 text-xs">
+                    <Zap className="w-3 h-3 mr-1 animate-spin" />
+                    Đang chuyển đổi...
+                  </Badge>
+                )}
               </Label>
               <Input
                 id="desktop-file"
                 type="file"
                 accept="image/*"
-                onChange={(e) => setUploadForm(prev => ({ 
-                  ...prev, 
-                  desktopFile: e.target.files?.[0] || null 
-                }))}
+                onChange={(e) => handleFileChange(e.target.files?.[0] || null, 'desktop')}
                 className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
               {uploadForm.desktopFile && (
-                <p className="text-sm text-gray-500 mt-1">
-                  {uploadForm.desktopFile.name} ({formatFileSize(uploadForm.desktopFile.size)})
-                </p>
+                <div className="mt-2 space-y-1">
+                  <p className="text-sm text-gray-500">
+                    {uploadForm.desktopFile.name} ({formatFileSize(uploadForm.desktopFile.size)})
+                  </p>
+                  {conversionStatus.desktop && (
+                    <div className="flex items-center space-x-2 text-xs">
+                      <Badge variant="outline" className="bg-green-50 text-green-700">
+                        <FileImage className="w-3 h-3 mr-1" />
+                        WebP
+                      </Badge>
+                      <span className="text-green-600">
+                        Tiết kiệm {conversionStatus.desktop.compressionRatio}% 
+                        ({formatFileSize(conversionStatus.desktop.originalSize)} → {formatFileSize(conversionStatus.desktop.convertedSize)})
+                      </span>
+                    </div>
+                  )}
+                </div>
               )}
               <p className="text-xs text-gray-500 mt-1">
                 💻 Hiển thị trên máy tính, laptop, tablet ngang
@@ -442,16 +515,27 @@ const ImageManagement = () => {
                 id="mobile-file"
                 type="file"
                 accept="image/*"
-                onChange={(e) => setUploadForm(prev => ({ 
-                  ...prev, 
-                  mobileFile: e.target.files?.[0] || null 
-                }))}
+                onChange={(e) => handleFileChange(e.target.files?.[0] || null, 'mobile')}
                 className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
               {uploadForm.mobileFile && (
-                <p className="text-sm text-gray-500 mt-1">
-                  {uploadForm.mobileFile.name} ({formatFileSize(uploadForm.mobileFile.size)})
-                </p>
+                <div className="mt-2 space-y-1">
+                  <p className="text-sm text-gray-500">
+                    {uploadForm.mobileFile.name} ({formatFileSize(uploadForm.mobileFile.size)})
+                  </p>
+                  {conversionStatus.mobile && (
+                    <div className="flex items-center space-x-2 text-xs">
+                      <Badge variant="outline" className="bg-green-50 text-green-700">
+                        <FileImage className="w-3 h-3 mr-1" />
+                        WebP
+                      </Badge>
+                      <span className="text-green-600">
+                        Tiết kiệm {conversionStatus.mobile.compressionRatio}% 
+                        ({formatFileSize(conversionStatus.mobile.originalSize)} → {formatFileSize(conversionStatus.mobile.convertedSize)})
+                      </span>
+                    </div>
+                  )}
+                </div>
               )}
               <p className="text-xs text-gray-500 mt-1">
                 📱 Hiển thị trên điện thoại, tablet dọc (nếu không có sẽ dùng ảnh PC)
@@ -471,12 +555,17 @@ const ImageManagement = () => {
           <Button 
             onClick={handleUpload} 
             className="w-full" 
-            disabled={uploading}
+            disabled={uploading || conversionStatus.isConverting}
           >
             {uploading ? (
               <>
                 <Upload className="w-4 h-4 mr-2 animate-spin" />
                 Đang upload...
+              </>
+            ) : conversionStatus.isConverting ? (
+              <>
+                <Zap className="w-4 h-4 mr-2 animate-spin" />
+                Đang chuyển đổi sang WebP...
               </>
             ) : (
               <>
@@ -485,6 +574,41 @@ const ImageManagement = () => {
               </>
             )}
           </Button>
+        </CardContent>
+      </Card>
+
+      {/* Enhanced WebP Info Card */}
+      <Card className="bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
+        <CardHeader>
+          <CardTitle className="flex items-center text-green-800">
+            <Zap className="w-5 h-5 mr-2" />
+            🚀 Tự Động Tối Ưu Hình Ảnh WebP
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div className="space-y-2">
+              <div className="flex items-center text-green-700">
+                <FileImage className="w-4 h-4 mr-2" />
+                <span className="font-semibold">Tự động chuyển đổi</span>
+              </div>
+              <p className="text-green-600">PNG và JPG → WebP</p>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center text-blue-700">
+                <Monitor className="w-4 h-4 mr-2" />
+                <span className="font-semibold">Giảm dung lượng</span>
+              </div>
+              <p className="text-blue-600">25-50% so với PNG</p>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center text-purple-700">
+                <Smartphone className="w-4 h-4 mr-2" />
+                <span className="font-semibold">Tăng tốc tải</span>
+              </div>
+              <p className="text-purple-600">Hiệu suất cao hơn</p>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
@@ -542,6 +666,7 @@ const ImageManagement = () => {
               <li>• <strong>Thư viện xe</strong>: Phải chọn dòng xe để hiển thị trong gallery chi tiết từng xe</li>
               <li>• <strong>Khuyến mãi/Tin tức</strong>: Không cần chọn dòng xe, áp dụng chung</li>
               <li>• Hình Mobile chỉ cần thiết cho Hero Banner để tối ưu hiển thị trên điện thoại</li>
+              <li>• <strong>🚀 Auto WebP</strong>: PNG/JPG sẽ tự động chuyển sang WebP để tối ưu dung lượng</li>
               <li>• Kích thước file nên dưới 5MB để tăng tốc độ tải</li>
             </ul>
           </div>
