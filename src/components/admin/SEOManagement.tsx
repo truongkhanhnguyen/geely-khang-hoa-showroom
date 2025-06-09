@@ -120,15 +120,22 @@ const SEOManagement = () => {
       const { data, error } = await supabase
         .from('website_seo_settings')
         .select('*')
-        .single();
+        .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
         console.error('Error loading SEO settings:', error);
         return;
       }
 
       if (data) {
-        setSeoSettings(data);
+        setSeoSettings({
+          ...data,
+          hreflang_tags: data.hreflang_tags || [],
+          schema_address: data.schema_address || {},
+          schema_offers: data.schema_offers || [],
+          schema_services: data.schema_services || [],
+          custom_meta_tags: data.custom_meta_tags || []
+        });
       }
     } catch (error) {
       console.error('Error loading SEO settings:', error);

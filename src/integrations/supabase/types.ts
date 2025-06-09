@@ -297,6 +297,144 @@ export type Database = {
         }
         Relationships: []
       }
+      website_seo_settings: {
+        Row: {
+          bing_site_verification: string | null
+          canonical_url: string
+          created_at: string | null
+          custom_meta_tags: Json | null
+          geo_placename: string
+          geo_position: string
+          geo_region: string
+          google_site_verification: string | null
+          hreflang_tags: Json | null
+          id: string
+          meta_charset: string
+          meta_viewport: string
+          og_description: string
+          og_image: string
+          og_locale: string
+          og_site_name: string
+          og_title: string
+          og_type: string
+          robots_follow: boolean | null
+          robots_index: boolean | null
+          robots_noarchive: boolean | null
+          robots_nosnippet: boolean | null
+          schema_address: Json | null
+          schema_description: string
+          schema_logo: string
+          schema_name: string
+          schema_offers: Json | null
+          schema_services: Json | null
+          schema_type: string
+          schema_url: string
+          site_author: string
+          site_description: string
+          site_keywords: string
+          site_title: string
+          sitemap_changefreq: string
+          sitemap_priority: string
+          twitter_card: string
+          twitter_description: string
+          twitter_image: string
+          twitter_site: string | null
+          twitter_title: string
+          updated_at: string | null
+          yandex_verification: string | null
+        }
+        Insert: {
+          bing_site_verification?: string | null
+          canonical_url?: string
+          created_at?: string | null
+          custom_meta_tags?: Json | null
+          geo_placename?: string
+          geo_position?: string
+          geo_region?: string
+          google_site_verification?: string | null
+          hreflang_tags?: Json | null
+          id?: string
+          meta_charset?: string
+          meta_viewport?: string
+          og_description?: string
+          og_image?: string
+          og_locale?: string
+          og_site_name?: string
+          og_title?: string
+          og_type?: string
+          robots_follow?: boolean | null
+          robots_index?: boolean | null
+          robots_noarchive?: boolean | null
+          robots_nosnippet?: boolean | null
+          schema_address?: Json | null
+          schema_description?: string
+          schema_logo?: string
+          schema_name?: string
+          schema_offers?: Json | null
+          schema_services?: Json | null
+          schema_type?: string
+          schema_url?: string
+          site_author?: string
+          site_description?: string
+          site_keywords?: string
+          site_title?: string
+          sitemap_changefreq?: string
+          sitemap_priority?: string
+          twitter_card?: string
+          twitter_description?: string
+          twitter_image?: string
+          twitter_site?: string | null
+          twitter_title?: string
+          updated_at?: string | null
+          yandex_verification?: string | null
+        }
+        Update: {
+          bing_site_verification?: string | null
+          canonical_url?: string
+          created_at?: string | null
+          custom_meta_tags?: Json | null
+          geo_placename?: string
+          geo_position?: string
+          geo_region?: string
+          google_site_verification?: string | null
+          hreflang_tags?: Json | null
+          id?: string
+          meta_charset?: string
+          meta_viewport?: string
+          og_description?: string
+          og_image?: string
+          og_locale?: string
+          og_site_name?: string
+          og_title?: string
+          og_type?: string
+          robots_follow?: boolean | null
+          robots_index?: boolean | null
+          robots_noarchive?: boolean | null
+          robots_nosnippet?: boolean | null
+          schema_address?: Json | null
+          schema_description?: string
+          schema_logo?: string
+          schema_name?: string
+          schema_offers?: Json | null
+          schema_services?: Json | null
+          schema_type?: string
+          schema_url?: string
+          site_author?: string
+          site_description?: string
+          site_keywords?: string
+          site_title?: string
+          sitemap_changefreq?: string
+          sitemap_priority?: string
+          twitter_card?: string
+          twitter_description?: string
+          twitter_image?: string
+          twitter_site?: string | null
+          twitter_title?: string
+          updated_at?: string | null
+          yandex_verification?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
