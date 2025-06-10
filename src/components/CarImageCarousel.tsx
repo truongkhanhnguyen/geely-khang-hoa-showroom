@@ -8,9 +8,15 @@ interface CarImageCarouselProps {
   carModel: string;
   images?: string[];
   hideNavigation?: boolean;
+  displaySection?: 'hero' | 'gallery' | 'features';
 }
 
-const CarImageCarousel = ({ carModel, images: propImages, hideNavigation = false }: CarImageCarouselProps) => {
+const CarImageCarousel = ({ 
+  carModel, 
+  images: propImages, 
+  hideNavigation = false, 
+  displaySection = 'hero' 
+}: CarImageCarouselProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [images, setImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,28 +28,36 @@ const CarImageCarousel = ({ carModel, images: propImages, hideNavigation = false
     } else {
       fetchCarImages();
     }
-  }, [carModel, propImages]);
+  }, [carModel, propImages, displaySection]);
 
   const fetchCarImages = async () => {
     try {
-      console.log(`🚗 Fetching images for car model: ${carModel}`);
+      console.log(`🚗 Fetching images for car model: ${carModel}, section: ${displaySection}`);
       
       const { data, error } = await supabase
-        .from('website_images')
-        .select('*')
-        .eq('category', 'car_detail')
-        .ilike('name', `%${carModel.toLowerCase()}%`)
-        .order('created_at', { ascending: false });
+        .from('car_page_images')
+        .select(`
+          website_images:image_id (
+            url
+          )
+        `)
+        .eq('car_model', carModel.toLowerCase())
+        .eq('display_section', displaySection)
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
 
       if (error) {
         console.error('❌ Error fetching car images:', error);
         throw error;
       }
 
-      console.log(`✅ Found ${data?.length || 0} images for ${carModel}`);
+      console.log(`✅ Found ${data?.length || 0} images for ${carModel} in ${displaySection}`);
       
       if (data && data.length > 0) {
-        const imageUrls = data.map(img => img.url);
+        const imageUrls = data
+          .map(item => item.website_images?.url)
+          .filter(Boolean) as string[];
+        
         setImages(imageUrls);
         console.log('🖼️ Car images loaded:', imageUrls);
       } else {

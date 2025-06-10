@@ -88,7 +88,7 @@ const EX5Details = () => {
       {/* Hero Section - Mobile Optimized */}
       <section className="relative pt-14 md:pt-16">
         <div className="relative h-[60vh] md:h-[70vh] lg:h-screen">
-          <CarImageCarousel carModel="EX5" />
+          <CarImageCarousel carModel="ex5" displaySection="hero" />
           
           {/* Hero Text Overlay - Mobile Optimized */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent">

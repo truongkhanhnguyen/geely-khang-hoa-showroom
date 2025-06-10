@@ -72,6 +72,47 @@ export type Database = {
         }
         Relationships: []
       }
+      car_page_images: {
+        Row: {
+          car_model: string
+          created_at: string
+          display_order: number
+          display_section: string
+          id: string
+          image_id: string | null
+          is_active: boolean
+          updated_at: string
+        }
+        Insert: {
+          car_model: string
+          created_at?: string
+          display_order?: number
+          display_section: string
+          id?: string
+          image_id?: string | null
+          is_active?: boolean
+          updated_at?: string
+        }
+        Update: {
+          car_model?: string
+          created_at?: string
+          display_order?: number
+          display_section?: string
+          id?: string
+          image_id?: string | null
+          is_active?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "car_page_images_image_id_fkey"
+            columns: ["image_id"]
+            isOneToOne: false
+            referencedRelation: "website_images"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       car_prices: {
         Row: {
           base_price: number
