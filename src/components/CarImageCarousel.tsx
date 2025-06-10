@@ -20,6 +20,17 @@ const CarImageCarousel = ({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [images, setImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     if (propImages && propImages.length > 0) {
@@ -38,7 +49,8 @@ const CarImageCarousel = ({
         .from('car_page_images')
         .select(`
           website_images:image_id (
-            url
+            url,
+            mobile_url
           )
         `)
         .eq('car_model', carModel.toLowerCase())
@@ -55,7 +67,13 @@ const CarImageCarousel = ({
       
       if (data && data.length > 0) {
         const imageUrls = data
-          .map(item => item.website_images?.url)
+          .map(item => {
+            const websiteImage = item.website_images;
+            if (!websiteImage) return null;
+            
+            // Use mobile image if available and on mobile device, otherwise use desktop image
+            return isMobile && websiteImage.mobile_url ? websiteImage.mobile_url : websiteImage.url;
+          })
           .filter(Boolean) as string[];
         
         setImages(imageUrls);
