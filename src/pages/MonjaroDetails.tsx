@@ -10,11 +10,12 @@ import CarImageCarousel from "@/components/CarImageCarousel";
 import FeatureSlider from "@/components/FeatureSlider";
 import FloatingButtons from "@/components/FloatingButtons";
 import ContactFooter from "@/components/ContactFooter";
+
 const MonjaroDetails = () => {
   const navigate = useNavigate();
   const [showTestDrive, setShowTestDrive] = useState(false);
   const [showPriceQuote, setShowPriceQuote] = useState(false);
-  const carImages = ["https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=1920&h=1080&fit=crop", "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=1920&h=1080&fit=crop", "https://images.unsplash.com/photo-1621135802920-133df287f89c?w=1920&h=1080&fit=crop", "https://images.unsplash.com/photo-1619976215542-c8162db1a640?w=1920&h=1080&fit=crop"];
+
   const specifications = [{
     icon: Gauge,
     label: "Động cơ",
@@ -40,6 +41,7 @@ const MonjaroDetails = () => {
     label: "Camera",
     value: "360° + DMS"
   }];
+
   const detailedFeatures = [{
     id: "luxury",
     title: "Nội thất cao cấp",
@@ -61,6 +63,7 @@ const MonjaroDetails = () => {
     description: "Đèn LED Matrix thông minh, khởi động từ xa qua ứng dụng, sạc không dây cho điện thoại, hệ thống điều hòa tự động và khoang hành lý rộng rãi 1800L.",
     image: "https://images.unsplash.com/photo-1619976215542-c8162db1a640?w=800&h=600&fit=crop"
   }];
+
   return <div className="min-h-screen bg-white">
       {/* Header - Mobile Optimized */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50">
@@ -84,17 +87,13 @@ const MonjaroDetails = () => {
       {/* Hero Section - Mobile Optimized */}
       <section className="relative pt-14 md:pt-16">
         <div className="relative h-[60vh] md:h-[70vh] lg:h-screen">
-          <CarImageCarousel images={carImages} carModel="Monjaro" />
+          <CarImageCarousel carModel="Monjaro" />
           
           {/* Hero Text Overlay - Mobile Optimized */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent">
             <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8">
               <div className="max-w-7xl mx-auto">
                 <div className="text-white">
-                  
-                  
-                  
-                  
                   {/* Action Buttons - Updated Design */}
                   <div className="flex flex-col gap-3 max-w-sm">
                     <Button className="w-full h-12 bg-gray-200/90 hover:bg-gray-100 text-gray-800 font-medium text-sm rounded-lg border-0 shadow-sm transition-all" onClick={() => setShowPriceQuote(true)}>
@@ -195,4 +194,5 @@ const MonjaroDetails = () => {
       <PriceQuoteModal isOpen={showPriceQuote} onClose={() => setShowPriceQuote(false)} selectedCar="Geely Monjaro" />
     </div>;
 };
+
 export default MonjaroDetails;

@@ -10,11 +10,12 @@ import CarImageCarousel from "@/components/CarImageCarousel";
 import FeatureSlider from "@/components/FeatureSlider";
 import FloatingButtons from "@/components/FloatingButtons";
 import ContactFooter from "@/components/ContactFooter";
+
 const CoolrayDetails = () => {
   const navigate = useNavigate();
   const [showTestDrive, setShowTestDrive] = useState(false);
   const [showPriceQuote, setShowPriceQuote] = useState(false);
-  const carImages = ["https://images.unsplash.com/photo-1549924231-f129b911e442?w=1920&h=1080&fit=crop", "https://images.unsplash.com/photo-1502877338535-766e1452684a?w=1920&h=1080&fit=crop", "https://images.unsplash.com/photo-1600712242805-5f78671b24da?w=1920&h=1080&fit=crop", "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?w=1920&h=1080&fit=crop"];
+
   const specifications = [{
     icon: Gauge,
     label: "Động cơ",
@@ -40,6 +41,7 @@ const CoolrayDetails = () => {
     label: "Camera",
     value: "360°"
   }];
+
   const detailedFeatures = [{
     id: "interior",
     title: "Nội thất thông minh",
@@ -61,6 +63,7 @@ const CoolrayDetails = () => {
     description: "Động cơ 1.5L Turbo mạnh mẽ 177 HP, hộp số CVT mượt mà, tiêu thụ nhiên liệu chỉ 6.8L/100km, mang lại trải nghiệm lái xe năng động và tiết kiệm.",
     image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?w=800&h=600&fit=crop"
   }];
+
   return <div className="min-h-screen bg-white">
       {/* Header - Mobile Optimized */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50">
@@ -84,17 +87,13 @@ const CoolrayDetails = () => {
       {/* Hero Section - Mobile Optimized */}
       <section className="relative pt-14 md:pt-16">
         <div className="relative h-[60vh] md:h-[70vh] lg:h-screen">
-          <CarImageCarousel images={carImages} carModel="Coolray" />
+          <CarImageCarousel carModel="Coolray" />
           
           {/* Hero Text Overlay - Mobile Optimized */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent">
             <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8">
               <div className="max-w-7xl mx-auto">
                 <div className="text-white">
-                  
-                  
-                  
-                  
                   {/* Action Buttons - Updated Design */}
                   <div className="flex flex-col gap-3 max-w-sm">
                     <Button className="w-full h-12 bg-gray-200/90 hover:bg-gray-100 text-gray-800 font-medium text-sm rounded-lg border-0 shadow-sm transition-all" onClick={() => setShowPriceQuote(true)}>
@@ -195,4 +194,5 @@ const CoolrayDetails = () => {
       <PriceQuoteModal isOpen={showPriceQuote} onClose={() => setShowPriceQuote(false)} selectedCar="Geely Coolray" />
     </div>;
 };
+
 export default CoolrayDetails;

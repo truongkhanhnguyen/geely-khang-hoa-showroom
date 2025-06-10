@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, Calendar, Calculator, Battery, Gauge, Shield, Cog, Eye, Zap } from "lucide-react";
@@ -10,11 +11,12 @@ import CarImageCarousel from "@/components/CarImageCarousel";
 import FeatureSlider from "@/components/FeatureSlider";
 import FloatingButtons from "@/components/FloatingButtons";
 import ContactFooter from "@/components/ContactFooter";
+
 const EX5Details = () => {
   const navigate = useNavigate();
   const [showTestDrive, setShowTestDrive] = useState(false);
   const [showPriceQuote, setShowPriceQuote] = useState(false);
-  const carImages = ["https://images.unsplash.com/photo-1593941707882-a5bac6861d75?w=1920&h=1080&fit=crop", "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&h=1080&fit=crop", "https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=1920&h=1080&fit=crop", "https://images.unsplash.com/photo-1536431311719-398b6704d4cc?w=1920&h=1080&fit=crop"];
+
   const specifications = [{
     icon: Zap,
     label: "Động cơ",
@@ -40,6 +42,7 @@ const EX5Details = () => {
     label: "Tự lái",
     value: "Level 2"
   }];
+
   const detailedFeatures = [{
     id: "electric",
     title: "Động cơ điện thân thiện",
@@ -61,6 +64,7 @@ const EX5Details = () => {
     description: "Màn hình cảm ứng 12.3 inch, điều khiển bằng giọng nói AI, cập nhật phần mềm OTA qua mạng, hệ thống điều hòa thông minh và kết nối internet tốc độ cao.",
     image: "https://images.unsplash.com/photo-1536431311719-398b6704d4cc?w=800&h=600&fit=crop"
   }];
+
   return <div className="min-h-screen bg-white">
       {/* Header - Mobile Optimized */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50">
@@ -84,17 +88,13 @@ const EX5Details = () => {
       {/* Hero Section - Mobile Optimized */}
       <section className="relative pt-14 md:pt-16">
         <div className="relative h-[60vh] md:h-[70vh] lg:h-screen">
-          <CarImageCarousel images={carImages} carModel="EX5" />
+          <CarImageCarousel carModel="EX5" />
           
           {/* Hero Text Overlay - Mobile Optimized */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent">
             <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8">
               <div className="max-w-7xl mx-auto">
                 <div className="text-white">
-                  
-                  
-                  
-                  
                   {/* Action Buttons - Updated Design */}
                   <div className="flex flex-col gap-3 max-w-sm">
                     <Button className="w-full h-12 bg-gray-200/90 hover:bg-gray-100 text-gray-800 font-medium text-sm rounded-lg border-0 shadow-sm transition-all" onClick={() => setShowPriceQuote(true)}>
@@ -195,4 +195,5 @@ const EX5Details = () => {
       <PriceQuoteModal isOpen={showPriceQuote} onClose={() => setShowPriceQuote(false)} selectedCar="Geely EX5" />
     </div>;
 };
+
 export default EX5Details;
