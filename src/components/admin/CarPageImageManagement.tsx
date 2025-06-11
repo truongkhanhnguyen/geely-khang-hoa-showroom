@@ -57,6 +57,7 @@ const CarPageImageManagement = () => {
 
   const fetchCarPageImages = async () => {
     try {
+      console.log(`🔍 Fetching car page images for model: ${selectedCarModel}`);
       const { data, error } = await supabase
         .from('car_page_images')
         .select(`
@@ -73,10 +74,15 @@ const CarPageImageManagement = () => {
         .order('display_section')
         .order('display_order');
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Error fetching car page images:', error);
+        throw error;
+      }
+      
+      console.log(`✅ Found ${data?.length || 0} car page images:`, data);
       setCarPageImages(data || []);
     } catch (error) {
-      console.error('Error fetching car page images:', error);
+      console.error('💥 Error in fetchCarPageImages:', error);
       toast({
         title: "Lỗi",
         description: "Không thể tải danh sách ảnh xe",
@@ -101,8 +107,50 @@ const CarPageImageManagement = () => {
     }
   };
 
+  const ensureStorageBucket = async () => {
+    try {
+      console.log('🪣 Checking storage bucket...');
+      
+      // Check if bucket exists
+      const { data: buckets, error: listError } = await supabase.storage.listBuckets();
+      
+      if (listError) {
+        console.error('❌ Error listing buckets:', listError);
+        throw listError;
+      }
+      
+      const bucketExists = buckets.some(bucket => bucket.name === 'website-images');
+      
+      if (!bucketExists) {
+        console.log('📦 Creating website-images bucket...');
+        const { error: createError } = await supabase.storage.createBucket('website-images', {
+          public: true,
+          allowedMimeTypes: ['image/*'],
+          fileSizeLimit: 10485760 // 10MB
+        });
+        
+        if (createError) {
+          console.error('❌ Error creating bucket:', createError);
+          throw createError;
+        }
+        
+        console.log('✅ Storage bucket created successfully');
+      } else {
+        console.log('✅ Storage bucket already exists');
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('💥 Error ensuring storage bucket:', error);
+      throw error;
+    }
+  };
+
   const uploadImage = async (file: File, isMobile: boolean = false): Promise<string> => {
     console.log(`🔄 Starting upload for ${isMobile ? 'mobile' : 'desktop'} image:`, file.name);
+    
+    // Ensure bucket exists
+    await ensureStorageBucket();
     
     let fileToUpload = file;
     
@@ -131,7 +179,9 @@ const CarPageImageManagement = () => {
     const fileName = `${Date.now()}_${isMobile ? 'mobile_' : ''}${Math.random().toString(36).substring(2)}.${fileExt}`;
     const filePath = `car-images/${fileName}`;
 
-    const { error: uploadError } = await supabase.storage
+    console.log(`📤 Uploading to path: ${filePath}`);
+
+    const { data: uploadData, error: uploadError } = await supabase.storage
       .from('website-images')
       .upload(filePath, fileToUpload);
 
@@ -139,6 +189,8 @@ const CarPageImageManagement = () => {
       console.error('❌ Upload error:', uploadError);
       throw uploadError;
     }
+
+    console.log('📤 Upload successful, getting public URL...');
 
     const { data } = supabase.storage
       .from('website-images')
@@ -174,6 +226,8 @@ const CarPageImageManagement = () => {
     setUploading(true);
 
     try {
+      console.log('🚀 Starting image upload process...');
+      
       // Upload desktop image
       const desktopUrl = await uploadImage(uploadFiles.desktop, false);
       
@@ -182,6 +236,8 @@ const CarPageImageManagement = () => {
       if (uploadFiles.mobile) {
         mobileUrl = await uploadImage(uploadFiles.mobile, true);
       }
+
+      console.log('💾 Saving to website_images table...');
 
       // Save to website_images table
       const { data: imageData, error: insertError } = await supabase
@@ -198,7 +254,12 @@ const CarPageImageManagement = () => {
         .select()
         .single();
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        console.error('❌ Error inserting to website_images:', insertError);
+        throw insertError;
+      }
+
+      console.log('🔗 Adding to car page images mapping...');
 
       // Add to car page images mapping
       const { error: mappingError } = await supabase
@@ -211,7 +272,12 @@ const CarPageImageManagement = () => {
           is_active: true
         });
 
-      if (mappingError) throw mappingError;
+      if (mappingError) {
+        console.error('❌ Error adding to car_page_images:', mappingError);
+        throw mappingError;
+      }
+
+      console.log('✅ Upload and mapping completed successfully');
 
       toast({
         title: "Thành công",
@@ -222,14 +288,16 @@ const CarPageImageManagement = () => {
       setUploadFiles({ desktop: null, mobile: null });
       setImageName('');
       setDisplayOrder(1);
-      fetchCarPageImages();
-      fetchAvailableImages();
+      
+      // Refresh data
+      await fetchCarPageImages();
+      await fetchAvailableImages();
 
     } catch (error) {
-      console.error('Error uploading image:', error);
+      console.error('💥 Error in upload process:', error);
       toast({
         title: "Lỗi",
-        description: "Không thể upload ảnh",
+        description: `Không thể upload ảnh: ${error instanceof Error ? error.message : 'Lỗi không xác định'}`,
         variant: "destructive",
       });
     } finally {
